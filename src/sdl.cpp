@@ -1,6 +1,8 @@
 #include "sdl.h"
 #include "config.hpp"
 #include "context/window.h"
+#include "render/base.hpp"
+#include "render/player.hpp"
 #include "render/text.h"
 #include "util/path.hpp"
 #include <SDL3/SDL.h>
@@ -13,7 +15,7 @@ static SDL_AppResult SDL_Fail() {
 	return SDL_APP_FAILURE;
 }
 
-sdl::sdl(sdlDep dep) : w(nullptr), r(nullptr), d(std::move(dep)) {
+sdl::sdl(sdlDep &dep) : w(nullptr), r(nullptr), d(dep) {
 	for (const auto &b : d.entity->brick) {
 		// spdlog::trace("brick {} {:.0f} {:.0f} {}", b.id, b.x, b.y, b.region);
 	}
@@ -126,7 +128,16 @@ bool sdl::init() {
 		return false;
 	}
 
+	initRender();
+
 	return true;
+}
+
+void sdl::initRender() {
+	renderList.emplace_back(std::make_unique<render::Player>(r, d));
+	for (auto &ren : renderList) {
+		ren->init();
+	}
 }
 
 void sdl::renderCounter() {
@@ -168,6 +179,10 @@ void sdl::render() {
 
 	renderCounter();
 	renderControlMsg();
+
+	for (auto &ren : renderList) {
+		ren->render();
+	}
 
 	// renderGamepad();
 

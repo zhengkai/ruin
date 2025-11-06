@@ -6,6 +6,7 @@
 #include "context/window.h"
 #include "game.h"
 #include "region.hpp"
+#include "sdl-dep.hpp"
 #include "sdl.h"
 #include "util/ball.hpp"
 #include "util/print.hpp"
@@ -50,11 +51,12 @@ bool Ruin::init() {
 		.window = w,
 	});
 
-	s = std::make_unique<sdl>(sdlDep{
+	auto sd = sdlDep{
 		.ballCluster = bc,
 		.entity = e,
 		.window = w,
-	});
+	};
+	s = std::make_unique<sdl>(sd);
 
 	spdlog::info("ruin start");
 
