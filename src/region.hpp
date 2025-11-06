@@ -1,6 +1,6 @@
 #pragma once
 
-#include "context/entity.h"
+#include "context/misc.h"
 #include "physics.h"
 #include <spdlog/spdlog.h>
 
@@ -12,7 +12,7 @@ private:
 	std::shared_ptr<context::BallGroup> bg;
 
 public:
-	Region(std::shared_ptr<context::Entity> e,
+	Region(std::shared_ptr<context::Misc> e,
 		std::shared_ptr<context::BallGroup> bg)
 		: bg(bg), id(bg->region) {
 

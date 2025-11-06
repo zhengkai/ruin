@@ -1,12 +1,12 @@
 #pragma once
 
 #include "context/ball.h"
-#include "context/entity.h"
+#include "context/misc.h"
 #include <box2d/box2d.h>
 #include <memory>
 
 struct PhysicsDep {
-	std::shared_ptr<context::Entity> entity;
+	std::shared_ptr<context::Misc> entity;
 };
 
 class Physics {

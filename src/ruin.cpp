@@ -2,7 +2,7 @@
 #include "config.hpp"
 #include "context/ball.h"
 #include "context/brick.hpp"
-#include "context/entity.h"
+#include "context/misc.h"
 #include "context/window.h"
 #include "game.h"
 #include "region.hpp"
@@ -27,7 +27,7 @@ Ruin::~Ruin() {
 
 bool Ruin::init() {
 
-	auto e = std::make_shared<context::Entity>();
+	auto e = std::make_shared<context::Misc>();
 	auto w = std::make_shared<context::Window>();
 	auto bc = std::make_shared<context::BallCluster>();
 

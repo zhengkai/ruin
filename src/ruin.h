@@ -1,6 +1,6 @@
 #pragma once
 
-#include "context/entity.h"
+#include "context/misc.h"
 #include "context/window.h"
 #include "game.h"
 #include "region.hpp"
@@ -9,7 +9,7 @@
 
 struct RuinDeps {
 	std::shared_ptr<context::BallCluster> ballCluster;
-	std::shared_ptr<context::Entity> entity;
+	std::shared_ptr<context::Misc> entity;
 	std::shared_ptr<context::Window> window;
 };
 

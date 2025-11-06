@@ -5,7 +5,7 @@
 
 namespace context {
 
-struct Entity {
+struct Misc {
 	int hit = 0;
 	float speed = 1.0f;
 	int speedLevel = 0;
