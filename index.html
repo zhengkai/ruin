@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Ruin</title>
+<link rel="shortcut icon" href="favicon.webp">
+<link rel="stylesheet" href="style.css">
+<body>
+
+<div id="loading">loading...</div>
+
+<div id="debug"></div>
+
+<canvas id="canvas"></canvas>
+
+<script type='text/javascript'>
+const ce = document.getElementById('canvas');
+const le = document.getElementById('loading');
+const de = document.getElementById('debug');
+
+let gs = 50;
+if (window.innerWidth < 600) {
+	gs = 30;
+	if (window.innerWidth < 400) {
+		gs = 20;
+	}
+}
+
+const gw = Math.max(14, (window.innerWidth / 50) | 0);
+const gh = Math.max(14, (window.innerHeight / 50) | 0);
+let region = Math.floor(gw * gh / 80);
+if (region < 3) {
+	region = '1,2';
+} else {
+    let total = region;
+	region = [];
+	while (total > 3) {
+        const r = Math.floor(Math.random() * 3) + 1;
+        region.push(r);
+		total -= r;
+    }
+	if (total > 0) {
+		region.push(total);
+	}
+	region = region.join(',');
+}
+let arg = ["-W", gw, "-H", gh, "-r", region];
+const query = window.location.search;
+let debug = false;
+if (query.includes('debug')) {
+	debug = true;
+}
+if (query.includes('trace')) {
+	debug = true;
+	arg.push('--verbose=trace');
+}
+if (query.includes('classic')) {
+	arg.push('--classic');
+}
+
+ce.addEventListener('webglcontextlost', (e) => {
+	const msg = 'WebGL context lost. You will need to reload the page.';
+	console.error(msg);
+	alert(msg);
+	e.preventDefault();
+}, false);
+
+arg = arg.map(v => `${v}`);
+console.log('Arguments:', arg);
+
+var Module = {
+	arguments: arg,
+	print(...args) {
+		if (!args.length) {
+			return;
+		}
+		if (args[0].substring(18, 27) !== ' [trace] ') {
+			console.log(...args);
+		}
+		if (debug) {
+			const p = document.createElement('p');
+			p.innerText = args.join(' ');
+			de.appendChild(p);
+			while (de.children.length > 20) {
+				de.removeChild(de.firstElementChild);
+			}
+		}
+	},
+	canvas: ce,
+	setStatus(text) {
+		if (text.startsWith('Downloading')) {
+			le.innerText = text;
+			return
+		}
+		if (text.startsWith('Running...')) {
+			le.style.display = 'none';
+			ce.style.display = 'block';
+			if (debug) {
+				de.style.display = 'block';
+			}
+			return;
+		}
+	},
+	totalDependencies: 0,
+	monitorRunDependencies(left) {
+		this.totalDependencies = Math.max(this.totalDependencies, left);
+	}
+};
+Module.setStatus('Downloading...');
+window.onerror = (event) => {
+	// TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+	Module.setStatus('Exception thrown, see JavaScript console');
+	Module.setStatus = (text) => {
+		if (text) {
+			console.error('[post-exception status] ' + text);
+		}
+	};
+};
+
+// build: 2025-11-06 20:48:32 / ee24a545
+</script>
+			<script async type="text/javascript" src="ruin.js"></script>
+		</body>
+</html>
