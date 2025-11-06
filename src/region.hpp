@@ -18,7 +18,7 @@ public:
 
 		phy = std::make_unique<Physics>(
 			PhysicsDep{
-				.entity = e,
+				.misc = e,
 			},
 			bg);
 	}

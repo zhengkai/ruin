@@ -22,11 +22,11 @@ bool Game::parse() {
 	// control speed
 
 	if (input->speed != 0) {
-		int slv = d.entity->speedLevel + input->speed;
+		int slv = d.misc->speedLevel + input->speed;
 		slv = std::max(
 			-config::speedLevelMax, std::min(config::speedLevelMax, slv));
-		d.entity->speedLevel = slv;
-		d.entity->speed = std::pow(2, slv);
+		d.misc->speedLevel = slv;
+		d.misc->speed = std::pow(2, slv);
 
 		context::ControlMsg *cm = d.window->controlMsg;
 		if (cm == nullptr) {
@@ -70,8 +70,8 @@ bool Game::parse() {
 	// gamepad
 
 	bool gamepad = false;
-	auto &x = d.entity->gamepadX;
-	auto &y = d.entity->gamepadY;
+	auto &x = d.misc->gamepadX;
+	auto &y = d.misc->gamepadY;
 	if (input->hasGamepadX) {
 		gamepad = true;
 		x = util::gamepadConvert(input->gamepadX);

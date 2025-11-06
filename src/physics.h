@@ -6,7 +6,7 @@
 #include <memory>
 
 struct PhysicsDep {
-	std::shared_ptr<context::Misc> entity;
+	std::shared_ptr<context::Misc> misc;
 };
 
 class Physics {

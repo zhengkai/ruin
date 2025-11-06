@@ -9,7 +9,7 @@
 
 struct RuinDeps {
 	std::shared_ptr<context::BallCluster> ballCluster;
-	std::shared_ptr<context::Misc> entity;
+	std::shared_ptr<context::Misc> misc;
 	std::shared_ptr<context::Window> window;
 };
 

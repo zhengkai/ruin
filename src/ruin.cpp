@@ -38,7 +38,7 @@ bool Ruin::init() {
 
 	d = {
 		.ballCluster = bc,
-		.entity = e,
+		.misc = e,
 		.window = w,
 	};
 
@@ -47,13 +47,13 @@ bool Ruin::init() {
 	}
 
 	g = std::make_unique<Game>(GameDep{
-		.entity = e,
+		.misc = e,
 		.window = w,
 	});
 
 	auto sd = sdlDep{
 		.ballCluster = bc,
-		.entity = e,
+		.misc = e,
 		.window = w,
 	};
 	s = std::make_unique<sdl>(sd);

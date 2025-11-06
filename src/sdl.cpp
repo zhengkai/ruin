@@ -16,7 +16,7 @@ static SDL_AppResult SDL_Fail() {
 }
 
 sdl::sdl(sdlDep &dep) : w(nullptr), r(nullptr), d(dep) {
-	for (const auto &b : d.entity->brick) {
+	for (const auto &b : d.misc->brick) {
 		// spdlog::trace("brick {} {:.0f} {:.0f} {}", b.id, b.x, b.y, b.region);
 	}
 	// util::shuffleMapColor();
@@ -205,7 +205,7 @@ void sdl::renderBrick() {
 
 	SDL_FRect rect;
 
-	auto rl = d.entity->brick;
+	auto rl = d.misc->brick;
 
 	std::vector<SDL_FRect> edges;
 
@@ -346,7 +346,7 @@ void sdl::calcRegionSize() {
 			RegionSize{.w = config::gridW, .e = 0, .n = config::gridH, .s = 0});
 	}
 
-	for (const auto &b : d.entity->brick) {
+	for (const auto &b : d.misc->brick) {
 		if (b.region < 0) {
 			continue;
 		}
@@ -454,8 +454,8 @@ void sdl::calcGrid(int winW, int winH) {
 
 void sdl::renderGamepad() {
 
-	std::string x = std::to_string(d.entity->gamepadX);
-	std::string y = std::to_string(d.entity->gamepadY);
+	std::string x = std::to_string(d.misc->gamepadX);
+	std::string y = std::to_string(d.misc->gamepadY);
 
 	text->rMono32(x, 512, 512, Text::Align::RIGHT);
 	text->rMono32(y, 512, 554, Text::Align::RIGHT);

@@ -65,8 +65,8 @@ void Physics::update(float dt) {
 
 	bg->hit = false;
 
-	float x = d.entity->gamepadX;
-	float y = d.entity->gamepadY;
+	float x = d.misc->gamepadX;
+	float y = d.misc->gamepadY;
 	float gravity = std::sqrt(x * x + y * y);
 	if (gravity > 1.0f) {
 		x /= gravity;
@@ -74,11 +74,11 @@ void Physics::update(float dt) {
 	}
 	b2World_SetGravity(world, b2Vec2(x * config::gravity, y * config::gravity));
 
-	float speed = d.entity->speed;
+	float speed = d.misc->speed;
 	if (speed < 1.0f) {
 		_update(dt * speed);
 	} else {
-		for (int cnt = static_cast<int>(d.entity->speed); cnt > 0; cnt--) {
+		for (int cnt = static_cast<int>(d.misc->speed); cnt > 0; cnt--) {
 			_update(dt);
 		}
 	}
@@ -86,7 +86,7 @@ void Physics::update(float dt) {
 
 void Physics::_update(float deltaTime) {
 	bg->power = 0;
-	for (const auto &b : d.entity->brick) {
+	for (const auto &b : d.misc->brick) {
 		b2BodyId bb = brick[b.id];
 		if (b.region == region) {
 			bg->power++;
@@ -232,7 +232,7 @@ void Physics::createBrick() {
 
 	b2Polygon box = b2MakeBox(0.5f, 0.5f);
 
-	for (const auto &b : d.entity->brick) {
+	for (const auto &b : d.misc->brick) {
 
 		b2BodyDef bd = b2DefaultBodyDef();
 		bd.position = b2Vec2{b.x + 0.5f, b.y + 0.5f};
