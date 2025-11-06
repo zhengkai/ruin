@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0.0)
 
-project(pong VERSION 1.2)
-set(PROJ pong)
+project(ruin VERSION 1.2)
+set(PROJ ruin)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -46,7 +46,7 @@ endif()
 
 add_executable(${PROJ}
 	src/main.cpp
-	src/pong.cpp
+	src/ruin.cpp
 	src/sdl.cpp
 	src/render/text.cpp
 	src/physics.cpp

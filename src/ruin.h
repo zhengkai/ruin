@@ -7,16 +7,16 @@
 #include "sdl.h"
 #include "time.hpp"
 
-struct PongDeps {
+struct RuinDeps {
 	std::shared_ptr<context::BallCluster> ballCluster;
 	std::shared_ptr<context::Entity> entity;
 	std::shared_ptr<context::Window> window;
 };
 
-class Pong {
+class Ruin {
 
 private:
-	PongDeps d;
+	RuinDeps d;
 	std::unique_ptr<Time> t;
 	std::unique_ptr<sdl> s;
 	std::unique_ptr<Game> g;
@@ -28,8 +28,8 @@ private:
 
 public:
 	bool stop;
-	Pong();
-	~Pong();
+	Ruin();
+	~Ruin();
 	void loop();
 	void run();
 	bool init();

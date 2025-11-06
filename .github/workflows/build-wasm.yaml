@@ -15,8 +15,8 @@ jobs:
     steps:
       - name: Checkout
         run: |
-          git clone --depth 1 "https://x-access-token:${{ secrets.PONG_TOKEN }}@github.com/zhengkai/pong.git" main && \
-          git clone --branch gh-pages "https://x-access-token:${{ secrets.PONG_TOKEN }}@github.com/zhengkai/pong.git" main/gh-pages
+          git clone --depth 1 "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" main && \
+          git clone --branch gh-pages "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" main/gh-pages
 
       - name: Install Dependencies
         run: |
@@ -82,6 +82,6 @@ jobs:
           cd gh-pages && \
           cp ../web/index.html . && \
           git config user.name "Github Actions Bot" && \
-          git config user.email "pong.bot@soulogic.com" && \
+          git config user.email "ruin.bot@soulogic.com" && \
           git commit --all --message="Update WASM build" --amend || echo "No changes to commit" && \
           git push --force

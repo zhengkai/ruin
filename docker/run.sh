@@ -32,7 +32,7 @@ fi
 
 sudo docker build \
 	--progress=plain -t \
-	pong \
+	ruin \
 	-f Dockerfile .. || exit 1
 
 echo "$COMMIT" | tee "$COMMIT_FILE"

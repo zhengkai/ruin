@@ -34,7 +34,7 @@ jobs:
 
       - name: Checkout
         run: |
-          git clone --depth 1 "https://github.com/zhengkai/pong.git" .
+          git clone --depth 1 "https://github.com/zhengkai/ruin.git" .
 
       - name: Clone vcpkg
         run: |
@@ -61,5 +61,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: pong-windows
+          name: ruin-windows
           path: build\Release\*

@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 
 inline int parseArg(int argc, char **argv) {
-	CLI::App app{"Pong"};
+	CLI::App app{"Ruin"};
 
 	app.add_flag("-v,--version", config::versionOnly, "Print version only");
 
@@ -22,7 +22,7 @@ inline int parseArg(int argc, char **argv) {
 
 	app.add_flag("-c,--classic",
 		config::classic,
-		"Classic mode (like \"vnglst/pong-wars\")");
+		"Classic mode (like \"vnglst/ruin-wars\")");
 
 	std::vector<int> region;
 	app.add_option("-r,--region", region, "Region number")->delimiter(',');

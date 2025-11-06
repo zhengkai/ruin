@@ -1,4 +1,4 @@
-#include "pong.h"
+#include "ruin.h"
 #include "config.hpp"
 #include "context/ball.h"
 #include "context/brick.hpp"
@@ -17,14 +17,14 @@
 #include <emscripten.h>
 #endif
 
-Pong::Pong() : stop(false), t(std::make_unique<Time>()) {
+Ruin::Ruin() : stop(false), t(std::make_unique<Time>()) {
 }
 
-Pong::~Pong() {
+Ruin::~Ruin() {
 	stop = true;
 }
 
-bool Pong::init() {
+bool Ruin::init() {
 
 	auto e = std::make_shared<context::Entity>();
 	auto w = std::make_shared<context::Window>();
@@ -56,7 +56,7 @@ bool Pong::init() {
 		.window = w,
 	});
 
-	spdlog::info("pong start");
+	spdlog::info("ruin start");
 
 	if (!s->init()) {
 		spdlog::error("sdl init failed");
@@ -71,7 +71,7 @@ bool Pong::init() {
 	return true;
 }
 
-std::vector<context::Brick> Pong::genBrick() {
+std::vector<context::Brick> Ruin::genBrick() {
 
 	std::vector<context::Brick> li;
 	for (int y = 0; y < config::gridH; y++) {
@@ -83,7 +83,7 @@ std::vector<context::Brick> Pong::genBrick() {
 	return li;
 }
 
-void Pong::loop() {
+void Ruin::loop() {
 
 	d.window->serial++;
 

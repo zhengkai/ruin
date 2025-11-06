@@ -9,7 +9,7 @@ DIR="$(dirname "$(readlink -f "$0")")" && cd "$DIR" || exit 1
 
 ./build.sh || exit 1
 
-DOCKER_IMAGE="pong"
+DOCKER_IMAGE="ruin"
 
 BUILD_WASM_DIR="${DIR}/build-wasm"
 rm -rf "$BUILD_WASM_DIR"
@@ -17,7 +17,7 @@ mkdir -p "$BUILD_WASM_DIR"
 
 set -x
 sudo docker run \
-	--name "pong-cicd" \
+	--name "ruin-cicd" \
 	--mount "type=bind,source=${BUILD_WASM_DIR},target=/app/build-wasm" \
 	--rm \
 	"$DOCKER_IMAGE" \

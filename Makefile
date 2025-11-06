@@ -1,32 +1,32 @@
 SHELL:=/bin/bash
 
-PONG_DIR := $(CURDIR)/static
+RUIN_DIR := $(CURDIR)/static
 
 default:
 	./run.sh
 
 run:
-	# PONG_DIR=$(PONG_DIR) ./build/pong -r 2,2
-	# PONG_DIR=$(PONG_DIR) ./build/pong -r 2,2,3,4,2,2 --fullscreen
-	PONG_DIR=$(PONG_DIR) ./build/pong -r 2,2,3,4,2,2
+	# RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2
+	# RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2,3,4,2,2 --fullscreen
+	RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2,3,4,2,2
 
 v2:
-	PONG_DIR=$(PONG_DIR) ./build/pong -W 38 -H 18 -r 2,3,3
+	RUIN_DIR=$(RUIN_DIR) ./build/ruin -W 38 -H 18 -r 2,3,3
 
 classic:
-	PONG_DIR=$(PONG_DIR) ./build/pong -W 25 -H 26 -r 2 -c
+	RUIN_DIR=$(RUIN_DIR) ./build/ruin -W 25 -H 26 -r 2 -c
 
 debug:
-	PONG_DIR=$(PONG_DIR) CMAKE_BUILD_TYPE=debug ./run.sh
+	RUIN_DIR=$(RUIN_DIR) CMAKE_BUILD_TYPE=debug ./run.sh
 
 trace:
-	PONG_DIR=$(PONG_DIR) ./build/pong --verbose=trace
+	RUIN_DIR=$(RUIN_DIR) ./build/ruin --verbose=trace
 
 fullscreen:
-	PONG_DIR=$(PONG_DIR) ./build/pong -r 2,2,3,4,2,2 --fullscreen
+	RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2,3,4,2,2 --fullscreen
 
 help:
-	./build/pong --help
+	./build/ruin --help
 
 wasm:
 	./wasm.sh
@@ -36,22 +36,22 @@ wasm-clean:
 	./wasm.sh
 
 ver:
-	./build/pong --version
+	./build/ruin --version
 
-pong:
-	./build/pong --pong
+ruin:
+	./build/ruin --ruin
 
 small:
-	./build/pong --grid-w=20 --grid-h=16
+	./build/ruin --grid-w=20 --grid-h=16
 
 gdb:
-	gdb ./build/pong
+	gdb ./build/ruin
 
 vc:
 	vcpkg install
 
 version:
-	PONG_DIR=$(PONG_DIR) ./build/pong --version
+	RUIN_DIR=$(RUIN_DIR) ./build/ruin --version
 
 tidy:
 	find src -type f \( -name '*.h' -o -name '*.hpp' -o -name '*.cpp' \) | xargs clang-tidy -p build

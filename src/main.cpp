@@ -1,4 +1,4 @@
-#include "pong.h"
+#include "ruin.h"
 #include "sys/arg.hpp"
 #include "sys/spdlog.hpp"
 #include "sys/ver.hpp"
@@ -6,14 +6,14 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 
-static Pong *thePong = nullptr;
+static Ruin *theRuin = nullptr;
 
 void wasmLoop() {
-	if (thePong->stop) {
+	if (theRuin->stop) {
 		emscripten_cancel_main_loop();
 		return;
 	}
-	thePong->loop();
+	theRuin->loop();
 }
 #endif
 
@@ -33,13 +33,13 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	Pong p;
+	Ruin p;
 	if (!p.init()) {
 		return 1;
 	}
 
 #ifdef __EMSCRIPTEN__
-	thePong = &p;
+	theRuin = &p;
 	emscripten_set_main_loop(wasmLoop, 0, true);
 #else
 	while (!p.stop) {

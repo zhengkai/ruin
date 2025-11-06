@@ -3,9 +3,9 @@
 PWD="$(dirname "$(readlink -f "$0")")" && cd "$PWD" || exit 1
 
 mkdir -p static/tmp
-if [ -z "$PONG_PWD" ]; then
-	PONG_PWD="$(pwd)/static"
-	export PONG_PWD
+if [ -z "$RUIN_PWD" ]; then
+	RUIN_PWD="$(pwd)/static"
+	export RUIN_PWD
 fi
 
 [ -f "./tool/emsdk/emsdk_env.sh" ] && EMSDK_QUIET=1 source "./tool/emsdk/emsdk_env.sh"
@@ -36,15 +36,15 @@ emmake cmake \
 if [ -d "gh-pages" ]; then
 	(
 		cd gh-pages || exit 1
-		cp ../build-wasm/pong.wasm .
-		cp ../build-wasm/pong.data .
-		cp ../build-wasm/pong.js .
-		../tool/emsdk/upstream/emscripten/emstrip pong.wasm
+		cp ../build-wasm/ruin.wasm .
+		cp ../build-wasm/ruin.data .
+		cp ../build-wasm/ruin.js .
+		../tool/emsdk/upstream/emscripten/emstrip ruin.wasm
 	)
 else
 	(
 		cd build-wasm || exit 1
-		cp pong.wasm pong-strip.wasm
-		../tool/emsdk/upstream/emscripten/emstrip pong-strip.wasm
+		cp ruin.wasm ruin-strip.wasm
+		../tool/emsdk/upstream/emscripten/emstrip ruin-strip.wasm
 	)
 fi

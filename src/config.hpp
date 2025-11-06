@@ -13,7 +13,7 @@ inline bool helpOnly = false;
 inline std::string verbose = "info";
 
 // classic: The ball only moves at 45-degree diagonal angles,
-// similar to vnglst/pong-wars
+// similar to vnglst/ruin-wars
 inline bool classic = false;
 
 // 球半径小于 0.5 时，会出现长期垂直/水平方向运动，看起来不太自然
@@ -30,7 +30,7 @@ const float gravity = speed * 10.0f;
 const int fps = 60;
 const float fpsDeltaTime = 1.0f / static_cast<float>(fps);
 
-inline const char *winTitle = "Pong Test";
+inline const char *winTitle = "Ruin Test";
 
 const SDL_Color colorBg = {16, 64, 128, 255};
 

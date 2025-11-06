@@ -62,7 +62,7 @@ bool sdl::init() {
 
 #ifdef __EMSCRIPTEN__
 	// SDL_SetStringProperty(
-	// props, SDL_PROP_WINDOW_CREATE_EMSCRIPTEN_CANVAS_ID_STRING, "#pong");
+	// props, SDL_PROP_WINDOW_CREATE_EMSCRIPTEN_CANVAS_ID_STRING, "#ruin");
 #endif
 
 	w = SDL_CreateWindowWithProperties(props);

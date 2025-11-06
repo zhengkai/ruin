@@ -63,7 +63,7 @@ inline void InitDir() {
 #endif
 	auto appDir = getAppDir();
 
-	const char *envDir = std::getenv("PONG_DIR");
+	const char *envDir = std::getenv("RUIN_DIR");
 	if (envDir) {
 		auto pDir = fs::path(envDir);
 		if (pDir != appDir) {

@@ -6,12 +6,12 @@ DIR="$(dirname "$(pwd)")"
 
 mkdir -p "${DIR}/build"
 
-DOCKER_IMAGE="pong"
+DOCKER_IMAGE="ruin"
 
 set -x
 sudo docker run \
 	-it \
-	--name "pong-cicd-it" \
+	--name "ruin-cicd-it" \
 	--mount "type=bind,source=${DIR}/build,target=/app/build" \
 	--rm \
 	"$DOCKER_IMAGE" \
