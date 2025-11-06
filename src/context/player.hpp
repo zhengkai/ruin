@@ -1,31 +1,18 @@
 #pragma once
 
+#include "_def.hpp"
+#include <vector>
+
 namespace context {
 
-struct Pose {
-	enum class Type {
-		Idle,
-		Walk,
-		Run,
-		Jump
-	} type = Type::Idle;
-};
+struct Character : Entity {};
 
-struct Player {
-	float x = 0;
-	float y = 0;
-	Pose pose = {};
-};
+struct Player : Character {};
+struct Enemy : Character {};
 
-struct Monster {
-	float x = 0;
-	float y = 0;
-	Pose pose = {};
-};
-
-struct Character {
+struct CharacterList {
 	Player player = {};
-	std::vector<Pose> poses = {};
+	std::vector<Enemy> enemy;
 };
 
 }; // namespace context
