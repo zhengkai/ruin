@@ -50,8 +50,7 @@ add_executable(${PROJ}
 	src/sdl.cpp
 	src/render/text.cpp
 	src/physics.cpp
-	src/game.cpp
-	src/game.cpp
+	src/game/game.cpp
 
 	src/util/material/cam.cpp
 	src/util/material/hct_solver.cpp

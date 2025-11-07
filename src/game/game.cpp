@@ -1,8 +1,8 @@
 #include "game.h"
-#include "config.hpp"
-#include "input.hpp"
-#include "util/event.hpp"
-#include "util/input.hpp"
+#include "../config.hpp"
+#include "../input.hpp"
+#include "../util/event.hpp"
+#include "../util/input.hpp"
 #include <algorithm>
 
 static std::string speedMsg = "Speed Level: ";

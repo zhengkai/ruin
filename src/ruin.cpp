@@ -4,7 +4,7 @@
 #include "context/brick.hpp"
 #include "context/misc.h"
 #include "context/window.h"
-#include "game.h"
+#include "game/game.h"
 #include "region.hpp"
 #include "sdl-dep.hpp"
 #include "sdl.h"
@@ -30,6 +30,7 @@ bool Ruin::init() {
 	auto e = std::make_shared<context::Misc>();
 	auto w = std::make_shared<context::Window>();
 	auto bc = std::make_shared<context::BallCluster>();
+	auto sc = std::make_shared<context::Scene>();
 
 	bc->group =
 		util::genBallGroupList(config::gridWF, config::gridHF, config::region);

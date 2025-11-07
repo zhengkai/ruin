@@ -1,8 +1,8 @@
 #pragma once
 
-#include "context/misc.h"
-#include "context/window.h"
-#include "input.hpp"
+#include "../context/misc.h"
+#include "../context/window.h"
+#include "../input.hpp"
 
 struct GameDep {
 	std::shared_ptr<context::Misc> misc;

@@ -2,7 +2,7 @@
 
 #include "context/misc.h"
 #include "context/window.h"
-#include "game.h"
+#include "game/game.h"
 #include "region.hpp"
 #include "sdl.h"
 #include "time.hpp"

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../util/rand.hpp"
 #include "../util/sprite.hpp"
 #include "base.hpp"
 #include <SDL3_image/SDL_image.h>
@@ -18,7 +17,7 @@ struct Player : base {
 
 	void init() override {
 
-		walk = util::loadSpriteFrames(r, "assets/Samurai/Walk.png");
+		walk = util::loadSpriteFrames(r, "assets/Samurai/Attack_3.png");
 		if (walk.empty()) {
 			spdlog::error("Failed to load player walk sprites");
 			return;
@@ -30,8 +29,10 @@ struct Player : base {
 
 		float size = 500.0f;
 
+		int step = (d.window->serial / 10) % walk.size();
+
 		SDL_FRect dst = {200.0f, 200.0f, size, size};
-		SDL_RenderTexture(r, walk[stepDist(util::rng())], nullptr, &dst);
+		SDL_RenderTexture(r, walk[step], nullptr, &dst);
 	};
 };
 }; // namespace render
