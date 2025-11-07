@@ -7,7 +7,8 @@
 
 static std::string speedMsg = "Speed Level: ";
 
-Game::Game(GameDep dep) : d(std::move(dep)), input(std::make_shared<Input>()) {
+Game::Game(GameDep &dep)
+	: d(dep), input(std::make_shared<Input>()), scene(Scene(d)) {
 }
 
 Game::~Game() {
@@ -18,9 +19,16 @@ bool Game::parse() {
 	if (input->quit) {
 		return false;
 	}
+	parseInput();
+
+	scene.parse();
+
+	return true;
+}
+
+void Game::parseInput() {
 
 	// control speed
-
 	if (input->speed != 0) {
 		int slv = d.misc->speedLevel + input->speed;
 		slv = std::max(
@@ -89,8 +97,6 @@ bool Game::parse() {
 			// "speed: {:.3f} {:.3f}", speed, std::sqrt(x * x + y * y));
 		}
 	}
-
-	return true;
 }
 
 void Game::loopEvent() {

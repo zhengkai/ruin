@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/def.hpp"
+#include "../common/pose.hpp"
 
 namespace context {
 

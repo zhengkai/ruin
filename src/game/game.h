@@ -1,24 +1,23 @@
 #pragma once
 
-#include "../context/misc.h"
-#include "../context/window.h"
 #include "../input.hpp"
-
-struct GameDep {
-	std::shared_ptr<context::Misc> misc;
-	std::shared_ptr<context::Window> window;
-};
+#include "game-dep.hpp"
+#include "scene.hpp"
 
 class Game {
 
 private:
 	GameDep d;
 	std::shared_ptr<Input> input;
+	Scene scene;
 
 public:
-	Game(GameDep dep);
+	Game(GameDep &dep);
 	~Game();
 
 	bool parse();
 	void loopEvent();
+
+private:
+	void parseInput();
 };

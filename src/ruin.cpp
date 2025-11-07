@@ -4,6 +4,7 @@
 #include "context/brick.hpp"
 #include "context/misc.h"
 #include "context/window.h"
+#include "game/game-dep.hpp"
 #include "game/game.h"
 #include "region.hpp"
 #include "sdl-dep.hpp"
@@ -32,6 +33,8 @@ bool Ruin::init() {
 	auto bc = std::make_shared<context::BallCluster>();
 	auto sc = std::make_shared<context::Scene>();
 
+	spdlog::info("pose.type = {}", static_cast<int>(sc->player.pose.type));
+
 	bc->group =
 		util::genBallGroupList(config::gridWF, config::gridHF, config::region);
 
@@ -46,16 +49,18 @@ bool Ruin::init() {
 	for (auto &b : bc->group) {
 		region.push_back(std::make_unique<Region>(e, b));
 	}
-
-	g = std::make_unique<Game>(GameDep{
+	auto gameDep = GameDep{
 		.misc = e,
 		.window = w,
-	});
+		.scene = sc,
+	};
+	g = std::make_unique<Game>(gameDep);
 
 	auto sd = sdlDep{
 		.ballCluster = bc,
 		.misc = e,
 		.window = w,
+		.scene = sc,
 	};
 	s = std::make_unique<sdl>(sd);
 
