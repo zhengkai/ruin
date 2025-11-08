@@ -1,0 +1,17 @@
+syntax = "proto3";
+package pb;
+
+message CharacterSprite {
+	string type = 1;
+	string path = 2;
+	repeated uint32 step = 3;
+}
+
+message CharacterAsset {
+	string name = 1;
+	repeated CharacterSprite sprite = 2;
+}
+
+message AssetManifest {
+	repeated CharacterAsset character = 1;
+}

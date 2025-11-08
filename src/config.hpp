@@ -21,6 +21,8 @@ constexpr float ballRadius = 0.57f;
 
 inline std::vector<std::filesystem::path> dirList;
 
+inline std::filesystem::path assetDir = "asset";
+
 const float speed = 30.0f;
 const float speedMax = speed * 1.2f;
 const float speedMin = speed / 1.2f;

@@ -1,3 +1,4 @@
+#include "asset/asset.hpp"
 #include "ruin.h"
 #include "sys/arg.hpp"
 #include "sys/spdlog.hpp"
@@ -32,6 +33,8 @@ int main(int argc, char *argv[]) {
 	if (config::versionOnly) {
 		return 0;
 	}
+
+	LoadAsset();
 
 	Ruin p;
 	if (!p.init()) {

@@ -37,12 +37,33 @@ find_package(box2d CONFIG REQUIRED QUIET)
 find_package(fmt CONFIG REQUIRED QUIET)
 find_package(spdlog CONFIG REQUIRED QUIET)
 find_package(CLI11 CONFIG REQUIRED QUIET)
-
+find_package(Protobuf CONFIG REQUIRED QUIET)
 find_package(SDL3 CONFIG REQUIRED QUIET)
 find_package(SDL3_image CONFIG REQUIRED QUIET)
 if (NOT EMSCRIPTEN)
 find_package(SDL3_ttf CONFIG REQUIRED QUIET)
 endif()
+
+set(PROTO_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated/pb)
+file(MAKE_DIRECTORY ${PROTO_OUT_DIR})
+
+add_library(pb OBJECT
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
+)
+
+target_include_directories(pb PUBLIC
+    ${PROTO_OUT_DIR}
+    ${Protobuf_INCLUDE_DIRS}
+)
+
+protobuf_generate(
+    TARGET pb
+    PROTOS ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
+    IMPORT_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/proto
+    PROTOC_OUT_DIR ${PROTO_OUT_DIR}
+    LANGUAGE cpp
+    APPEND_PATH
+)
 
 add_executable(${PROJ}
 	src/main.cpp
@@ -56,6 +77,8 @@ add_executable(${PROJ}
 	src/util/material/hct_solver.cpp
 	src/util/material/utils.cpp
 	src/util/material/viewing_conditions.cpp
+
+    $<TARGET_OBJECTS:pb>
 )
 
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
@@ -71,6 +94,7 @@ target_precompile_headers(${PROJ} PRIVATE
 	<SDL3/SDL_events.h>
 	<SDL3/SDL_error.h>
 	<SDL3_image/SDL_image.h>
+	<google/protobuf/runtime_version.h>
 	<chrono>
 	<cmath>
 	<cstdio>
@@ -88,6 +112,7 @@ target_link_libraries(${PROJ} PRIVATE
 	SDL3_image::SDL3_image
 	spdlog::spdlog
 	CLI11::CLI11
+	protobuf::libprotobuf
 )
 if (NOT EMSCRIPTEN)
 target_link_libraries(${PROJ} PRIVATE
@@ -98,4 +123,6 @@ endif()
 target_include_directories(${PROJ} PUBLIC
 	${CMAKE_CURRENT_BINARY_DIR}
 	${CMAKE_BINARY_DIR}/generated
+	${PROTO_OUT_DIR}
+    ${Protobuf_INCLUDE_DIRS}
 )

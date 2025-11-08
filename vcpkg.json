@@ -6,6 +6,7 @@
     "box2d",
     "spdlog",
     "cli11",
+    "protobuf",
     {
       "name": "sdl3",
       "features": ["alsa", "vulkan"],
