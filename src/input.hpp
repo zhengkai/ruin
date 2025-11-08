@@ -69,22 +69,18 @@ public:
 	void gamepadAxis(const SDL_GamepadAxisEvent &e) {
 		switch (e.axis) {
 		case 0:
-			spdlog::info("gamepad axis 0 value {}", e.value);
 			axisA.x = e.value;
 			axisA.hasX = e.value;
 			break;
 		case 1:
-			spdlog::info("gamepad axis 1 value {}", e.value);
 			axisA.y = e.value;
 			axisA.hasY = e.value;
 			break;
 		case 2:
-			spdlog::info("gamepad axis 2 value {}", e.value);
 			axisB.x = e.value;
 			axisB.hasX = e.value;
 			break;
 		case 3:
-			spdlog::info("gamepad axis 3 value {}", e.value);
 			axisB.y = e.value;
 			axisB.hasY = e.value;
 			break;

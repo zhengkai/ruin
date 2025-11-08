@@ -9,12 +9,12 @@ class Game {
 
 private:
 	GameDep d;
-	std::shared_ptr<Input> input;
+	Input input = {};
 	Scene scene;
 
 	ControlAxis axisA;
 	ControlAxis axisB;
-	std::shared_ptr<Control> control;
+	Control control = {};
 
 public:
 	Game(GameDep &dep);

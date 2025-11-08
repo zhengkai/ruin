@@ -51,7 +51,14 @@ struct Player : base {
 		int step = pose.step % tex.size();
 
 		SDL_FRect dst = {200.0f, 200.0f, size, size};
-		SDL_RenderTexture(r, tex[step], nullptr, &dst);
+
+		if (d.scene->player.pose.facing == Pose::Facing::Left) {
+			SDL_FlipMode flip = SDL_FLIP_HORIZONTAL;
+			SDL_RenderTextureRotated(
+				r, tex[step], nullptr, &dst, 0.0, nullptr, flip);
+		} else {
+			SDL_RenderTexture(r, tex[step], nullptr, &dst);
+		}
 	};
 };
 }; // namespace render

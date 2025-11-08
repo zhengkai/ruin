@@ -4,19 +4,19 @@
 
 namespace util {
 
-inline void handleInput(SDL_Event &e, std::shared_ptr<Input> input) {
+inline void handleInput(SDL_Event &e, Input &input) {
 
 	SDL_Gamepad *gamepad;
 
 	switch (e.type) {
 	case SDL_EVENT_KEY_DOWN:
-		input->key(e.key);
+		input.key(e.key);
 		break;
 	case SDL_EVENT_WINDOW_RESIZED:
-		input->winResize(e.window);
+		input.winResize(e.window);
 		break;
 	case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-		input->gamepadAxis(e.gaxis);
+		input.gamepadAxis(e.gaxis);
 		break;
 	case SDL_EVENT_GAMEPAD_ADDED:
 		SDL_OpenGamepad(e.gdevice.which);
@@ -25,10 +25,10 @@ inline void handleInput(SDL_Event &e, std::shared_ptr<Input> input) {
 		SDL_CloseGamepad(SDL_GetGamepadFromID(e.gdevice.which));
 		break;
 	case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
-		input->gamepadButton(e.gbutton, true);
+		input.gamepadButton(e.gbutton, true);
 		break;
 	case SDL_EVENT_GAMEPAD_BUTTON_UP:
-		input->gamepadButton(e.gbutton, false);
+		input.gamepadButton(e.gbutton, false);
 		break;
 	default:
 		// spdlog::info(

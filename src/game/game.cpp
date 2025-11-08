@@ -8,9 +8,7 @@
 
 static std::string speedMsg = "Speed Level: ";
 
-Game::Game(GameDep &dep)
-	: d(dep), input(std::make_shared<Input>()),
-	  control(std::make_shared<Control>()), scene(Scene(d)) {
+Game::Game(GameDep &dep) : d(dep), scene(Scene(d)) {
 }
 
 Game::~Game() {
@@ -18,12 +16,12 @@ Game::~Game() {
 
 bool Game::parse() {
 
-	if (input->quit) {
+	if (input.quit) {
 		return false;
 	}
 	parseInput();
 
-	scene.parse();
+	scene.parse(control);
 
 	return true;
 }
@@ -32,8 +30,8 @@ void Game::parseInput() {
 
 	// control speed
 
-	if (input->speed != 0) {
-		int slv = d.misc->speedLevel + input->speed;
+	if (input.speed != 0) {
+		int slv = d.misc->speedLevel + input.speed;
 		slv = std::max(
 			-config::speedLevelMax, std::min(config::speedLevelMax, slv));
 		d.misc->speedLevel = slv;
@@ -55,33 +53,33 @@ void Game::parseInput() {
 
 	// window resize
 
-	if (input->winW > 0 && input->winH > 0) {
+	if (input.winW > 0 && input.winH > 0) {
 		auto wr = d.window->winResize;
 		if (wr == nullptr) {
 			wr = new context::WinResize();
 			d.window->winResize = wr;
 		}
-		wr->w = input->winW;
-		wr->h = input->winH;
+		wr->w = input.winW;
+		wr->h = input.winH;
 	}
 
 	// show ball
 
-	if (input->space) {
+	if (input.space) {
 		d.window->showBall = !d.window->showBall;
 	}
 
 	// fullscreen toggle
 
-	if (input->fullscreen) {
+	if (input.fullscreen) {
 		spdlog::info("toggling fullscreen");
 		d.window->toggleFullscreen = true;
 	}
 
 	// gamepad
 
-	parseInputAxis(input->axisA, axisA, control->axisA);
-	parseInputAxis(input->axisB, axisB, control->axisB);
+	parseInputAxis(input.axisA, axisA, control.axisA);
+	parseInputAxis(input.axisB, axisB, control.axisB);
 }
 
 void Game::parseInputAxis(
@@ -106,11 +104,11 @@ void Game::parseInputAxis(
 
 void Game::loopEvent() {
 	SDL_Event e;
-	input->Reset();
+	input.Reset();
 	while (SDL_PollEvent(&e)) {
 		util::SDLEventLog(e.type);
 		if (e.type == SDL_EVENT_QUIT) {
-			input->quit = true;
+			input.quit = true;
 			break;
 		}
 		util::handleInput(e, input);
