@@ -20,6 +20,7 @@ public:
 	bool parse(const Control &control) {
 
 		player.next();
+
 		player.parseFacing(control);
 
 		d.scene->player.pose = player.pose;

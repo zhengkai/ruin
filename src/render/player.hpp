@@ -15,18 +15,18 @@ struct Player : base {
 	void init() override {
 
 		const std::unordered_map<Pose::Type, std::string> li = {
-			{Pose::Type::Walk, "Walk"},
-			{Pose::Type::Run, "Run"},
-			{Pose::Type::Attack1, "Attack_1"},
-			{Pose::Type::Attack2, "Attack_2"},
-			{Pose::Type::Attack3, "Attack_3"},
-			{Pose::Type::Jump, "Jump"},
-			{Pose::Type::Idle, "Idle"},
+			{Pose::Type::Walk, "walk"},
+			{Pose::Type::Run, "run"},
+			{Pose::Type::Attack1, "attack_1"},
+			{Pose::Type::Attack2, "attack_2"},
+			{Pose::Type::Attack3, "attack_3"},
+			{Pose::Type::Jump, "jump"},
+			{Pose::Type::Idle, "idle"},
 		};
 
 		for (const auto &[type, name] : li) {
 			const std::filesystem::path file =
-				"assets/Samurai/" + name + ".png";
+				"asset/character/samurai/" + name + ".png";
 			auto frames = util::loadSpriteFrames(r, file);
 			if (frames.empty()) {
 				spdlog::error("Failed to load player sprites file: {}", name);

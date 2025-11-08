@@ -23,6 +23,15 @@ public:
 	int winH = 0;
 	int speed = 0;
 	bool fullscreen = false;
+
+	bool btnA = false;
+	bool btnB = false;
+	bool btnX = false;
+	bool btnY = false;
+	bool hasBtnA = false;
+	bool hasBtnB = false;
+	bool hasBtnX = false;
+	bool hasBtnY = false;
 	InputAxis axisA = {};
 	InputAxis axisB = {};
 
@@ -94,6 +103,26 @@ public:
 			break;
 		default:
 			std::string s = util::getSDLGamepadBtnName(e.button);
+
+			switch (e.button) {
+			case SDL_GAMEPAD_BUTTON_NORTH:
+				btnY = down;
+				hasBtnY = true;
+				break;
+			case SDL_GAMEPAD_BUTTON_SOUTH:
+				btnA = down;
+				hasBtnA = true;
+				break;
+			case SDL_GAMEPAD_BUTTON_WEST:
+				btnX = down;
+				hasBtnX = true;
+				break;
+			case SDL_GAMEPAD_BUTTON_EAST:
+				btnB = down;
+				hasBtnB = true;
+				break;
+			}
+
 			spdlog::info("gamepad button {}", s);
 			break;
 		}

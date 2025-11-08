@@ -78,8 +78,24 @@ void Game::parseInput() {
 
 	// gamepad
 
+	parseInputButton();
 	parseInputAxis(input.axisA, axisA, control.axisA);
 	parseInputAxis(input.axisB, axisB, control.axisB);
+}
+
+void Game::parseInputButton() {
+	if (input.hasBtnA) {
+		control.btnA = input.btnA;
+	}
+	if (input.hasBtnB) {
+		control.btnB = input.btnB;
+	}
+	if (input.hasBtnX) {
+		control.btnX = input.btnX;
+	}
+	if (input.hasBtnY) {
+		control.btnY = input.btnY;
+	}
 }
 
 void Game::parseInputAxis(

@@ -16,9 +16,28 @@ public:
 
 	void next() {
 		serial++;
-		if (serial > 20) {
+		if (serial > 10) {
 			serial = 0;
 			pose.step++;
+		}
+	}
+
+	void parse(const Control &control) {
+		parseFacing(control);
+		parseAttack(control);
+	}
+
+	void parseAttack(const Control &control) {
+		if (pose.type == Pose::Type::Attack1) {
+		}
+		if (!control.btnA) {
+			return;
+		}
+		if (pose.type == Pose::Type::Attack1) {
+
+		} else {
+			pose.type = Pose::Type::Attack1;
+			pose.step = 0;
 		}
 	}
 

@@ -25,6 +25,7 @@ public:
 
 private:
 	void parseInput();
+	void parseInputButton();
 	void parseInputAxis(
 		const InputAxis &in, ControlAxis &prev, ControlAxis &out);
 };

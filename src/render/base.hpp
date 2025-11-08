@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../common/pose.hpp"
 #include "../sdl-dep.hpp"
 #include <SDL3/SDL_render.h>
 

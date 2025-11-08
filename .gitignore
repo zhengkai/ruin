@@ -1,6 +1,7 @@
-/static
+/.cache
+/asset
 /build
 /build-wasm
-/.cache
 /extern
 /gh-pages
+/static
