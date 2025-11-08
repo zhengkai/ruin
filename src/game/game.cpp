@@ -1,4 +1,5 @@
 #include "game.h"
+#include "../common/control.hpp"
 #include "../config.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
@@ -8,7 +9,8 @@
 static std::string speedMsg = "Speed Level: ";
 
 Game::Game(GameDep &dep)
-	: d(dep), input(std::make_shared<Input>()), scene(Scene(d)) {
+	: d(dep), input(std::make_shared<Input>()),
+	  control(std::make_shared<Control>()), scene(Scene(d)) {
 }
 
 Game::~Game() {
@@ -29,6 +31,7 @@ bool Game::parse() {
 void Game::parseInput() {
 
 	// control speed
+
 	if (input->speed != 0) {
 		int slv = d.misc->speedLevel + input->speed;
 		slv = std::max(
@@ -77,24 +80,26 @@ void Game::parseInput() {
 
 	// gamepad
 
-	bool gamepad = false;
-	auto &x = d.misc->gamepadX;
-	auto &y = d.misc->gamepadY;
-	if (input->hasGamepadX) {
-		gamepad = true;
-		x = util::gamepadConvert(input->gamepadX);
+	parseInputAxis(input->axisA, axisA, control->axisA);
+	parseInputAxis(input->axisB, axisB, control->axisB);
+}
+
+void Game::parseInputAxis(
+	const InputAxis &in, ControlAxis &prev, ControlAxis &out) {
+	if (!in.hasX && !in.hasY) {
+		return;
 	}
-	if (input->hasGamepadY) {
-		gamepad = true;
-		y = util::gamepadConvert(input->gamepadY);
+	if (in.hasX) {
+		out.x = prev.x = util::gamepadConvert(in.x);
 	}
-	if (gamepad) {
-		float speed = std::sqrt(x * x + y * y);
+	if (in.hasY) {
+		out.y = prev.y = util::gamepadConvert(in.y);
+	}
+	if (prev.x != 0.0f && prev.y != 0.0f) {
+		float speed = std::sqrt(prev.x * prev.x + prev.y * prev.y);
 		if (speed > 1.0f) {
-			x /= speed;
-			y /= speed;
-			// spdlog::info(
-			// "speed: {:.3f} {:.3f}", speed, std::sqrt(x * x + y * y));
+			out.x = prev.x / speed;
+			out.y = prev.y / speed;
 		}
 	}
 }

@@ -1,12 +1,8 @@
 #pragma once
 
-namespace context {
-
 struct ControlAxis {
-	int x = 0;
-	int y = 0;
-	bool hasX = false;
-	bool hasY = false;
+	float x = 0.0f;
+	float y = 0.0f;
 };
 
 struct Control {
@@ -19,4 +15,3 @@ struct Control {
 	ControlAxis axisA = {};
 	ControlAxis axisB = {};
 };
-}; // namespace context

@@ -6,7 +6,9 @@ struct Pose {
 		Walk,
 		Run,
 		Jump,
-		Attack,
+		Attack1,
+		Attack2,
+		Attack3,
 	} type = Type::Idle;
 	enum class Facing : uint8_t {
 		Left,

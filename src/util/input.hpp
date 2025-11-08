@@ -37,7 +37,7 @@ inline void handleInput(SDL_Event &e, std::shared_ptr<Input> input) {
 	}
 };
 
-inline float gamepadConvert(int v) {
+inline float gamepadConvert(const int v) {
 	float r = static_cast<float>(v) / 32768.0f;
 	if (r > -0.1f && r < 0.1f) {
 		r = 0.0f;

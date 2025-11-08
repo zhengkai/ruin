@@ -4,6 +4,13 @@
 #include "util/event.hpp"
 #include <SDL3/SDL_events.h>
 
+struct InputAxis {
+	int x = 0;
+	int y = 0;
+	bool hasX = false;
+	bool hasY = false;
+};
+
 struct Input {
 
 public:
@@ -16,10 +23,8 @@ public:
 	int winH = 0;
 	int speed = 0;
 	bool fullscreen = false;
-	int gamepadX = 0;
-	int gamepadY = 0;
-	bool hasGamepadX = false;
-	bool hasGamepadY = false;
+	InputAxis axisA = {};
+	InputAxis axisB = {};
 
 	void Reset() {
 		*this = {};
@@ -64,12 +69,24 @@ public:
 	void gamepadAxis(const SDL_GamepadAxisEvent &e) {
 		switch (e.axis) {
 		case 0:
-			hasGamepadX = true;
-			gamepadX = e.value;
+			spdlog::info("gamepad axis 0 value {}", e.value);
+			axisA.x = e.value;
+			axisA.hasX = e.value;
 			break;
 		case 1:
-			hasGamepadY = true;
-			gamepadY = e.value;
+			spdlog::info("gamepad axis 1 value {}", e.value);
+			axisA.y = e.value;
+			axisA.hasY = e.value;
+			break;
+		case 2:
+			spdlog::info("gamepad axis 2 value {}", e.value);
+			axisB.x = e.value;
+			axisB.hasX = e.value;
+			break;
+		case 3:
+			spdlog::info("gamepad axis 3 value {}", e.value);
+			axisB.y = e.value;
+			axisB.hasY = e.value;
 			break;
 		}
 	}

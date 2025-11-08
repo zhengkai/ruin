@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../common/control.hpp"
 #include "../input.hpp"
 #include "game-dep.hpp"
 #include "scene.hpp"
@@ -11,6 +12,10 @@ private:
 	std::shared_ptr<Input> input;
 	Scene scene;
 
+	ControlAxis axisA;
+	ControlAxis axisB;
+	std::shared_ptr<Control> control;
+
 public:
 	Game(GameDep &dep);
 	~Game();
@@ -20,4 +25,6 @@ public:
 
 private:
 	void parseInput();
+	void parseInputAxis(
+		const InputAxis &in, ControlAxis &prev, ControlAxis &out);
 };

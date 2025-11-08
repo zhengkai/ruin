@@ -12,14 +12,14 @@ struct Player : base {
 
 	using base::base;
 
-	std::unordered_map<Pose::Type, std::vector<SDL_Texture *>> texMap = {};
-
 	void init() override {
 
 		const std::unordered_map<Pose::Type, std::string> li = {
 			{Pose::Type::Walk, "Walk"},
 			{Pose::Type::Run, "Run"},
-			{Pose::Type::Attack, "Attack_1"},
+			{Pose::Type::Attack1, "Attack_1"},
+			{Pose::Type::Attack2, "Attack_2"},
+			{Pose::Type::Attack3, "Attack_3"},
 			{Pose::Type::Jump, "Jump"},
 			{Pose::Type::Idle, "Idle"},
 		};
@@ -46,13 +46,7 @@ struct Player : base {
 		float size = 500.0f;
 
 		const auto &pose = d.scene->player.pose;
-		spdlog::info("start render a");
-
-		spdlog::info("pose.type = {}", static_cast<int>(pose.type));
-		spdlog::info("start render b");
-
 		const auto &tex = texMap.at(pose.type);
-		spdlog::info("start render tex");
 
 		int step = pose.step % tex.size();
 

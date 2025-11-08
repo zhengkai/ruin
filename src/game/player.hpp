@@ -14,6 +14,7 @@ public:
 	void next() {
 		serial++;
 		if (serial > 20) {
+			serial = 0;
 			pose.step++;
 		}
 	}
