@@ -7,7 +7,7 @@
 #include "game/game-dep.hpp"
 #include "game/game.h"
 #include "region.hpp"
-#include "sdl-dep.hpp"
+#include "render/dep.hpp"
 #include "sdl.h"
 #include "util/ball.hpp"
 #include "util/print.hpp"
@@ -56,7 +56,7 @@ bool Ruin::init() {
 	};
 	g = std::make_unique<Game>(gameDep);
 
-	auto sd = sdlDep{
+	auto sd = render::sdlDep{
 		.ballCluster = bc,
 		.misc = e,
 		.window = w,

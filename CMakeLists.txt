@@ -48,6 +48,7 @@ set(PROTO_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated/pb)
 file(MAKE_DIRECTORY ${PROTO_OUT_DIR})
 
 add_library(pb OBJECT
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/pose.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
 )
 

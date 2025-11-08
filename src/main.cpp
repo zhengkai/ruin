@@ -1,4 +1,4 @@
-#include "asset/asset.hpp"
+#include "asset/init.hpp"
 #include "ruin.h"
 #include "sys/arg.hpp"
 #include "sys/spdlog.hpp"
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	LoadAsset();
+	asset::Init();
 
 	Ruin p;
 	if (!p.init()) {

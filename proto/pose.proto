@@ -1,0 +1,15 @@
+syntax = "proto3";
+package pb;
+
+message Pose {
+	enum Type {
+		unknown = 0;
+		walk = 1;
+		run = 2;
+		attack1 = 3;
+		attack2 = 4;
+		attack3 = 5;
+		jump = 6;
+		idle = 7;
+	}
+}

@@ -2,6 +2,7 @@
 #include "config.hpp"
 #include "context/window.h"
 #include "render/base.hpp"
+#include "render/dep.hpp"
 #include "render/player.hpp"
 #include "render/text.h"
 #include "util/path.hpp"
@@ -15,11 +16,7 @@ static SDL_AppResult SDL_Fail() {
 	return SDL_APP_FAILURE;
 }
 
-sdl::sdl(sdlDep &dep) : w(nullptr), r(nullptr), d(dep) {
-	for (const auto &b : d.misc->brick) {
-		// spdlog::trace("brick {} {:.0f} {:.0f} {}", b.id, b.x, b.y, b.region);
-	}
-	// util::shuffleMapColor();
+sdl::sdl(render::sdlDep &dep) : d(dep), w(nullptr), r(nullptr) {
 }
 
 void sdl::initWinSize() {
@@ -89,7 +86,7 @@ bool sdl::init() {
 		return false;
 	}
 
-	rainbow = std::make_unique<Rainbow>(r);
+	rd = new render::renderDep(d, asset::asset, r);
 
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);
@@ -134,7 +131,7 @@ bool sdl::init() {
 }
 
 void sdl::initRender() {
-	renderList.emplace_back(std::make_unique<render::Player>(r, d));
+	renderList.emplace_back(std::make_unique<render::Player>(rd));
 	for (auto &ren : renderList) {
 		ren->init();
 	}
@@ -174,8 +171,6 @@ void sdl::render() {
 			}
 		}
 	}
-
-	rainbow->render(d.ballCluster->group, d.window);
 
 	renderCounter();
 	renderControlMsg();

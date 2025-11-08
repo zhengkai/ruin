@@ -1,8 +1,10 @@
 syntax = "proto3";
 package pb;
 
+import "pose.proto";
+
 message CharacterSprite {
-	string type = 1;
+	Pose.Type pose = 1;
 	string path = 2;
 	repeated uint32 step = 3;
 }

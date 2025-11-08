@@ -1,9 +1,9 @@
 #pragma once
 
 #include "render/base.hpp"
+#include "render/dep.hpp"
 #include "render/rainbow.hpp"
 #include "render/text.h"
-#include "sdl-dep.hpp"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
@@ -13,17 +13,18 @@
 class sdl {
 
 private:
-	SDL_Renderer *r;
+	render::sdlDep d = {};
+	render::renderDep *rd = nullptr;
+	SDL_Renderer *r = nullptr;
 	Text *text;
 	// SDL_Texture *bg;
 	SDL_Window *w;
 	SDL_Texture *ballTex;
-	sdlDep d;
 	std::unique_ptr<Rainbow> rainbow;
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:
-	sdl(sdlDep &dep);
+	sdl(render::sdlDep &dep);
 	~sdl();
 	bool init();
 	void handleInput(SDL_Event *e);

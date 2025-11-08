@@ -21,13 +21,13 @@ struct Player : base {
 			{Pose::Type::Attack2, "attack_2"},
 			{Pose::Type::Attack3, "attack_3"},
 			{Pose::Type::Jump, "jump"},
-			{Pose::Type::Idle, "idle"},
+			{Pose::Type::Idle, "walk"},
 		};
 
 		for (const auto &[type, name] : li) {
 			const std::filesystem::path file =
 				"asset/character/samurai/" + name + ".png";
-			auto frames = util::loadSpriteFrames(r, file);
+			auto frames = util::loadSpriteFrames(d->r, file);
 			if (frames.empty()) {
 				spdlog::error("Failed to load player sprites file: {}", name);
 				return;
@@ -38,26 +38,26 @@ struct Player : base {
 	};
 	void render() override {
 
-		if (!d.scene) {
-			spdlog::error("d.scene is nullptr!");
+		if (!d->scene) {
+			spdlog::error("d->scene is nullptr!");
 			return;
 		}
 
 		float size = 500.0f;
 
-		const auto &pose = d.scene->player.pose;
+		const auto &pose = d->scene->player.pose;
 		const auto &tex = texMap.at(pose.type);
 
 		int step = pose.step % tex.size();
 
 		SDL_FRect dst = {200.0f, 200.0f, size, size};
 
-		if (d.scene->player.pose.facing == Pose::Facing::Left) {
+		if (d->scene->player.pose.facing == Pose::Facing::Left) {
 			SDL_FlipMode flip = SDL_FLIP_HORIZONTAL;
 			SDL_RenderTextureRotated(
-				r, tex[step], nullptr, &dst, 0.0, nullptr, flip);
+				d->r, tex[step], nullptr, &dst, 0.0, nullptr, flip);
 		} else {
-			SDL_RenderTexture(r, tex[step], nullptr, &dst);
+			SDL_RenderTexture(d->r, tex[step], nullptr, &dst);
 		}
 	};
 };
