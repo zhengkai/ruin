@@ -1,18 +1,21 @@
 #pragma once
 
 #include "../common/control.hpp"
+#include "../context/scene.hpp"
 #include "game-dep.hpp"
 #include "player.hpp"
 
 class Scene {
 
 private:
+	context::Scene &cs;
+
 	GameDep d;
 	Player player;
 	bool lastRight = true;
 
 public:
-	Scene(GameDep &dep) : d(dep) {
+	Scene(GameDep &dep, context::Scene &cs) : d(dep), cs(cs) {
 		player = Player();
 	};
 	~Scene() {};
@@ -23,7 +26,7 @@ public:
 
 		player.parseFacing(control);
 
-		d.scene->player.pose = player.pose;
+		cs.player.pose = player.pose;
 
 		return true;
 	};

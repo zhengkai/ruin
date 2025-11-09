@@ -31,9 +31,8 @@ bool Ruin::init() {
 	auto e = std::make_shared<context::Misc>();
 	auto w = std::make_shared<context::Window>();
 	auto bc = std::make_shared<context::BallCluster>();
-	auto sc = std::make_shared<context::Scene>();
 
-	spdlog::info("pose.type = {}", static_cast<int>(sc->player.pose.type));
+	spdlog::info("pose.type = {}", static_cast<int>(cs.player.pose.type));
 
 	bc->group =
 		util::genBallGroupList(config::gridWF, config::gridHF, config::region);
@@ -51,18 +50,14 @@ bool Ruin::init() {
 	}
 	auto gameDep = GameDep{
 		.misc = e,
-		.window = w,
-		.scene = sc,
 	};
-	g = std::make_unique<Game>(gameDep);
+	g = std::make_unique<Game>(gameDep, cs, cw);
 
 	auto sd = render::sdlDep{
 		.ballCluster = bc,
 		.misc = e,
-		.window = w,
-		.scene = sc,
 	};
-	s = std::make_unique<sdl>(sd);
+	s = std::make_unique<sdl>(sd, cs, cw);
 
 	spdlog::info("ruin start");
 

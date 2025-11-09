@@ -16,6 +16,9 @@ struct RuinDeps {
 class Ruin {
 
 private:
+	context::Scene cs = {};
+	context::Window cw = {};
+
 	RuinDeps d;
 	std::unique_ptr<Time> t;
 	std::unique_ptr<sdl> s;

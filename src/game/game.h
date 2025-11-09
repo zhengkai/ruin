@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../common/control.hpp"
+#include "../context/scene.hpp"
+#include "../context/window.h"
 #include "../input.hpp"
 #include "game-dep.hpp"
 #include "scene.hpp"
@@ -8,6 +10,9 @@
 class Game {
 
 private:
+	context::Scene &cs;
+	context::Window &cw;
+
 	GameDep d;
 	Input input = {};
 	Scene scene;
@@ -17,7 +22,7 @@ private:
 	Control control = {};
 
 public:
-	Game(GameDep &dep);
+	Game(GameDep &dep, context::Scene &cs, context::Window &cw);
 	~Game();
 
 	bool parse();

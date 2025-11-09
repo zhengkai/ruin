@@ -8,7 +8,8 @@
 
 static std::string speedMsg = "Speed Level: ";
 
-Game::Game(GameDep &dep) : d(dep), scene(Scene(d)) {
+Game::Game(GameDep &dep, context::Scene &cs, context::Window &cw)
+	: d(dep), cs(cs), cw(cw), scene(Scene(d, cs)) {
 }
 
 Game::~Game() {
@@ -37,10 +38,10 @@ void Game::parseInput() {
 		d.misc->speedLevel = slv;
 		d.misc->speed = std::pow(2, slv);
 
-		context::ControlMsg *cm = d.window->controlMsg;
+		context::ControlMsg *cm = cw.controlMsg;
 		if (cm == nullptr) {
 			cm = new context::ControlMsg();
-			d.window->controlMsg = cm;
+			cw.controlMsg = cm;
 		}
 
 		std::string m = std::to_string((int)std::pow(2, std::abs(slv))) + "x";
@@ -48,16 +49,16 @@ void Game::parseInput() {
 			m = "1/" + m;
 		}
 		cm->msg = speedMsg + m;
-		cm->expireSerial = d.window->serial + config::fps * 2;
+		cm->expireSerial = cw.serial + config::fps * 2;
 	}
 
 	// window resize
 
 	if (input.winW > 0 && input.winH > 0) {
-		auto wr = d.window->winResize;
+		auto wr = cw.winResize;
 		if (wr == nullptr) {
 			wr = new context::WinResize();
-			d.window->winResize = wr;
+			cw.winResize = wr;
 		}
 		wr->w = input.winW;
 		wr->h = input.winH;
@@ -66,14 +67,14 @@ void Game::parseInput() {
 	// show ball
 
 	if (input.space) {
-		d.window->showBall = !d.window->showBall;
+		cw.showBall = !cw.showBall;
 	}
 
 	// fullscreen toggle
 
 	if (input.fullscreen) {
 		spdlog::info("toggling fullscreen");
-		d.window->toggleFullscreen = true;
+		cw.toggleFullscreen = true;
 	}
 
 	// gamepad

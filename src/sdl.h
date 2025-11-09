@@ -1,5 +1,7 @@
 #pragma once
 
+#include "context/scene.hpp"
+#include "context/window.h"
 #include "render/base.hpp"
 #include "render/dep.hpp"
 #include "render/rainbow.hpp"
@@ -13,6 +15,9 @@
 class sdl {
 
 private:
+	context::Scene &cs;
+	context::Window &cw;
+
 	render::sdlDep d = {};
 	render::renderDep *rd = nullptr;
 	SDL_Renderer *r = nullptr;
@@ -24,7 +29,7 @@ private:
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:
-	sdl(render::sdlDep &dep);
+	sdl(render::sdlDep &dep, context::Scene &cs, context::Window &cw);
 	~sdl();
 	bool init();
 	void handleInput(SDL_Event *e);

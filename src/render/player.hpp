@@ -38,21 +38,16 @@ struct Player : base {
 	};
 	void render() override {
 
-		if (!d->scene) {
-			spdlog::error("d->scene is nullptr!");
-			return;
-		}
-
 		float size = 500.0f;
 
-		const auto &pose = d->scene->player.pose;
+		const auto &pose = d->scene.player.pose;
 		const auto &tex = texMap.at(pose.type);
 
 		int step = pose.step % tex.size();
 
 		SDL_FRect dst = {200.0f, 200.0f, size, size};
 
-		if (d->scene->player.pose.facing == Pose::Facing::Left) {
+		if (d->scene.player.pose.facing == Pose::Facing::Left) {
 			SDL_FlipMode flip = SDL_FLIP_HORIZONTAL;
 			SDL_RenderTextureRotated(
 				d->r, tex[step], nullptr, &dst, 0.0, nullptr, flip);
