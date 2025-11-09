@@ -71,11 +71,11 @@ add_executable(${PROJ}
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	target_compile_options(${PROJ} PRIVATE
 		-Wall -Wextra -Werror
-		-fsanitize=address,undefined
+		-fsanitize=undefined
 		-fno-omit-frame-pointer
 	)
 	target_link_options(${PROJ} PRIVATE
-		-fsanitize=address,undefined
+		-fsanitize=undefined
 		-fno-omit-frame-pointer
 		-static-libasan
 	)

@@ -1,0 +1,2 @@
+fun:SDL_EGL_LoadLibrary
+fun:Wayland_GLES_LoadLibraryayland_GLES_LoadLibrary

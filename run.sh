@@ -10,6 +10,9 @@ if [ -z "$RUIN_DIR" ]; then
 	export RUIN_DIR
 fi
 
+export ASAN_OPTIONS=detect_leaks=0
+# export LSAN_OPTIONS="fast_unwind_on_malloc=0:verbosity=1:ignorelist=${PWD}/misc/lsan-ignore.txt"
+
 export CC=clang
 export CXX=clang++
 
