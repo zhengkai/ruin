@@ -20,11 +20,13 @@ static SDL_AppResult SDL_Fail() {
 sdl::sdl(context::BallCluster &cb,
 	context::Scene &cs,
 	context::Window &cw,
-	context::Misc &cm)
-	: scene(cs), window(cw), misc(cm), cb(cb) {
+	context::Misc &cm,
+	SDL_Renderer *r,
+	SDL_Window *w)
+	: scene(cs), window(cw), misc(cm), cb(cb), r(r), w(w) {
 }
 
-void sdl::initWinSize() {
+inline void initWinSize(context::Window &cw) {
 
 	SDL_DisplayID display = SDL_GetPrimaryDisplay();
 	if (!display) {
@@ -37,55 +39,14 @@ void sdl::initWinSize() {
 
 	spdlog::info("desktop get size {}x{}", mode->w, mode->h);
 
-	window.w = static_cast<int>(std::floor(static_cast<float>(mode->w) * 0.8f));
-	window.h = static_cast<int>(std::floor(static_cast<float>(mode->h) * 0.8f));
+	cw.w = static_cast<int>(std::floor(static_cast<float>(mode->w) * 0.8f));
+	cw.h = static_cast<int>(std::floor(static_cast<float>(mode->h) * 0.8f));
 }
 
 bool sdl::init() {
 
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
-		SDL_Fail();
-		return false;
-	}
-
-	initWinSize();
-
-	SDL_PropertiesID props = SDL_CreateProperties();
-
-	SDL_SetStringProperty(
-		props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, config::winTitle);
-	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, window.w);
-	SDL_SetNumberProperty(
-		props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, window.h);
-	SDL_SetNumberProperty(props,
-		SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER,
-		SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
-
-#ifdef __EMSCRIPTEN__
-	// SDL_SetStringProperty(
-	// props, SDL_PROP_WINDOW_CREATE_EMSCRIPTEN_CANVAS_ID_STRING, "#ruin");
-#endif
-
-	w = SDL_CreateWindowWithProperties(props);
-
-	SDL_DestroyProperties(props);
-
-	if (!w) {
-		SDL_Fail();
-		return false;
-	}
-
 	if (config::fullscreen) {
 		SDL_SetWindowFullscreen(w, true);
-	}
-
-	// SDL_HideCursor();
-	// SDL_SetWindowMouseGrab(window, true);
-
-	r = SDL_CreateRenderer(w, NULL);
-	if (!r) {
-		SDL_Fail();
-		return false;
 	}
 
 	rd = new render::renderDep(cb, asset::asset, r, scene, misc);
@@ -140,7 +101,6 @@ void sdl::initRender() {
 }
 
 void sdl::renderCounter() {
-
 	std::string counter = std::to_string(window.serial);
 	text->rMono32(counter, window.w - 16, 16, Text::Align::RIGHT);
 }
@@ -482,6 +442,47 @@ sdl::~sdl() {
 	SDL_Quit();
 }
 
-sdl *createSDL() {
-	return nullptr;
+std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
+	context::Scene &cs,
+	context::Window &cw,
+	context::Misc &cm) {
+
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
+		SDL_Fail();
+		return nullptr;
+	}
+
+	initWinSize(cw);
+
+	SDL_PropertiesID props = SDL_CreateProperties();
+
+	SDL_SetStringProperty(
+		props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, config::winTitle);
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, cw.w);
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, cw.h);
+	SDL_SetNumberProperty(props,
+		SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER,
+		SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+
+#ifdef __EMSCRIPTEN__
+	// SDL_SetStringProperty(
+	// props, SDL_PROP_WINDOW_CREATE_EMSCRIPTEN_CANVAS_ID_STRING, "#ruin");
+#endif
+
+	auto w = SDL_CreateWindowWithProperties(props);
+
+	SDL_DestroyProperties(props);
+
+	if (!w) {
+		SDL_Fail();
+		return nullptr;
+	}
+
+	auto r = SDL_CreateRenderer(w, NULL);
+	if (!r) {
+		SDL_Fail();
+		return nullptr;
+	}
+
+	return std::make_unique<sdl>(cb, cs, cw, cm, r, w);
 }

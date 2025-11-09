@@ -40,7 +40,7 @@ bool Ruin::init() {
 
 	g = std::make_unique<Game>(scene, window, misc);
 
-	s = std::make_unique<sdl>(cb, scene, window, misc);
+	s = createSDL(cb, scene, window, misc);
 
 	spdlog::info("ruin start");
 

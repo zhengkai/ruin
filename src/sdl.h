@@ -33,7 +33,9 @@ public:
 	sdl(context::BallCluster &cb,
 		context::Scene &cs,
 		context::Window &cw,
-		context::Misc &cm);
+		context::Misc &cm,
+		SDL_Renderer *r,
+		SDL_Window *w);
 	~sdl();
 	bool init();
 	void handleInput(SDL_Event *e);
@@ -47,11 +49,15 @@ private:
 	void renderBall(std::shared_ptr<context::Ball> b, SDL_Color c);
 	void renderBrick();
 	void calcGrid(int winW, int winH);
-	void initWinSize();
 	void calcRegionSize();
 	bool toggleFullscreen();
 	void renderGamepad();
 	void initRender();
 };
 
-sdl *createSDL();
+inline void initWinSize(context::Window &cw);
+
+std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
+	context::Scene &cs,
+	context::Window &cw,
+	context::Misc &cm);
