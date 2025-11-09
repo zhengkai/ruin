@@ -481,3 +481,7 @@ sdl::~sdl() {
 	SDL_GL_UnloadLibrary();
 	SDL_Quit();
 }
+
+sdl *createSDL() {
+	return nullptr;
+}

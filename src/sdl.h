@@ -53,3 +53,5 @@ private:
 	void renderGamepad();
 	void initRender();
 };
+
+sdl *createSDL();

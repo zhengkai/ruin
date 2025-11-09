@@ -14,7 +14,7 @@ bool Text::init(SDL_Renderer *r) {
 #ifndef __EMSCRIPTEN__
 	this->r = r;
 
-	if (not TTF_Init()) {
+	if (!TTF_Init()) {
 		error("TTF_Init fail: {}");
 		return false;
 	}
@@ -104,4 +104,5 @@ void Text::error(std::string_view msg) {
 }
 
 Text::~Text() {
+	r = nullptr;
 }

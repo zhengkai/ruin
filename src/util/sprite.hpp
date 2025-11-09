@@ -6,7 +6,7 @@
 
 namespace util {
 
-std::vector<SDL_Texture *> loadSpriteFrames(
+inline std::vector<SDL_Texture *> loadSpriteFrames(
 	SDL_Renderer *r, const std::filesystem::path file) {
 
 	auto img = util::file(file);

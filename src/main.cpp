@@ -34,8 +34,6 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	asset::Init();
-
 	Ruin p;
 	if (!p.init()) {
 		return 1;
