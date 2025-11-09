@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../asset/asset.hpp"
 #include "../common/control.hpp"
 #include "../context/scene.hpp"
 #include "player.hpp"
@@ -7,24 +8,22 @@
 class Scene {
 
 private:
-	context::Scene &cs;
+	context::Scene &c;
+	const asset::Asset &asset;
 
 	Player player;
 	bool lastRight = true;
 
 public:
-	Scene(context::Scene &cs) : cs(cs) {
-		player = Player();
-	};
+	Scene(context::Scene &c, const asset::Asset &asset)
+		: c(c), asset(asset), player(c, asset) {};
 	~Scene() {};
 
 	bool parse(const Control &control) {
 
-		player.next();
+		player.parse(control);
 
-		player.parseFacing(control);
-
-		cs.player.pose = player.pose;
+		c.player.pose = player.pose;
 
 		return true;
 	};

@@ -18,8 +18,8 @@ private:
 	context::Scene &scene;
 	context::Window &window;
 	context::Misc &misc;
+	asset::Asset &asset;
 	context::BallCluster &cb;
-	asset::Asset asset;
 
 	render::renderDep *rd = nullptr;
 	SDL_Renderer *r = nullptr;
@@ -35,6 +35,7 @@ public:
 		context::Scene &cs,
 		context::Window &cw,
 		context::Misc &cm,
+		asset::Asset &asset,
 		SDL_Renderer *r,
 		SDL_Window *w);
 	~sdl();
@@ -61,4 +62,5 @@ inline void initWinSize(context::Window &cw);
 std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
 	context::Scene &cs,
 	context::Window &cw,
-	context::Misc &cm);
+	context::Misc &cm,
+	asset::Asset &asset);

@@ -38,11 +38,9 @@ bool Ruin::init() {
 		region.push_back(std::make_unique<Region>(misc, b));
 	}
 
-	g = std::make_unique<Game>(scene, window, misc);
-
 	spdlog::info("ruin start");
 
-	s = createSDL(cb, scene, window, misc);
+	s = createSDL(cb, scene, window, misc, asset);
 	if (!s) {
 		spdlog::error("sdl create failed");
 	}
@@ -55,6 +53,8 @@ bool Ruin::init() {
 	spdlog::info("region num = {}, list = {}",
 		config::regionNum,
 		util::joinVector(config::region));
+
+	g = std::make_unique<Game>(scene, window, misc, asset);
 
 	return true;
 }

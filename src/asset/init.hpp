@@ -2,10 +2,10 @@
 
 #include "../util/file.hpp"
 #include "../util/path.hpp"
+#include "../util/pose.hpp"
 #include "../util/sprite.hpp"
 #include "asset.hpp"
 #include "pb/asset.pb.h"
-#include "util.hpp"
 #include <google/protobuf/util/json_util.h>
 
 namespace asset {
@@ -44,7 +44,7 @@ inline bool mergeCharacter(SDL_Renderer *r,
 				spdlog::error(
 					"sprite character {}.{} has invalid step size: {} vs {}",
 					dc->name,
-					poseName(row.pose()),
+					util::poseName(row.pose()),
 					size,
 					sp->duration.size());
 				return false;

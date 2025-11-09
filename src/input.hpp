@@ -121,9 +121,11 @@ public:
 				btnB = down;
 				hasBtnB = true;
 				break;
+			default:
+				spdlog::info("gamepad button {}", s);
+				break;
 			}
 
-			spdlog::info("gamepad button {}", s);
 			break;
 		}
 	};

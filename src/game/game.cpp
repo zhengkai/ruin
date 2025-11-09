@@ -8,8 +8,11 @@
 
 static std::string speedMsg = "Speed Level: ";
 
-Game::Game(context::Scene &cs, context::Window &cw, context::Misc &cm)
-	: window(cw), misc(cm), scene(Scene(cs)) {
+Game::Game(context::Scene &cs,
+	context::Window &cw,
+	context::Misc &cm,
+	const asset::Asset &asset)
+	: window(cw), misc(cm), scene(Scene(cs, asset)) {
 }
 
 Game::~Game() {

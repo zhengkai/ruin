@@ -14,6 +14,7 @@ private:
 	context::Window window = {};
 	context::Misc misc = {};
 	context::BallCluster cb = {};
+	asset::Asset asset = {};
 
 	std::unique_ptr<Time> t = std::make_unique<Time>();
 	std::unique_ptr<sdl> s;

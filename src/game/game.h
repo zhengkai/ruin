@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../asset/asset.hpp"
 #include "../common/control.hpp"
 #include "../context/misc.h"
 #include "../context/scene.hpp"
@@ -21,7 +22,10 @@ private:
 	Control control = {};
 
 public:
-	Game(context::Scene &cs, context::Window &cw, context::Misc &cm);
+	Game(context::Scene &cs,
+		context::Window &cw,
+		context::Misc &cm,
+		const asset::Asset &asset);
 	~Game();
 
 	bool parse();

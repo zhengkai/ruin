@@ -22,9 +22,10 @@ sdl::sdl(context::BallCluster &cb,
 	context::Scene &cs,
 	context::Window &cw,
 	context::Misc &cm,
+	asset::Asset &asset,
 	SDL_Renderer *r,
 	SDL_Window *w)
-	: scene(cs), window(cw), misc(cm), cb(cb), r(r), w(w) {
+	: scene(cs), window(cw), misc(cm), asset(asset), cb(cb), r(r), w(w) {
 }
 
 inline void initWinSize(context::Window &cw) {
@@ -451,7 +452,8 @@ sdl::~sdl() {
 std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
 	context::Scene &cs,
 	context::Window &cw,
-	context::Misc &cm) {
+	context::Misc &cm,
+	asset::Asset &asset) {
 
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
 		SDL_Fail();
@@ -490,5 +492,5 @@ std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
 		return nullptr;
 	}
 
-	return std::make_unique<sdl>(cb, cs, cw, cm, r, w);
+	return std::make_unique<sdl>(cb, cs, cw, cm, asset, r, w);
 }

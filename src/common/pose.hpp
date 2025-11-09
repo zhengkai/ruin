@@ -1,27 +1,12 @@
 #pragma once
 
+#include "pb/pose.pb.h"
+
 struct Pose {
-	enum class Type : uint8_t {
-		Idle,
-		Walk,
-		Run,
-		Jump,
-		Attack1,
-		Attack2,
-		Attack3,
-	} type = Type::Idle;
+	::pb::Pose_Type type = pb::Pose_Type::Pose_Type_idle;
 	enum class Facing : uint8_t {
 		Left,
 		Right,
 	} facing = Facing::Right;
-	int typeID = 0;
 	int step = 0;
 };
-
-namespace std {
-template <> struct hash<Pose::Type> {
-	size_t operator()(const Pose::Type &t) const noexcept {
-		return static_cast<size_t>(t);
-	}
-};
-}; // namespace std
