@@ -11,5 +11,8 @@ message Pose {
 		attack3 = 5;
 		jump = 6;
 		idle = 7;
+		shield = 8;
+		dead = 9;
+		hurt = 10;
 	}
 }

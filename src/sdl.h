@@ -19,6 +19,7 @@ private:
 	context::Window &window;
 	context::Misc &misc;
 	context::BallCluster &cb;
+	asset::Asset asset;
 
 	render::renderDep *rd = nullptr;
 	SDL_Renderer *r = nullptr;

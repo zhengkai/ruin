@@ -1,4 +1,5 @@
 #include "sdl.h"
+#include "asset/init.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
 #include "context/window.h"
@@ -49,7 +50,12 @@ bool sdl::init() {
 		SDL_SetWindowFullscreen(w, true);
 	}
 
-	rd = new render::renderDep(cb, asset::asset, r, scene, misc);
+	if (!asset::Load(r, config::assetDir, asset)) {
+		spdlog::error("Failed to load assets");
+		return false;
+	}
+
+	rd = new render::renderDep(cb, asset, r, scene, misc);
 
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);

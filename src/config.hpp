@@ -21,7 +21,8 @@ constexpr float ballRadius = 0.57f;
 
 inline std::vector<std::filesystem::path> dirList;
 
-inline std::filesystem::path assetDir = "asset";
+inline const std::filesystem::path assetDir = "asset";
+inline const std::filesystem::path assetManifest = "manifest.json";
 
 const float speed = 30.0f;
 const float speedMax = speed * 1.2f;
