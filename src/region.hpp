@@ -12,18 +12,12 @@ private:
 	std::shared_ptr<context::BallGroup> bg;
 
 public:
-	Region(std::shared_ptr<context::Misc> e,
-		std::shared_ptr<context::BallGroup> bg)
-		: bg(bg), id(bg->region) {
+	Region(context::Misc &cm, std::shared_ptr<context::BallGroup> bg)
+		: id(bg->region), bg(bg) {
 
-		phy = std::make_unique<Physics>(
-			PhysicsDep{
-				.misc = e,
-			},
-			bg);
+		phy = std::make_unique<Physics>(cm, bg);
 	}
 	~Region() {
-		spdlog::trace("region destory {}", id);
 	}
 	void update(float dt) {
 		phy->update(dt);

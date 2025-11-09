@@ -13,8 +13,8 @@ static b2ShapeDef dsd = [] {
 	return sd;
 }();
 
-Physics::Physics(PhysicsDep dep, std::shared_ptr<context::BallGroup> bg)
-	: d(std::move(dep)), region(bg->region), bg(bg) {
+Physics::Physics(context::Misc &cm, std::shared_ptr<context::BallGroup> bg)
+	: cm(cm), region(bg->region), bg(bg) {
 
 	b2WorldDef worldDef = b2DefaultWorldDef();
 	worldDef.gravity = b2Vec2{0.0f, 0.0f};
@@ -34,7 +34,8 @@ Physics::Physics(PhysicsDep dep, std::shared_ptr<context::BallGroup> bg)
 }
 
 Physics::~Physics() {
-	spdlog::trace("phy destory {}", region);
+	bl.clear();
+	brick.clear();
 	b2DestroyWorld(world);
 }
 
@@ -65,8 +66,8 @@ void Physics::update(float dt) {
 
 	bg->hit = false;
 
-	float x = d.misc->gamepadX;
-	float y = d.misc->gamepadY;
+	float x = cm.gamepadX;
+	float y = cm.gamepadY;
 	float gravity = std::sqrt(x * x + y * y);
 	if (gravity > 1.0f) {
 		x /= gravity;
@@ -74,11 +75,11 @@ void Physics::update(float dt) {
 	}
 	b2World_SetGravity(world, b2Vec2(x * config::gravity, y * config::gravity));
 
-	float speed = d.misc->speed;
+	float speed = cm.speed;
 	if (speed < 1.0f) {
 		_update(dt * speed);
 	} else {
-		for (int cnt = static_cast<int>(d.misc->speed); cnt > 0; cnt--) {
+		for (int cnt = static_cast<int>(cm.speed); cnt > 0; cnt--) {
 			_update(dt);
 		}
 	}
@@ -86,7 +87,7 @@ void Physics::update(float dt) {
 
 void Physics::_update(float deltaTime) {
 	bg->power = 0;
-	for (const auto &b : d.misc->brick) {
+	for (const auto &b : cm.brick) {
 		b2BodyId bb = brick[b.id];
 		if (b.region == region) {
 			bg->power++;
@@ -232,7 +233,7 @@ void Physics::createBrick() {
 
 	b2Polygon box = b2MakeBox(0.5f, 0.5f);
 
-	for (const auto &b : d.misc->brick) {
+	for (const auto &b : cm.brick) {
 
 		b2BodyDef bd = b2DefaultBodyDef();
 		bd.position = b2Vec2{b.x + 0.5f, b.y + 0.5f};

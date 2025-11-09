@@ -32,8 +32,6 @@ std::vector<SDL_Texture *> loadSpriteFrames(
 		return {};
 	}
 
-	int num = w / h;
-
 	float wf = static_cast<float>(w);
 	float hf = static_cast<float>(h);
 

@@ -15,21 +15,25 @@
 class sdl {
 
 private:
-	context::Scene &cs;
-	context::Window &cw;
+	context::Scene &scene;
+	context::Window &window;
+	context::Misc &misc;
+	context::BallCluster &cb;
 
-	render::sdlDep d = {};
 	render::renderDep *rd = nullptr;
 	SDL_Renderer *r = nullptr;
-	Text *text;
+	Text *text = nullptr;
 	// SDL_Texture *bg;
-	SDL_Window *w;
-	SDL_Texture *ballTex;
+	SDL_Window *w = nullptr;
+	SDL_Texture *ballTex = nullptr;
 	std::unique_ptr<Rainbow> rainbow;
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:
-	sdl(render::sdlDep &dep, context::Scene &cs, context::Window &cw);
+	sdl(context::BallCluster &cb,
+		context::Scene &cs,
+		context::Window &cw,
+		context::Misc &cm);
 	~sdl();
 	bool init();
 	void handleInput(SDL_Event *e);

@@ -48,7 +48,9 @@ int main(int argc, char *argv[]) {
 	while (!p.stop) {
 		p.loop();
 	}
-#endif
 
+	spdlog::get("async_stdout")->flush();
+	spdlog::shutdown();
+#endif
 	return 0;
 }

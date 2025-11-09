@@ -10,20 +10,6 @@ set(VCPKG_VERBOSE OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (CMAKE_BUILD_TYPE STREQUAL "debug")
-	target_compile_options(${PROJ} PRIVATE
-		-Wall -Wextra -Werror
-		-fsanitize=address,undefined
-		-fno-omit-frame-pointer
-	)
-	target_link_options(${PROJ} PRIVATE
-		-fsanitize=address,undefined
-		-fno-omit-frame-pointer
-		-static-libasan
-		-static-libubsan
-	)
-endif()
-
 if (MSVC)
 	add_compile_options(/utf-8)
     set(BUILD_SHARED_LIBS ON)
@@ -81,6 +67,19 @@ add_executable(${PROJ}
 
     $<TARGET_OBJECTS:pb>
 )
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	target_compile_options(${PROJ} PRIVATE
+		-Wall -Wextra -Werror
+		-fsanitize=address,undefined
+		-fno-omit-frame-pointer
+	)
+	target_link_options(${PROJ} PRIVATE
+		-fsanitize=address,undefined
+		-fno-omit-frame-pointer
+		-static-libasan
+	)
+endif()
 
 set(CMAKE_THREAD_LIBS_INIT "-lpthread")
 set(THREADS_PREFER_PTHREAD_FLAG ON)

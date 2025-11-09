@@ -17,8 +17,11 @@ static SDL_AppResult SDL_Fail() {
 	return SDL_APP_FAILURE;
 }
 
-sdl::sdl(render::sdlDep &dep, context::Scene &cs, context::Window &cw)
-	: d(dep), w(nullptr), r(nullptr), cs(cs), cw(cw) {
+sdl::sdl(context::BallCluster &cb,
+	context::Scene &cs,
+	context::Window &cw,
+	context::Misc &cm)
+	: scene(cs), window(cw), misc(cm), cb(cb) {
 }
 
 void sdl::initWinSize() {
@@ -34,8 +37,8 @@ void sdl::initWinSize() {
 
 	spdlog::info("desktop get size {}x{}", mode->w, mode->h);
 
-	cw.w = static_cast<int>(std::floor(static_cast<float>(mode->w) * 0.8f));
-	cw.h = static_cast<int>(std::floor(static_cast<float>(mode->h) * 0.8f));
+	window.w = static_cast<int>(std::floor(static_cast<float>(mode->w) * 0.8f));
+	window.h = static_cast<int>(std::floor(static_cast<float>(mode->h) * 0.8f));
 }
 
 bool sdl::init() {
@@ -51,8 +54,9 @@ bool sdl::init() {
 
 	SDL_SetStringProperty(
 		props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, config::winTitle);
-	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, cw.w);
-	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, cw.h);
+	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, window.w);
+	SDL_SetNumberProperty(
+		props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, window.h);
 	SDL_SetNumberProperty(props,
 		SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER,
 		SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
@@ -84,7 +88,7 @@ bool sdl::init() {
 		return false;
 	}
 
-	rd = new render::renderDep(d, asset::asset, r, cs);
+	rd = new render::renderDep(cb, asset::asset, r, scene, misc);
 
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);
@@ -113,7 +117,7 @@ bool sdl::init() {
 	// SDL_GetCurrentRenderOutputSize(r, &drawableWidth, &drawableHeight);
 	// spdlog::error("output size {} {}", drawableWidth, drawableHeight);
 
-	calcGrid(cw.w, cw.h);
+	calcGrid(window.w, window.h);
 
 	text = new Text();
 	if (text->init(r)) {
@@ -137,8 +141,8 @@ void sdl::initRender() {
 
 void sdl::renderCounter() {
 
-	std::string counter = std::to_string(cw.serial);
-	text->rMono32(counter, cw.w - 16, 16, Text::Align::RIGHT);
+	std::string counter = std::to_string(window.serial);
+	text->rMono32(counter, window.w - 16, 16, Text::Align::RIGHT);
 }
 
 void sdl::render() {
@@ -154,8 +158,8 @@ void sdl::render() {
 
 	renderBrick();
 
-	if (cw.showBall) {
-		auto gl = d.ballCluster->group;
+	if (window.showBall) {
+		auto gl = cb.group;
 		for (auto &bg : gl) {
 			for (auto &b : bg->list) {
 
@@ -183,11 +187,11 @@ void sdl::render() {
 }
 
 void sdl::renderResize() {
-	auto wr = cw.winResize;
+	auto wr = window.winResize;
 	if (wr == nullptr) {
 		return;
 	}
-	cw.winResize = nullptr;
+	window.winResize = nullptr;
 	calcGrid(wr->w, wr->h);
 	delete wr;
 }
@@ -196,7 +200,7 @@ void sdl::renderBrick() {
 
 	SDL_FRect rect;
 
-	auto rl = d.misc->brick;
+	auto rl = misc.brick;
 
 	std::vector<SDL_FRect> edges;
 
@@ -205,10 +209,10 @@ void sdl::renderBrick() {
 	bool cw = false, cn = false, ce = false, cs = false;
 
 	for (const auto &b : rl) {
-		rect.w = this->cw.gridSize;
-		rect.h = this->cw.gridSize;
-		rect.x = this->cw.startX + b.x * this->cw.gridSize;
-		rect.y = this->cw.startY + b.y * this->cw.gridSize;
+		rect.w = this->window.gridSize;
+		rect.h = this->window.gridSize;
+		rect.x = this->window.startX + b.x * this->window.gridSize;
+		rect.y = this->window.startY + b.y * this->window.gridSize;
 
 		SDL_FRect corner;
 		corner.w = config::brickBorder;
@@ -261,7 +265,7 @@ void sdl::renderBrick() {
 			}
 		}
 
-		auto group = d.ballCluster->group[b.region];
+		auto group = cb.group[b.region];
 		auto bc = group->color;
 
 		// double power = b.power * 2.0f;
@@ -330,14 +334,14 @@ void sdl::calcRegionSize() {
 		int s;
 	};
 	std::vector<RegionSize> li;
-	auto gl = d.ballCluster->group;
+	auto gl = cb.group;
 	li.reserve(gl.size());
 	for (size_t i = 0; i < gl.size(); i++) {
 		li.push_back(
 			RegionSize{.w = config::gridW, .e = 0, .n = config::gridH, .s = 0});
 	}
 
-	for (const auto &b : d.misc->brick) {
+	for (const auto &b : misc.brick) {
 		if (b.region < 0) {
 			continue;
 		}
@@ -365,9 +369,9 @@ void sdl::calcRegionSize() {
 void sdl::renderBall(std::shared_ptr<context::Ball> b, SDL_Color c) {
 
 	SDL_FRect rect;
-	rect.x = cw.startX + (b->pos.x - config::ballRadius) * cw.gridSize;
-	rect.y = cw.startY + (b->pos.y - config::ballRadius) * cw.gridSize;
-	rect.w = cw.gridSize * config::ballRadius / 0.5f;
+	rect.x = window.startX + (b->pos.x - config::ballRadius) * window.gridSize;
+	rect.y = window.startY + (b->pos.y - config::ballRadius) * window.gridSize;
+	rect.w = window.gridSize * config::ballRadius / 0.5f;
 	rect.h = rect.w;
 
 	// spdlog::trace("ball = {} {} {}", rect.x, rect.y, rect.w);
@@ -378,23 +382,23 @@ void sdl::renderBall(std::shared_ptr<context::Ball> b, SDL_Color c) {
 }
 
 void sdl::renderControlMsg() {
-	context::ControlMsg *c = cw.controlMsg;
+	context::ControlMsg *c = window.controlMsg;
 	if (c == nullptr) {
 		return;
 	}
-	if (c->expireSerial < cw.serial) {
+	if (c->expireSerial < window.serial) {
 		delete c;
-		cw.controlMsg = nullptr;
+		window.controlMsg = nullptr;
 		return;
 	}
-	text->rMono96(c->msg, cw.w / 2, cw.h - 192, Text::Align::CENTER);
+	text->rMono96(c->msg, window.w / 2, window.h - 192, Text::Align::CENTER);
 }
 
 bool sdl::toggleFullscreen() {
-	if (!cw.toggleFullscreen) {
+	if (!window.toggleFullscreen) {
 		return false;
 	}
-	cw.toggleFullscreen = false;
+	window.toggleFullscreen = false;
 	config::fullscreen = !config::fullscreen;
 	SDL_SetWindowFullscreen(w, config::fullscreen);
 	return true;
@@ -412,19 +416,19 @@ void sdl::calcGrid(int winW, int winH) {
 	wh *= scale;
 #endif
 
-	cw.w = static_cast<int>(ww);
-	cw.h = static_cast<int>(wh);
+	window.w = static_cast<int>(ww);
+	window.h = static_cast<int>(wh);
 
 	float wf = config::gridWF;
 	float hf = config::gridHF + cfgPaddingTop;
 
 	float gs = std::floor(ww / wf < wh / hf ? ww / wf : wh / hf);
 
-	cw.gridSize = gs;
+	window.gridSize = gs;
 	spdlog::info("gridSize = {}, win = {}x{}", gs, winW, winH);
 
-	cw.startX = std::floor((ww - (gs * wf)) / 2);
-	cw.startY = std::floor((wh - (gs * hf)) / 2 + (gs * cfgPaddingTop));
+	window.startX = std::floor((ww - (gs * wf)) / 2);
+	window.startY = std::floor((wh - (gs * hf)) / 2 + (gs * cfgPaddingTop));
 	spdlog::info(
 		"grid {}x{}={}, grid pixel: {}x{}, win pixel: {}x{}, start: x={},y={}",
 		config::gridW,
@@ -432,26 +436,33 @@ void sdl::calcGrid(int winW, int winH) {
 		config::gridW * config::gridH,
 		gs * config::gridW,
 		gs * config::gridH,
-		cw.w,
-		cw.h,
-		cw.startX,
-		cw.startY);
+		window.w,
+		window.h,
+		window.startX,
+		window.startY);
 }
 
 void sdl::renderGamepad() {
 
-	std::string x = std::to_string(d.misc->gamepadX);
-	std::string y = std::to_string(d.misc->gamepadY);
+	std::string x = std::to_string(misc.gamepadX);
+	std::string y = std::to_string(misc.gamepadY);
 
 	text->rMono32(x, 512, 512, Text::Align::RIGHT);
 	text->rMono32(y, 512, 554, Text::Align::RIGHT);
 }
 
 sdl::~sdl() {
-	spdlog::trace("sdl::~sdl");
 	if (text) {
 		delete text;
 		text = nullptr;
+	}
+
+	if (rd) {
+		delete rd;
+		rd = nullptr;
+	}
+	if (renderList.size() > 0) {
+		renderList.clear();
 	}
 
 	if (ballTex) {
@@ -466,5 +477,7 @@ sdl::~sdl() {
 		SDL_DestroyWindow(w);
 		w = nullptr;
 	}
+	SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD);
+	SDL_GL_UnloadLibrary();
 	SDL_Quit();
 }

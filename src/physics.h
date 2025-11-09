@@ -5,24 +5,20 @@
 #include <box2d/box2d.h>
 #include <memory>
 
-struct PhysicsDep {
-	std::shared_ptr<context::Misc> misc;
-};
-
 class Physics {
 
 private:
-	PhysicsDep d;
+	context::Misc &cm;
+
 	int ballSize;
 	int region;
 	b2WorldId world;
-	b2BodyId ground;
 	std::vector<b2BodyId> bl;
 	std::shared_ptr<context::BallGroup> bg;
 	std::vector<b2BodyId> brick;
 
 public:
-	Physics(PhysicsDep dep, std::shared_ptr<context::BallGroup> bg);
+	Physics(context::Misc &cm, std::shared_ptr<context::BallGroup> bg);
 	~Physics();
 
 	void update(float dt);

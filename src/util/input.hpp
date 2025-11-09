@@ -6,7 +6,7 @@ namespace util {
 
 inline void handleInput(SDL_Event &e, Input &input) {
 
-	SDL_Gamepad *gamepad;
+	// SDL_Gamepad *gamepad;
 
 	switch (e.type) {
 	case SDL_EVENT_KEY_DOWN:

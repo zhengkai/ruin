@@ -8,18 +8,19 @@
 
 namespace render {
 
-struct sdlDep {
-	std::shared_ptr<context::BallCluster> ballCluster;
-	std::shared_ptr<context::Misc> misc;
-};
-
-struct renderDep : sdlDep {
+struct renderDep {
+	context::Misc &misc;
 	context::Scene &scene;
 	asset::Asset &a;
 	SDL_Renderer *r;
-	renderDep(
-		const sdlDep &d, asset::Asset &a, SDL_Renderer *r, context::Scene &cs)
-		: sdlDep(d), a(a), r(r), scene(cs) {};
+	context::BallCluster &cb;
+
+	renderDep(context::BallCluster &cb,
+		asset::Asset &a,
+		SDL_Renderer *r,
+		context::Scene &cs,
+		context::Misc &cm)
+		: misc(cm), scene(cs), a(a), r(r), cb(cb) {};
 };
 
 }; // namespace render

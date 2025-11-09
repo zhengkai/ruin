@@ -15,6 +15,7 @@ inline void mergeCharacter(pb::AssetManifest &src, Asset &dst) {
 
 		auto dc = std::make_shared<Character>();
 		dc->name = sc.name();
+		dst.character[dc->name] = dc;
 
 		std::cout << "Character name: " << sc.name() << std::endl;
 		for (const auto &sprite : sc.sprite()) {

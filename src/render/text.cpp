@@ -104,5 +104,4 @@ void Text::error(std::string_view msg) {
 }
 
 Text::~Text() {
-	spdlog::info("font close");
 }

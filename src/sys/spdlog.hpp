@@ -28,8 +28,6 @@ inline void spdlogInit() {
 	// 默认日志级别 info
 	spdlog::level::level_enum log_level = spdlog::level::info;
 
-	bool verbose = false;
-
 	if (config::verbose == "trace") {
 		log_level = spdlog::level::trace;
 	} else if (config::verbose == "debug") {

@@ -2,7 +2,6 @@
 
 #include "../common/control.hpp"
 #include "../context/scene.hpp"
-#include "game-dep.hpp"
 #include "player.hpp"
 
 class Scene {
@@ -10,12 +9,11 @@ class Scene {
 private:
 	context::Scene &cs;
 
-	GameDep d;
 	Player player;
 	bool lastRight = true;
 
 public:
-	Scene(GameDep &dep, context::Scene &cs) : d(dep), cs(cs) {
+	Scene(context::Scene &cs) : cs(cs) {
 		player = Player();
 	};
 	~Scene() {};

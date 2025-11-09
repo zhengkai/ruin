@@ -4,10 +4,8 @@
 #include "context/brick.hpp"
 #include "context/misc.h"
 #include "context/window.h"
-#include "game/game-dep.hpp"
 #include "game/game.h"
 #include "region.hpp"
-#include "render/dep.hpp"
 #include "sdl.h"
 #include "util/ball.hpp"
 #include "util/print.hpp"
@@ -19,45 +17,30 @@
 #include <emscripten.h>
 #endif
 
-Ruin::Ruin() : stop(false), t(std::make_unique<Time>()) {
+Ruin::Ruin() {
 }
 
 Ruin::~Ruin() {
 	stop = true;
+	region.clear();
 }
 
 bool Ruin::init() {
 
-	auto e = std::make_shared<context::Misc>();
-	auto w = std::make_shared<context::Window>();
-	auto bc = std::make_shared<context::BallCluster>();
+	spdlog::info("pose.type = {}", static_cast<int>(scene.player.pose.type));
 
-	spdlog::info("pose.type = {}", static_cast<int>(cs.player.pose.type));
-
-	bc->group =
+	cb.group =
 		util::genBallGroupList(config::gridWF, config::gridHF, config::region);
 
-	e->brick = genBrick();
+	misc.brick = genBrick();
 
-	d = {
-		.ballCluster = bc,
-		.misc = e,
-		.window = w,
-	};
-
-	for (auto &b : bc->group) {
-		region.push_back(std::make_unique<Region>(e, b));
+	for (auto &b : cb.group) {
+		region.push_back(std::make_unique<Region>(misc, b));
 	}
-	auto gameDep = GameDep{
-		.misc = e,
-	};
-	g = std::make_unique<Game>(gameDep, cs, cw);
 
-	auto sd = render::sdlDep{
-		.ballCluster = bc,
-		.misc = e,
-	};
-	s = std::make_unique<sdl>(sd, cs, cw);
+	g = std::make_unique<Game>(scene, window, misc);
+
+	s = std::make_unique<sdl>(cb, scene, window, misc);
 
 	spdlog::info("ruin start");
 
@@ -88,7 +71,7 @@ std::vector<context::Brick> Ruin::genBrick() {
 
 void Ruin::loop() {
 
-	d.window->serial++;
+	window.serial++;
 
 #ifdef __EMSCRIPTEN__
 	auto now = steady_clock::now();

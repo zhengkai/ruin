@@ -1,5 +1,7 @@
 #!/bin/bash -ex
 
+BUILD_TYPE="${1:-Debug}"
+
 PWD="$(dirname "$(readlink -f "$0")")" && cd "$PWD" || exit 1
 
 mkdir -p static/tmp
@@ -14,9 +16,9 @@ export CXX=clang++
 cmake \
 	-B build \
 	-DCMAKE_TOOLCHAIN_FILE="${PWD}/tool/vcpkg/scripts/buildsystems/vcpkg.cmake" \
-	-DCMAKE_BUILD_TYPE="Release"
+	-DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 
-cmake --build build --config Release "-j$(nproc)"
+cmake --build build --config "$BUILD_TYPE" -j"$(nproc)"
 
 ./ldd/run.sh
 

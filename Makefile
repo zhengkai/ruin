@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-RUIN_DIR := $(CURDIR)/static
+export RUIN_DIR := $(CURDIR)/static
 
 default:
 	./run.sh
@@ -8,22 +8,22 @@ default:
 run:
 	# RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2
 	# RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2,3,4,2,2 --fullscreen
-	RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2,3,4,2,2
+	./build/ruin -r 2,2,3,4,2,2
 
 v2:
-	RUIN_DIR=$(RUIN_DIR) ./build/ruin -W 38 -H 18 -r 2,3,3
+	./build/ruin -W 38 -H 18 -r 2,3,3
 
 classic:
-	RUIN_DIR=$(RUIN_DIR) ./build/ruin -W 25 -H 26 -r 2 -c
+	./build/ruin -W 25 -H 26 -r 2 -c
 
 debug:
-	RUIN_DIR=$(RUIN_DIR) CMAKE_BUILD_TYPE=debug ./run.sh
+	CMAKE_BUILD_TYPE=debug ./run.sh
 
 trace:
-	RUIN_DIR=$(RUIN_DIR) ./build/ruin --verbose=trace
+	./build/ruin --verbose=trace
 
 fullscreen:
-	RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2,3,4,2,2 --fullscreen
+	./build/ruin -r 2,2,3,4,2,2 --fullscreen
 
 help:
 	./build/ruin --help
@@ -51,7 +51,7 @@ vc:
 	vcpkg install
 
 version:
-	RUIN_DIR=$(RUIN_DIR) ./build/ruin --version
+	./build/ruin --version
 
 tidy:
 	find src -type f \( -name '*.h' -o -name '*.hpp' -o -name '*.cpp' \) | xargs clang-tidy -p build

@@ -150,7 +150,7 @@ double RotationDirection(const double from, const double to) {
 // Converts a color in ARGB format to a hexadecimal string in lowercase.
 //
 // For instance: hex_from_argb(0xff012345) == "ff012345"
-std::string HexFromArgb(Argb argb) {
+std::string HexFromArgb(Argb _) {
 	// return absl::StrCat(absl::Hex(argb));
 	return "";
 }
