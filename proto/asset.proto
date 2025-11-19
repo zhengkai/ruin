@@ -3,6 +3,17 @@ package pb;
 
 import "pose.proto";
 
+message Size {
+	uint32 w = 1;
+	uint32 h = 2;
+}
+
+message Tileset {
+	string name = 1;
+	string path = 2;
+	Size size = 3;
+}
+
 message CharacterSprite {
 	Pose.Type pose = 1;
 	string path = 2;
@@ -16,4 +27,5 @@ message CharacterAsset {
 
 message AssetManifest {
 	repeated CharacterAsset character = 1;
+	repeated Tileset tileset = 2;
 }

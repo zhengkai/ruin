@@ -6,6 +6,52 @@
 
 namespace util {
 
+inline std::vector<SDL_Texture *> loadTileset(
+	SDL_Renderer *r, const std::filesystem::path file, int w, int h) {
+
+	auto img = util::file(file);
+	SDL_Surface *s = IMG_Load(img.c_str());
+	if (!s) {
+		spdlog::error("load image fail: {}", file.string());
+		return {};
+	}
+	int sw = s->w;
+	int sh = s->h;
+
+	SDL_FRect dst{0.0f, 0.0f, static_cast<float>(w), static_cast<float>(h)};
+
+	std::vector<SDL_Texture *> fl;
+	for (int x = 0; x < sw; x += w) {
+		for (int y = 0; y < sh; y += h) {
+			SDL_FRect src{.x = static_cast<float>(x),
+				.y = static_cast<float>(y),
+				.w = dst.w,
+				.h = dst.h};
+			SDL_Texture *t = SDL_CreateTextureFromSurface(r, s);
+			if (!t) {
+				SDL_Log("Failed to create texture: %s", SDL_GetError());
+				spdlog::error("create texture fail: {}", file.string());
+				SDL_DestroySurface(s);
+				return {};
+			}
+
+			SDL_Texture *tile = SDL_CreateTexture(
+				r, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h);
+
+			SDL_SetRenderTarget(r, tile);
+			SDL_RenderTexture(r, t, &src, &dst);
+			SDL_SetRenderTarget(r, nullptr);
+			SDL_DestroyTexture(t);
+
+			// spdlog::info(
+			// "loaded tile: {} {}x{} at {}/{}", file.string(), w, h, x, y);
+
+			fl.push_back(tile);
+		}
+	}
+	return fl;
+};
+
 inline std::vector<SDL_Texture *> loadSpriteFrames(
 	SDL_Renderer *r, const std::filesystem::path file) {
 

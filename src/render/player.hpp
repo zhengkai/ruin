@@ -32,6 +32,10 @@ struct Player : base {
 		} else {
 			SDL_RenderTexture(d->r, tex, nullptr, &dst);
 		}
+
+		auto tile = d->asset.tileset.at("grassland")->list[1];
+		SDL_FRect tileDst = {100.0f, 700.0f, 64.0f, 64.0f};
+		SDL_RenderTexture(d->r, tile, nullptr, &tileDst);
 	};
 };
 }; // namespace render

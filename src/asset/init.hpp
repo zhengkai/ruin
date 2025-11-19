@@ -56,6 +56,27 @@ inline bool mergeCharacter(SDL_Renderer *r,
 	return true;
 }
 
+inline bool mergeTileset(SDL_Renderer *r,
+	pb::AssetManifest &src,
+	std::filesystem::path dir,
+	Asset &dst) {
+
+	for (const auto &st : src.tileset()) {
+
+		auto t = std::make_shared<Tileset>();
+		t->name = st.name();
+		dst.tileset[t->name] = t;
+
+		auto file = dir / st.path();
+		auto size = st.size();
+		t->list = util::loadTileset(r, file, size.w(), size.h());
+		if (t->list.empty()) {
+			return false;
+		}
+	}
+	return true;
+}
+
 inline bool loadJSON(std::string file, pb::AssetManifest &manifest) {
 
 	auto s = util::loadJSONFile(file);
@@ -85,6 +106,10 @@ inline bool Load(SDL_Renderer *r, std::filesystem::path dir, Asset &asset) {
 	}
 
 	if (!mergeCharacter(r, manifest, dir, asset)) {
+		return false;
+	}
+
+	if (!mergeTileset(r, manifest, dir, asset)) {
 		return false;
 	}
 
