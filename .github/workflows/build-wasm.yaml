@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Checkout
         run: |
-          git clone --depth 1 "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" main && \
+          git clone --depth 1 "https://github.com/zhengkai/ruin.git" main && \
           git clone --branch gh-pages "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" main/gh-pages
 
       - name: Install Dependencies
