@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pb;
+
+message MapCellTile {
+	string name = 1;
+	uint32 id = 2;
+}
+
+message MapCell {
+	uint32 id = 1;
+	MapCellTile tile = 2;
+}
+
+message Map {
+	uint32 w = 1;
+	uint32 h = 2;
+	repeated MapCell list = 3;
+}
