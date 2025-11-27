@@ -1,8 +1,10 @@
 syntax = "proto3";
 package pb;
 
+import "asset.proto";
+
 message MapCellTile {
-	string name = 1;
+	Tileset.Name name = 1;
 	uint32 id = 2;
 }
 

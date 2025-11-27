@@ -1,9 +1,11 @@
 #pragma once
 
+#include "pb/asset.pb.h"
+
 namespace asset {
 
 struct Tileset {
-	std::string name = "";
+	pb::Tileset_Name name = pb::Tileset_Name_unknown;
 	std::vector<SDL_Texture *> list = {};
 
 	~Tileset() {

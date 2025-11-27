@@ -36,6 +36,7 @@ file(MAKE_DIRECTORY ${PROTO_OUT_DIR})
 add_library(pb OBJECT
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/pose.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/map.proto
 )
 
 target_include_directories(pb PUBLIC

@@ -2,6 +2,7 @@
 
 #include "../common/pose.hpp"
 #include "base.hpp"
+#include "pb/asset.pb.h"
 #include <SDL3_image/SDL_image.h>
 #include <spdlog/spdlog.h>
 
@@ -33,7 +34,9 @@ struct Player : base {
 			SDL_RenderTexture(d->r, tex, nullptr, &dst);
 		}
 
-		auto tile = d->asset.tileset.at("grassland")->list[1];
+		auto tile =
+			d->asset.tileset.at(pb::Tileset_Name::Tileset_Name_grassland)
+				->list[1];
 		SDL_FRect tileDst = {100.0f, 700.0f, 64.0f, 64.0f};
 		SDL_RenderTexture(d->r, tile, nullptr, &tileDst);
 	};

@@ -66,6 +66,7 @@ inline bool mergeTileset(SDL_Renderer *r,
 		auto t = std::make_shared<Tileset>();
 		t->name = st.name();
 		dst.tileset[t->name] = t;
+		spdlog::info("Loading tileset: {}", pb::Tileset_Name_Name(t->name));
 
 		auto file = dir / st.path();
 		auto size = st.size();

@@ -9,7 +9,12 @@ message Size {
 }
 
 message Tileset {
-	string name = 1;
+	enum Name {
+		unknown = 0;
+		grassland = 1;
+		iron = 2;
+	}
+	Name name = 1;
 	string path = 2;
 	Size size = 3;
 }
