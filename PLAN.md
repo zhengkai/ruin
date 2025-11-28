@@ -1,5 +1,13 @@
 # PLAN
 
+## 2025.11.28
+
+[editor](https://zhengkai.github.io/ruin-editor/) 可以拖拽材质并导出 `map.json`，主体可以读 `map.json` 并正确显示 tile  
+接下来是 camera 类，tile 显示多大（缩放倍数）、跟随角色移动什么的，都跟这个类有关
+
+问了下祥基 editor，我自己没找到，果然有个 [mapeditor/tiled](https://github.com/mapeditor/tiled)
+看来是处理这个事情的，不过问的时候 editor 基本写完了，先用着，以后再研究这个
+
 ## 2025.11.19
 
 前些天有事，没想断了 10 天了  
