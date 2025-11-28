@@ -21,8 +21,8 @@ inline std::vector<SDL_Texture *> loadTileset(
 	SDL_FRect dst{0.0f, 0.0f, static_cast<float>(w), static_cast<float>(h)};
 
 	std::vector<SDL_Texture *> fl;
-	for (int x = 0; x < sw; x += w) {
-		for (int y = 0; y < sh; y += h) {
+	for (int y = 0; y < sh; y += h) {
+		for (int x = 0; x < sw; x += w) {
 			SDL_FRect src{.x = static_cast<float>(x),
 				.y = static_cast<float>(y),
 				.w = dst.w,

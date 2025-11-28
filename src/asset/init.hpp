@@ -6,6 +6,7 @@
 #include "../util/sprite.hpp"
 #include "asset.hpp"
 #include "pb/asset.pb.h"
+#include "pb/map.pb.h"
 #include <google/protobuf/util/json_util.h>
 
 namespace asset {
@@ -78,23 +79,25 @@ inline bool mergeTileset(SDL_Renderer *r,
 	return true;
 }
 
-inline bool loadJSON(std::string file, pb::AssetManifest &manifest) {
+inline bool mergeMap(pb::Map &src, Asset &dst) {
 
-	auto s = util::loadJSONFile(file);
-	if (s.empty()) {
-		spdlog::error("Failed to load asset manifest: {}", file);
-		return false;
+	for (const auto &s : src.list()) {
+
+		auto t = s.tile();
+		if (!t.id() || !t.name()) {
+			continue;
+		}
+
+		dst.map.cell.emplace_back(MapCell{
+			.tileName = t.name(),
+			.tileID = static_cast<int>(t.id()),
+			.x = static_cast<float>(s.id() % src.w()),
+			.y = static_cast<float>(s.id() / src.w()),
+		});
 	}
+	dst.map.w = src.w();
+	dst.map.h = src.h();
 
-	google::protobuf::util::JsonParseOptions options;
-	options.ignore_unknown_fields = true;
-
-	auto status =
-		google::protobuf::util::JsonStringToMessage(s, &manifest, options);
-	if (!status.ok()) {
-		spdlog::error("Failed to JSON {}, error: {}", file, status.message());
-		return false;
-	}
 	return true;
 }
 
@@ -102,7 +105,7 @@ inline bool Load(SDL_Renderer *r, std::filesystem::path dir, Asset &asset) {
 
 	auto f = util::file(dir / "manifest.json");
 	pb::AssetManifest manifest;
-	if (!loadJSON(f, manifest)) {
+	if (!util::loadJSON(f, manifest)) {
 		return false;
 	}
 
@@ -111,6 +114,16 @@ inline bool Load(SDL_Renderer *r, std::filesystem::path dir, Asset &asset) {
 	}
 
 	if (!mergeTileset(r, manifest, dir, asset)) {
+		return false;
+	}
+
+	auto fm = util::file(dir / "map.json");
+	pb::Map map;
+	if (!util::loadJSON(fm, map)) {
+		return false;
+	}
+
+	if (!mergeMap(map, asset)) {
 		return false;
 	}
 

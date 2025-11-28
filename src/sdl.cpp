@@ -5,6 +5,7 @@
 #include "context/window.h"
 #include "render/base.hpp"
 #include "render/dep.hpp"
+#include "render/map.hpp"
 #include "render/player.hpp"
 #include "render/text.h"
 #include "util/path.hpp"
@@ -102,6 +103,7 @@ bool sdl::init() {
 
 void sdl::initRender() {
 	renderList.emplace_back(std::make_unique<render::Player>(rd));
+	renderList.emplace_back(std::make_unique<render::Map>(rd));
 	for (auto &ren : renderList) {
 		ren->init();
 	}

@@ -9,8 +9,8 @@
 namespace render {
 
 struct renderDep {
-	context::Misc &misc;
-	context::Scene &scene;
+	const context::Misc &misc;
+	const context::Scene &scene;
 	const asset::Asset &asset;
 	SDL_Renderer *r;
 	context::BallCluster &cb;
