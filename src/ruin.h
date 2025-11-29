@@ -1,7 +1,7 @@
 #pragma once
 
 #include "context/misc.h"
-#include "context/window.h"
+#include "context/window.hpp"
 #include "game/game.h"
 #include "region.hpp"
 #include "sdl.h"

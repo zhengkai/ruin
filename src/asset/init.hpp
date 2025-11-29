@@ -81,6 +81,9 @@ inline bool mergeTileset(SDL_Renderer *r,
 
 inline bool mergeMap(pb::Map &src, Asset &dst) {
 
+	int h = static_cast<int>(src.h());
+	int w = static_cast<int>(src.w());
+
 	for (const auto &s : src.list()) {
 
 		auto t = s.tile();
@@ -88,13 +91,21 @@ inline bool mergeMap(pb::Map &src, Asset &dst) {
 			continue;
 		}
 
+		int id = static_cast<int>(s.id());
+
 		dst.map.cell.emplace_back(MapCell{
+			.id = id,
 			.tileName = t.name(),
 			.tileID = static_cast<int>(t.id()),
-			.x = static_cast<float>(s.id() % src.w()),
-			.y = static_cast<float>(s.id() / src.w()),
+			.x = static_cast<float>(id % w),
+			.y = static_cast<float>(h - id / w),
 		});
 	}
+
+	for (const auto &c : dst.map.cell) {
+		spdlog::info("cell {} {} {}", c.id, c.x, c.y);
+	}
+
 	dst.map.w = src.w();
 	dst.map.h = src.h();
 

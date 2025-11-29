@@ -41,30 +41,19 @@ void Game::parseInput() {
 		misc.speedLevel = slv;
 		misc.speed = std::pow(2, slv);
 
-		context::ControlMsg *cm = window.controlMsg;
-		if (cm == nullptr) {
-			cm = new context::ControlMsg();
-			window.controlMsg = cm;
-		}
-
 		std::string m = std::to_string((int)std::pow(2, std::abs(slv))) + "x";
 		if (slv < 0) {
 			m = "1/" + m;
 		}
-		cm->msg = speedMsg + m;
-		cm->expireSerial = window.serial + config::fps * 2;
 	}
 
 	// window resize
 
 	if (input.winW > 0 && input.winH > 0) {
-		auto wr = window.winResize;
-		if (wr == nullptr) {
-			wr = new context::WinResize();
-			window.winResize = wr;
-		}
-		wr->w = input.winW;
-		wr->h = input.winH;
+		auto &wr = window.winResize;
+		wr.w = input.winW;
+		wr.h = input.winH;
+		wr.trigger = true;
 	}
 
 	// show ball

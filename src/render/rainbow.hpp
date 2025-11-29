@@ -2,7 +2,7 @@
 
 #include "../config.hpp"
 #include "../context/ball.h"
-#include "../context/window.h"
+#include "../context/window.hpp"
 #include "../util/hct.hpp"
 #include <SDL3/SDL_render.h>
 #include <memory>

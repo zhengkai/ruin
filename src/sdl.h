@@ -1,7 +1,7 @@
 #pragma once
 
 #include "context/scene.hpp"
-#include "context/window.h"
+#include "context/window.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
 #include "render/rainbow.hpp"

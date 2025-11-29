@@ -2,7 +2,7 @@
 #include "asset/init.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
-#include "context/window.h"
+#include "context/window.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
 #include "render/map.hpp"
@@ -42,8 +42,8 @@ inline void initWinSize(context::Window &cw) {
 
 	spdlog::info("desktop get size {}x{}", mode->w, mode->h);
 
-	cw.w = static_cast<int>(std::floor(static_cast<float>(mode->w) * 0.8f));
-	cw.h = static_cast<int>(std::floor(static_cast<float>(mode->h) * 0.8f));
+	cw.setSize(std::floor(static_cast<float>(mode->w) * 0.8f),
+		std::floor(static_cast<float>(mode->h) * 0.8f));
 }
 
 bool sdl::init() {
@@ -57,7 +57,7 @@ bool sdl::init() {
 		return false;
 	}
 
-	rd = new render::renderDep(cb, asset, r, scene, misc);
+	rd = new render::renderDep(cb, asset, r, scene, misc, window);
 
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);
@@ -144,7 +144,6 @@ void sdl::render() {
 	}
 
 	renderCounter();
-	renderControlMsg();
 
 	for (auto &ren : renderList) {
 		ren->render();
@@ -156,13 +155,13 @@ void sdl::render() {
 }
 
 void sdl::renderResize() {
-	auto wr = window.winResize;
-	if (wr == nullptr) {
+	auto &wr = window.winResize;
+	if (!wr.trigger) {
 		return;
 	}
-	window.winResize = nullptr;
-	calcGrid(wr->w, wr->h);
-	delete wr;
+	spdlog::info("sdl::renderResize called");
+	wr.trigger = false;
+	calcGrid(wr.w, wr.h);
 }
 
 void sdl::renderBrick() {
@@ -350,19 +349,6 @@ void sdl::renderBall(std::shared_ptr<context::Ball> b, SDL_Color c) {
 	SDL_RenderTexture(r, ballTex, nullptr, &rect);
 }
 
-void sdl::renderControlMsg() {
-	context::ControlMsg *c = window.controlMsg;
-	if (c == nullptr) {
-		return;
-	}
-	if (c->expireSerial < window.serial) {
-		delete c;
-		window.controlMsg = nullptr;
-		return;
-	}
-	text->rMono96(c->msg, window.w / 2, window.h - 192, Text::Align::CENTER);
-}
-
 bool sdl::toggleFullscreen() {
 	if (!window.toggleFullscreen) {
 		return false;
@@ -385,30 +371,7 @@ void sdl::calcGrid(int winW, int winH) {
 	wh *= scale;
 #endif
 
-	window.w = static_cast<int>(ww);
-	window.h = static_cast<int>(wh);
-
-	float wf = config::gridWF;
-	float hf = config::gridHF + cfgPaddingTop;
-
-	float gs = std::floor(ww / wf < wh / hf ? ww / wf : wh / hf);
-
-	window.gridSize = gs;
-	spdlog::info("gridSize = {}, win = {}x{}", gs, winW, winH);
-
-	window.startX = std::floor((ww - (gs * wf)) / 2);
-	window.startY = std::floor((wh - (gs * hf)) / 2 + (gs * cfgPaddingTop));
-	spdlog::info(
-		"grid {}x{}={}, grid pixel: {}x{}, win pixel: {}x{}, start: x={},y={}",
-		config::gridW,
-		config::gridH,
-		config::gridW * config::gridH,
-		gs * config::gridW,
-		gs * config::gridH,
-		window.w,
-		window.h,
-		window.startX,
-		window.startY);
+	window.calcGrid(winW, winH, ww, wh);
 }
 
 void sdl::renderGamepad() {

@@ -4,7 +4,7 @@
 #include "../common/control.hpp"
 #include "../context/misc.h"
 #include "../context/scene.hpp"
-#include "../context/window.h"
+#include "../context/window.hpp"
 #include "../input.hpp"
 #include "scene.hpp"
 
