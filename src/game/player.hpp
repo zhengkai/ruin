@@ -41,15 +41,16 @@ private:
 	}
 
 public:
-	Player(context::Scene &c, const asset::Asset &asset)
-		: scene(c), asset(asset) {
-		spdlog::info("player {}", scene.player.id);
+	Player(context::Scene &scene, const asset::Asset &asset)
+		: scene(scene), asset(asset) {
+
+		scene.player.asset = this->asset.character.at("samurai");
 	};
 	~Player() {};
 
 	void parse(const Control &control) {
 
-		scene.player.asset = asset.character.at("samurai");
+		scene.player.control.x = control.axisA.x;
 
 		next();
 

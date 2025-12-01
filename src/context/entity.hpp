@@ -6,6 +6,10 @@
 
 namespace context {
 
+struct Control {
+	float x = 0.0f;
+};
+
 struct Entity {
 	int id = 0;
 	float x = 0;
@@ -26,6 +30,8 @@ struct Entity {
 
 struct Character : Entity {
 	std::shared_ptr<asset::Character> asset;
+	Control control = {};
+	float speed = 2.0f;
 };
 struct Player : Character {};
 struct Enemy : Character {};

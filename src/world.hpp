@@ -46,6 +46,7 @@ public:
 
 private:
 	void _step(float deltaTime) {
+
 		b2World_Step(b2w, deltaTime, 1);
 		auto pos = b2Body_GetPosition(b2p);
 		if (pos.x < 0.0f || pos.y < 0.0f) {
@@ -56,7 +57,15 @@ private:
 			prev.p = pos;
 			b2Body_SetTransform(b2p, prev.p, prev.q);
 		}
-		d.scene.player.setPos(pos);
+
+		auto &p = d.scene.player;
+		if (p.control.x) {
+			auto vel = b2Body_GetLinearVelocity(b2p);
+			vel.x = p.control.x * p.speed;
+			b2Body_SetLinearVelocity(b2p, vel);
+		}
+
+		p.setPos(pos);
 
 		// spdlog::info("player pos {} {}", d.scene.player.x, d.scene.player.y);
 		// spdlog::info(
