@@ -15,8 +15,6 @@ struct Player : base {
 	void init() override {};
 	void render() override {
 
-		float size = 500.0f;
-
 		const auto &player = d->scene.player;
 		const auto &pose = player.pose;
 
@@ -24,7 +22,8 @@ struct Player : base {
 
 		auto tex = sprite->list[pose.step];
 
-		SDL_FRect dst = {200.0f, 200.0f, size, size};
+		SDL_FRect dst = {.x = player.x, .y = player.y, .w = 2.0f, .h = 2.0f};
+		d->window.calcCameraOffset(dst);
 
 		if (d->scene.player.pose.facing == Pose::Facing::Left) {
 			SDL_FlipMode flip = SDL_FLIP_HORIZONTAL;

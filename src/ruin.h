@@ -6,6 +6,7 @@
 #include "region.hpp"
 #include "sdl.h"
 #include "time.hpp"
+#include "world.hpp"
 
 class Ruin {
 
@@ -19,6 +20,7 @@ private:
 	std::unique_ptr<Time> t = std::make_unique<Time>();
 	std::unique_ptr<sdl> s;
 	std::unique_ptr<Game> g;
+	std::unique_ptr<World> w;
 	steady_clock::time_point prev;
 	std::vector<std::unique_ptr<Region>> region;
 

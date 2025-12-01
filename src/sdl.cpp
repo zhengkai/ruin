@@ -102,8 +102,8 @@ bool sdl::init() {
 }
 
 void sdl::initRender() {
-	renderList.emplace_back(std::make_unique<render::Player>(rd));
 	renderList.emplace_back(std::make_unique<render::Map>(rd));
+	renderList.emplace_back(std::make_unique<render::Player>(rd));
 	for (auto &ren : renderList) {
 		ren->init();
 	}
@@ -120,6 +120,8 @@ void sdl::render() {
 		return;
 	}
 	renderResize();
+
+	window.setFocus(scene.player);
 
 	auto c = config::colorBg;
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);

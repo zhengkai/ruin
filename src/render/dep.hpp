@@ -11,7 +11,7 @@ namespace render {
 
 struct renderDep {
 	const context::Misc &misc;
-	const context::Scene &scene;
+	context::Scene &scene;
 	context::Window &window;
 	const asset::Asset &asset;
 	SDL_Renderer *r;
@@ -20,7 +20,7 @@ struct renderDep {
 	renderDep(context::BallCluster &cb,
 		const asset::Asset &a,
 		SDL_Renderer *r,
-		const context::Scene &cs,
+		context::Scene &cs,
 		const context::Misc &cm,
 		context::Window &cw)
 		: misc(cm), scene(cs), window(cw), asset(a), r(r), cb(cb) {};

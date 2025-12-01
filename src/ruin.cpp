@@ -10,6 +10,7 @@
 #include "util/ball.hpp"
 #include "util/print.hpp"
 #include "util/rand.hpp"
+#include "world.hpp"
 #include <SDL3/SDL_events.h>
 #include <algorithm>
 #include <spdlog/spdlog.h>
@@ -26,6 +27,9 @@ Ruin::~Ruin() {
 }
 
 bool Ruin::init() {
+
+	scene.player.x = 10.0f;
+	scene.player.y = 13.0f;
 
 	spdlog::info("pose.type = {}", static_cast<int>(scene.player.pose.type));
 
@@ -49,6 +53,8 @@ bool Ruin::init() {
 		return false;
 	}
 	spdlog::trace("sdl init done");
+
+	w = createWorld(scene, asset);
 
 	spdlog::info("region num = {}, list = {}",
 		config::regionNum,
@@ -91,6 +97,8 @@ void Ruin::loop() {
 		stop = true;
 		return;
 	}
+
+	w->step();
 
 	spdlog::trace("dt = {:.6f}s", dt);
 	for (int i = 0; i < cfgPhyLoop; i++) {

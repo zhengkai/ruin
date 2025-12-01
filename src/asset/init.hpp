@@ -102,9 +102,9 @@ inline bool mergeMap(pb::Map &src, Asset &dst) {
 		});
 	}
 
-	for (const auto &c : dst.map.cell) {
-		spdlog::info("cell {} {} {}", c.id, c.x, c.y);
-	}
+	// for (const auto &c : dst.map.cell) {
+	// spdlog::info("cell {} {} {}", c.id, c.x, c.y);
+	// }
 
 	dst.map.w = src.w();
 	dst.map.h = src.h();
