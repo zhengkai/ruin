@@ -1,5 +1,9 @@
 # PLAN
 
+## 2025.12.01
+
+完成了最基本的镜头跟随、角色移动，都是最简单最粗糙的实现。角色和场景的贴图也有偏差，需要重新校对
+
 ## 2025.11.28
 
 [editor](https://zhengkai.github.io/ruin-editor/) 可以拖拽材质并导出 `map.json`，主体可以读 `map.json` 并正确显示 tile  
