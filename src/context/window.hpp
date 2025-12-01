@@ -24,6 +24,13 @@ struct Camera {
 	float gridSize = 1.0f;
 };
 
+struct Boundary {
+	float down = 0.0f;
+	float up = 100.0f;
+	float left = 0.0f;
+	float right = 100.0f;
+};
+
 struct Window {
 
 public:
@@ -44,6 +51,8 @@ public:
 private:
 	Focus focus = {};
 	Camera camera = {};
+	Boundary boundary = {};
+	Boundary focusBoundary = {};
 
 public:
 	void setSize(float inW, float inH) {
@@ -86,11 +95,28 @@ public:
 	}
 
 	void setFocus(float x, float y) {
+		if (x < focusBoundary.left) {
+			x = focusBoundary.left;
+		} else if (x > focusBoundary.right) {
+			x = focusBoundary.right;
+		}
 		focus.x = x;
+
+		if (y < focusBoundary.down) {
+			y = focusBoundary.down;
+		} else if (y > focusBoundary.up) {
+			y = focusBoundary.up;
+		}
 		focus.y = y;
 	};
 	void setFocus(Player p) {
 		setFocus(p.x, p.y);
+	}
+
+	void setBoundary(int x, int y) {
+		boundary.right = static_cast<float>(x);
+		boundary.up = static_cast<float>(y);
+		calcBoundary();
 	}
 
 	void calcCameraOffset(SDL_FRect &r) {
@@ -105,6 +131,16 @@ private:
 		camera.gridSize = gridSize * camera.zoom;
 		camera.cx = std::round(wf / 2.0f);
 		camera.cy = std::round(hf / 2.0f);
+		calcBoundary();
+	}
+	void calcBoundary() {
+		auto hw = wf / 2.0f / camera.gridSize - 0.5f;
+		focusBoundary.left = hw;
+		focusBoundary.right = boundary.right - hw;
+
+		auto hh = hf / 2.0f / camera.gridSize - 0.5f;
+		focusBoundary.down = hh;
+		focusBoundary.up = boundary.up - hh;
 	}
 };
 }; // namespace context
