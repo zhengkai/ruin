@@ -4,7 +4,6 @@
 #include "context/window.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
-#include "render/rainbow.hpp"
 #include "render/text.h"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_pixels.h>
@@ -27,7 +26,6 @@ private:
 	// SDL_Texture *bg;
 	SDL_Window *w = nullptr;
 	SDL_Texture *ballTex = nullptr;
-	std::unique_ptr<Rainbow> rainbow;
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:

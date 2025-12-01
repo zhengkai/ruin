@@ -92,5 +92,3 @@ constexpr bool cfgWASM = false;
 #endif
 
 constexpr int cfgPhyLoop = 1;
-
-constexpr float cfgPaddingTop = 0.8f;

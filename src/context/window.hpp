@@ -61,7 +61,7 @@ public:
 		hf = wh;
 
 		float gw = config::gridWF;
-		float gh = config::gridHF + cfgPaddingTop;
+		float gh = config::gridHF;
 
 		float gs = std::floor(ww / gw < wh / gh ? ww / gw : wh / gh);
 
@@ -69,7 +69,7 @@ public:
 		spdlog::info("gridSize = {}, win = {}x{}", gs, winW, winH);
 
 		startX = std::floor((ww - (gs * gw)) / 2);
-		startY = std::floor((wh - (gs * gh)) / 2 + (gs * cfgPaddingTop));
+		startY = std::floor((wh - (gs * gh)) / 2);
 		spdlog::info("grid1 {}x{}={}, grid pixel: {}x{}, win pixel: {}x{}, "
 					 "start: x={},y={}",
 			config::gridW,
