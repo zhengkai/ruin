@@ -2,7 +2,6 @@
 
 #include "../common/pose.hpp"
 #include "base.hpp"
-#include "pb/asset.pb.h"
 #include <SDL3_image/SDL_image.h>
 #include <spdlog/spdlog.h>
 
@@ -22,22 +21,14 @@ struct Player : base {
 
 		auto tex = sprite->list[pose.step];
 
-		SDL_FRect dst = {.x = player.x, .y = player.y, .w = 2.0f, .h = 2.0f};
-		d->window.calcCameraOffset(dst);
+		SDL_FRect dst = {
+			.x = player.x, .y = player.y + 0.5f, .w = 3.0f, .h = 3.0f};
 
-		if (d->scene.player.pose.facing == Pose::Facing::Left) {
-			SDL_FlipMode flip = SDL_FLIP_HORIZONTAL;
-			SDL_RenderTextureRotated(
-				d->r, tex, nullptr, &dst, 0.0, nullptr, flip);
+		if (player.pose.facing == Pose::Facing::Left) {
+			renderTextureFlipX(tex, dst);
 		} else {
-			SDL_RenderTexture(d->r, tex, nullptr, &dst);
+			renderTexture(tex, dst);
 		}
-
-		auto tile =
-			d->asset.tileset.at(pb::Tileset_Name::Tileset_Name_grassland)
-				->list[1];
-		SDL_FRect tileDst = {100.0f, 700.0f, 64.0f, 64.0f};
-		SDL_RenderTexture(d->r, tile, nullptr, &tileDst);
 	};
 };
 }; // namespace render

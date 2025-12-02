@@ -8,8 +8,7 @@
 inline static b2ShapeDef dsd = [] {
 	b2ShapeDef sd = b2DefaultShapeDef();
 	sd.material = b2DefaultSurfaceMaterial();
-	sd.material.friction = 0.0f;
-	sd.density = 1.0f;
+	sd.material.friction = 0.8f;
 	return sd;
 }();
 
@@ -67,9 +66,9 @@ private:
 
 		p.setPos(pos);
 
-		// spdlog::info("player pos {} {}", d.scene.player.x, d.scene.player.y);
-		// spdlog::info(
-		// "terrain size {} {}", terrain.size(), d.asset.map.cell.size());
+		// spdlog::info("player pos {} {}", d.scene.player.x,
+		// d.scene.player.y); spdlog::info( "terrain size {} {}",
+		// terrain.size(), d.asset.map.cell.size());
 	};
 	void init() {
 		initMap();
@@ -78,10 +77,11 @@ private:
 	void initPlayer() {
 		b2BodyDef def = b2DefaultBodyDef();
 		def.type = b2_dynamicBody;
-		def.position = d.scene.player.getPos();
+		auto &p = d.scene.player;
+		def.position = p.getPos();
 		b2p = b2CreateBody(b2w, &def);
 
-		b2Polygon box = b2MakeBox(0.5f, 0.5f);
+		b2Polygon box = b2MakeBox(p.w / 2.0f, p.h / 2.0f);
 		b2ShapeId shape = b2CreatePolygonShape(b2p, &dsd, &box);
 		b2Shape_SetRestitution(shape, 0.0f);
 

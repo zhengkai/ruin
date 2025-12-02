@@ -120,8 +120,8 @@ public:
 	}
 
 	void calcCameraOffset(SDL_FRect &r) {
-		r.x = camera.cx - camera.gridSize * (focus.x - r.x);
-		r.y = camera.cy + camera.gridSize * (focus.y - r.y);
+		r.x = camera.cx - camera.gridSize * (focus.x - r.x + r.w / 2.0f);
+		r.y = camera.cy + camera.gridSize * (focus.y - r.y - r.h / 2.0f);
 		r.w *= camera.gridSize;
 		r.h *= camera.gridSize;
 	};

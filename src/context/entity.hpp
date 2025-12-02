@@ -12,8 +12,10 @@ struct Control {
 
 struct Entity {
 	int id = 0;
-	float x = 0;
-	float y = 0;
+	float x = 0.0f;
+	float y = 0.0f;
+	float w = 1.0f;
+	float h = 1.0f;
 	int z = 0;
 	Pose pose = {};
 
@@ -26,6 +28,9 @@ struct Entity {
 		x = pos.x;
 		y = pos.y;
 	}
+	SDL_FRect getRect() {
+		return SDL_FRect{.x = x, .y = y, .w = w, .h = h};
+	}
 };
 
 struct Character : Entity {
@@ -33,7 +38,12 @@ struct Character : Entity {
 	Control control = {};
 	float speed = 2.0f;
 };
-struct Player : Character {};
+struct Player : Character {
+	Player() {
+		w = 1.0f;
+		h = 2.0f;
+	}
+};
 struct Enemy : Character {};
 
 }; // namespace context

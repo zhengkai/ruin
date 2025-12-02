@@ -10,6 +10,10 @@ struct MapCell {
 	int tileID = 1;
 	float x = 0.0;
 	float y = 0.0;
+
+	SDL_FRect getRect() const {
+		return SDL_FRect{.x = x, .y = y, .w = 1.0f, .h = 1.0f};
+	}
 };
 
 struct Map {
