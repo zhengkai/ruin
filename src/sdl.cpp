@@ -6,6 +6,7 @@
 #include "render/base.hpp"
 #include "render/debug.hpp"
 #include "render/dep.hpp"
+#include "render/gamepad.hpp"
 #include "render/map.hpp"
 #include "render/player.hpp"
 #include "render/text.h"
@@ -106,6 +107,7 @@ void sdl::initRender() {
 	renderList.emplace_back(std::make_unique<render::Map>(rd));
 	renderList.emplace_back(std::make_unique<render::Player>(rd));
 	renderList.emplace_back(std::make_unique<render::Debug>(rd));
+	renderList.emplace_back(std::make_unique<render::Gamepad>(rd));
 	for (auto &ren : renderList) {
 		ren->init();
 	}

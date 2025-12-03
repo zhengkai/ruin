@@ -103,6 +103,14 @@ public:
 			axisB.y = e.value;
 			axisB.hasY = true;
 			break;
+		case 4:
+			btnLT.v = e.value;
+			btnLT.has = true;
+			break;
+		case 5:
+			btnRT.v = e.value;
+			btnRT.has = true;
+			break;
 		default:
 			spdlog::info("gamepad axis {} {}", e.axis, e.value);
 			break;

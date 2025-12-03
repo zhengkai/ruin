@@ -33,5 +33,8 @@ struct base {
 		d->window.calcCameraOffset(rect);
 		return SDL_RenderFillRect(d->r, &rect);
 	};
+	bool renderUIFillRect(SDL_FRect &rect) {
+		return SDL_RenderFillRect(d->r, &rect);
+	};
 };
 }; // namespace render
