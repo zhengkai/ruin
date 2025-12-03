@@ -4,11 +4,21 @@
 #include "util/event.hpp"
 #include <SDL3/SDL_events.h>
 
+struct InputButton {
+	bool press = false;
+	bool has = false;
+};
+
 struct InputAxis {
 	int x = 0;
 	int y = 0;
 	bool hasX = false;
 	bool hasY = false;
+};
+
+struct InputTrigger {
+	int v = 0;
+	bool has = false;
 };
 
 struct Input {
@@ -24,14 +34,14 @@ public:
 	int speed = 0;
 	bool fullscreen = false;
 
-	bool btnA = false;
-	bool btnB = false;
-	bool btnX = false;
-	bool btnY = false;
-	bool hasBtnA = false;
-	bool hasBtnB = false;
-	bool hasBtnX = false;
-	bool hasBtnY = false;
+	InputButton btnA = {};
+	InputButton btnB = {};
+	InputButton btnX = {};
+	InputButton btnY = {};
+	InputButton btnRB = {};
+	InputButton btnLB = {};
+	InputTrigger btnLT = {};
+	InputTrigger btnRT = {};
 	InputAxis axisA = {};
 	InputAxis axisB = {};
 
@@ -79,24 +89,28 @@ public:
 		switch (e.axis) {
 		case 0:
 			axisA.x = e.value;
-			axisA.hasX = e.value;
+			axisA.hasX = true;
 			break;
 		case 1:
 			axisA.y = e.value;
-			axisA.hasY = e.value;
+			axisA.hasY = true;
 			break;
 		case 2:
 			axisB.x = e.value;
-			axisB.hasX = e.value;
+			axisB.hasX = true;
 			break;
 		case 3:
 			axisB.y = e.value;
-			axisB.hasY = e.value;
+			axisB.hasY = true;
+			break;
+		default:
+			spdlog::info("gamepad axis {} {}", e.axis, e.value);
 			break;
 		}
 	}
 
 	void gamepadButton(const SDL_GamepadButtonEvent &e, bool down) {
+
 		switch (e.button) {
 		case SDL_GAMEPAD_BUTTON_START:
 			quit = true;
@@ -106,21 +120,24 @@ public:
 
 			switch (e.button) {
 			case SDL_GAMEPAD_BUTTON_NORTH:
-				btnY = down;
-				hasBtnY = true;
+				btnY = {down, true};
 				break;
 			case SDL_GAMEPAD_BUTTON_SOUTH:
-				btnA = down;
-				hasBtnA = true;
+				btnA = {down, true};
 				break;
 			case SDL_GAMEPAD_BUTTON_WEST:
-				btnX = down;
-				hasBtnX = true;
+				btnX = {down, true};
 				break;
 			case SDL_GAMEPAD_BUTTON_EAST:
-				btnB = down;
-				hasBtnB = true;
+				btnB = {down, true};
 				break;
+			case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
+				btnLB = {down, true};
+				break;
+			case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
+				btnRB = {down, true};
+				break;
+
 			default:
 				spdlog::info("gamepad button {}", s);
 				break;

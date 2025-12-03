@@ -77,6 +77,7 @@ private:
 	void initPlayer() {
 		b2BodyDef def = b2DefaultBodyDef();
 		def.type = b2_dynamicBody;
+		def.fixedRotation = true;
 		auto &p = d.scene.player;
 		def.position = p.getPos();
 		b2p = b2CreateBody(b2w, &def);

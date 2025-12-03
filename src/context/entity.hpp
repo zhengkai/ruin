@@ -6,7 +6,7 @@
 
 namespace context {
 
-struct Control {
+struct CharacterControl {
 	float x = 0.0f;
 };
 
@@ -35,7 +35,7 @@ struct Entity {
 
 struct Character : Entity {
 	std::shared_ptr<asset::Character> asset;
-	Control control = {};
+	CharacterControl control = {};
 	float speed = 2.0f;
 };
 struct Player : Character {

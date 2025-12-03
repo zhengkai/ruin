@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../asset/asset.hpp"
-#include "../common/control.hpp"
 #include "../common/pose.hpp"
 #include "../context/entity.hpp"
 #include "../context/scene.hpp"
+#include "../context/window.hpp"
 #include "../util/pose.hpp"
 #include <pb/pose.pb.h>
 #include <spdlog/spdlog.h>
@@ -48,7 +48,7 @@ public:
 	};
 	~Player() {};
 
-	void parse(const Control &control) {
+	void parse(const context::Control &control) {
 
 		scene.player.control.x = control.axisA.x;
 
@@ -60,7 +60,7 @@ public:
 		parseAttack(control);
 	}
 
-	void parseAttack(const Control &control) {
+	void parseAttack(const context::Control &control) {
 		if (!control.btnA) {
 			return;
 		}
@@ -70,7 +70,7 @@ public:
 		}
 	}
 
-	void parseFacing(const Control &control) {
+	void parseFacing(const context::Control &control) {
 		if (util::poseIsAttack(pose.type)) {
 			return;
 		}

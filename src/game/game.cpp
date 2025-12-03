@@ -1,5 +1,4 @@
 #include "game.h"
-#include "../common/control.hpp"
 #include "../config.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
@@ -25,7 +24,7 @@ bool Game::parse() {
 	}
 	parseInput();
 
-	scene.parse(control);
+	scene.parse(window.control);
 
 	return true;
 }
@@ -72,27 +71,37 @@ void Game::parseInput() {
 	// gamepad
 
 	parseInputButton();
-	parseInputAxis(input.axisA, axisA, control.axisA);
-	parseInputAxis(input.axisB, axisB, control.axisB);
+	parseInputAxis(input.axisA, prevAxisA, window.control.axisA);
+	parseInputAxis(input.axisB, prevAxisB, window.control.axisB);
+}
+
+void parseInputButton(InputButton &in, bool &out) {
+	if (in.has) {
+		out = in.press;
+	}
 }
 
 void Game::parseInputButton() {
-	if (input.hasBtnA) {
-		control.btnA = input.btnA;
+
+	auto &c = window.control;
+
+	::parseInputButton(input.btnA, c.btnA);
+	::parseInputButton(input.btnB, c.btnB);
+	::parseInputButton(input.btnX, c.btnX);
+	::parseInputButton(input.btnY, c.btnY);
+	::parseInputButton(input.btnRB, c.btnRB);
+	::parseInputButton(input.btnLB, c.btnLB);
+	if (input.btnLT.has) {
+		c.btnLT = util::gamepadConvert(input.btnLT.v);
 	}
-	if (input.hasBtnB) {
-		control.btnB = input.btnB;
-	}
-	if (input.hasBtnX) {
-		control.btnX = input.btnX;
-	}
-	if (input.hasBtnY) {
-		control.btnY = input.btnY;
+	if (input.btnRT.has) {
+		c.btnRT = util::gamepadConvert(input.btnRT.v);
 	}
 }
 
-void Game::parseInputAxis(
-	const InputAxis &in, ControlAxis &prev, ControlAxis &out) {
+void Game::parseInputAxis(const InputAxis &in,
+	context::ControlAxis &prev,
+	context::ControlAxis &out) {
 	if (!in.hasX && !in.hasY) {
 		return;
 	}

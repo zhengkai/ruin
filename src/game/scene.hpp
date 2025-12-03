@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../asset/asset.hpp"
-#include "../common/control.hpp"
 #include "../context/scene.hpp"
+#include "../context/window.hpp"
 #include "player.hpp"
 
 class Scene {
@@ -19,7 +19,7 @@ public:
 		: c(c), asset(asset), player(c, asset) {};
 	~Scene() {};
 
-	bool parse(const Control &control) {
+	bool parse(const context::Control &control) {
 
 		player.parse(control);
 

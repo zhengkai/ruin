@@ -6,6 +6,27 @@
 
 namespace context {
 
+struct ControlAxis {
+	float x = 0.0f;
+	float y = 0.0f;
+};
+
+struct Control {
+
+	bool btnA = false;
+	bool btnB = false;
+	bool btnX = false;
+	bool btnY = false;
+	bool btnRB = false;
+	bool btnLB = false;
+
+	float btnLT = 0.0f;
+	float btnRT = 0.0f;
+
+	ControlAxis axisA = {};
+	ControlAxis axisB = {};
+};
+
 struct WinResize {
 	int w = 0;
 	int h = 0;
@@ -47,6 +68,7 @@ public:
 	WinResize winResize = {};
 	bool showBall = true;
 	bool toggleFullscreen = false;
+	Control control = {};
 
 private:
 	Focus focus = {};
