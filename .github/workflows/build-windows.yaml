@@ -1,9 +1,9 @@
-name: Build Windows Release
+name: Build Windows Package
 
 on:
   push:
     branches:
-      - none
+      - master
 
 concurrency:
   group: build-windows
@@ -34,7 +34,7 @@ jobs:
 
       - name: Checkout
         run: |
-          git clone --depth 1 "https://github.com/zhengkai/ruin.git" .
+          git clone --depth 1 "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" .
 
       - name: Clone vcpkg
         run: |
@@ -52,14 +52,41 @@ jobs:
       - name: Build with CMake
         run: cmake --build build --config Release -- /m
 
-      - name: Download Font
-        run: Invoke-WebRequest -Uri "https://github.com/JetBrains/JetBrainsMono/raw/refs/heads/master/fonts/otf/JetBrainsMono-Regular.otf" -OutFile "build\Release\JetBrainsMono-Regular.otf"
-
-      - name: Copy Image
-        run: Copy-Item -Path "misc\circle.webp" -Destination "build\Release\circle.webp"
+      - name: Download asset
+        run: |
+          git clone --depth 1 "https://github.com/zhengkai/ruin-asset.git" asset
+          Copy-Item -Recurse 'asset*' 'build\Release' -Exclude '.git*'
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ruin-windows
           path: build\Release\*
+
+      - name: Delete old daily tag
+        run: |
+          try { git tag -d daily } catch {}
+          try { git push origin :refs/tags/daily } catch {}
+
+      - name: Recreate daily tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag daily
+          git push origin daily --force
+
+      - name: Zip build output
+        run: |
+          cd build\Release
+          7z a ..\..\ruin-win.zip .\*
+
+      - name: Create/Update Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: daily
+          name: Daily Build
+          prerelease: true
+          body: "Latest daily build."
+          files: ruin-win.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.RUIN_TOKEN }}
