@@ -38,6 +38,10 @@ public:
 	InputButton btnB = {};
 	InputButton btnX = {};
 	InputButton btnY = {};
+	InputButton btnU = {};
+	InputButton btnD = {};
+	InputButton btnL = {};
+	InputButton btnR = {};
 	InputButton btnRB = {};
 	InputButton btnLB = {};
 	InputTrigger btnLT = {};
@@ -139,13 +143,24 @@ public:
 			case SDL_GAMEPAD_BUTTON_EAST:
 				btnB = {down, true};
 				break;
+			case SDL_GAMEPAD_BUTTON_DPAD_UP:
+				btnU = {down, true};
+				break;
+			case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
+				btnD = {down, true};
+				break;
+			case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
+				btnL = {down, true};
+				break;
+			case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
+				btnR = {down, true};
+				break;
 			case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
 				btnLB = {down, true};
 				break;
 			case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
 				btnRB = {down, true};
 				break;
-
 			default:
 				spdlog::info("gamepad button {}", s);
 				break;

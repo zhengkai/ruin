@@ -17,6 +17,12 @@ struct Control {
 	bool btnB = false;
 	bool btnX = false;
 	bool btnY = false;
+
+	bool btnU = false;
+	bool btnD = false;
+	bool btnL = false;
+	bool btnR = false;
+
 	bool btnRB = false;
 	bool btnLB = false;
 
@@ -39,7 +45,7 @@ struct Focus {
 };
 
 struct Camera {
-	float zoom = 1.5f;
+	float zoom = 3.5f;
 	float cx = 0.0f; // cx/cy (中心像素的坐标)
 	float cy = 0.0f;
 	float gridSize = 1.0f;

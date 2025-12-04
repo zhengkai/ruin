@@ -89,6 +89,12 @@ void Game::parseInputButton() {
 	::parseInputButton(input.btnB, c.btnB);
 	::parseInputButton(input.btnX, c.btnX);
 	::parseInputButton(input.btnY, c.btnY);
+
+	::parseInputButton(input.btnU, c.btnU);
+	::parseInputButton(input.btnD, c.btnD);
+	::parseInputButton(input.btnL, c.btnL);
+	::parseInputButton(input.btnR, c.btnR);
+
 	::parseInputButton(input.btnRB, c.btnRB);
 	::parseInputButton(input.btnLB, c.btnLB);
 	if (input.btnLT.has) {
@@ -109,7 +115,7 @@ void Game::parseInputAxis(const InputAxis &in,
 		out.x = prev.x = util::gamepadConvert(in.x);
 	}
 	if (in.hasY) {
-		out.y = prev.y = util::gamepadConvert(in.y);
+		out.y = prev.y = util::gamepadConvert(-in.y);
 	}
 	if (prev.x != 0.0f && prev.y != 0.0f) {
 		float speed = std::sqrt(prev.x * prev.x + prev.y * prev.y);

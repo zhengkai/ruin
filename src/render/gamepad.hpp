@@ -13,22 +13,97 @@ struct Gamepad : base {
 
 		auto &c = d->window.control;
 
-		trigger(c.btnLT, 150.0f);
-		trigger(c.btnRT, 100.0f);
+		float x;
+
+		x = 9.25f;
+		button(c.btnY, x + 1.25f, 0.0f);
+		button(c.btnX, x, 1.25f);
+		button(c.btnB, x + 2.5f, 1.25f);
+		button(c.btnA, x + 1.25f, 2.5f);
+
+		x = 5.0f;
+		button(c.btnU, x + 1.25f, 0.0f);
+		button(c.btnL, x, 1.25f);
+		button(c.btnR, x + 2.5f, 1.25f);
+		button(c.btnD, x + 1.25f, 2.5f);
+
+		button(c.btnLB, 0.0f, 0.0f);
+		button(c.btnRB, 16.75f, 0.0f);
+
+		axis(c.axisA, 1.25f);
+		axis(c.axisB, 13.0f);
+
+		trigger(c.btnLT, 0.0f);
+		trigger(c.btnRT, 16.75f);
 	};
 
-	void trigger(float t, float x) {
+	void button(bool v, float x, float y) {
+
+		if (v) {
+			colorValid();
+		} else {
+			colorInvalid();
+		}
+
+		SDL_FRect r = {.x = x, .y = y, .w = 1.0f, .h = 1.0f};
+
+		renderGamepad(r);
+	}
+
+	void trigger(float v, float x) {
+
+		colorInvalid();
+		SDL_FRect r = {.x = x, .y = 1.25f, .w = 1.0f, .h = 2.25f};
+		auto ra = r;
+		renderGamepad(r);
+
+		if (!v) {
+			return;
+		}
+
+		colorValid();
+		ra.h *= v;
+		renderGamepad(ra);
+	}
+
+	void axis(context::ControlAxis &v, float x) {
+
+		colorInvalid();
+		SDL_FRect r = {.x = x, .y = 0.0f, .w = 3.5f, .h = 3.5f};
+		renderGamepad(r);
+
+		// spdlog::info("Axis x:{:.3f} y:{:.3f}", v.x, v.y);
+
+		if (v.x || v.y) {
+			colorValid();
+			r = {.x = x + (1 + v.x) * 1.25f,
+				.y = (1 - v.y) * 1.25f,
+				.w = 1.0f,
+				.h = 1.0f};
+			renderGamepad(r);
+		}
+	}
+
+	void colorInvalid() {
+		SDL_SetRenderDrawColor(d->r, 50, 70, 90, 192);
+	}
+	void colorValid() {
+		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 255);
+	}
+
+	void renderGamepad(SDL_FRect &r) {
+
+		float grid = 50.0f;
 
 		auto &w = d->window;
+		float x = w.wf - grid * 18.25f;
+		float y = w.hf - grid * 4.0f;
 
-		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 192);
+		r.x = x + r.x * grid;
+		r.y = y + r.y * grid;
+		r.w = r.w * grid;
+		r.h = r.h * grid;
 
-		SDL_FRect r = {
-			.x = w.wf - x, .y = w.hf - 100.0f, .w = 30.0f, .h = 80.0f};
-		renderUIFillRect(r);
-
-		SDL_SetRenderDrawColor(d->r, 100, 130, 255, 192);
-		r.h = 80.0f * t;
 		renderUIFillRect(r);
 	}
 };
