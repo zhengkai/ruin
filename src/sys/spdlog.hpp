@@ -7,8 +7,16 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 #endif
+#ifdef _MSC_VER
+#include <windows.h>
+#endif
 
 inline void spdlogInit() {
+
+#ifdef _MSC_VER
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
+#endif
 
 #ifndef __EMSCRIPTEN__
 	spdlog::init_thread_pool(8192, 1);

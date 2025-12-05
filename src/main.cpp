@@ -1,4 +1,3 @@
-#include "asset/init.hpp"
 #include "ruin.h"
 #include "sys/arg.hpp"
 #include "sys/spdlog.hpp"
