@@ -138,7 +138,11 @@ inline bool Load(SDL_Renderer *r, std::filesystem::path dir, Asset &asset) {
 		return false;
 	}
 
+#ifdef _MSC_VER
+	spdlog::info(L"Loading asset from {}", f.wstring());
+#else
 	spdlog::info("Loading asset from {}", f);
+#endif
 	return true;
 };
 }; // namespace asset

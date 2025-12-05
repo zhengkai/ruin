@@ -31,8 +31,6 @@ bool Ruin::init() {
 	scene.player.x = 10.0f;
 	scene.player.y = 13.0f;
 
-	spdlog::info("pose.type = {}", static_cast<int>(scene.player.pose.type));
-
 	cb.group =
 		util::genBallGroupList(config::gridWF, config::gridHF, config::region);
 

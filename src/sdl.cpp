@@ -66,7 +66,6 @@ bool sdl::init() {
 
 	SDL_RenderPresent(r);
 	auto img = util::file("asset/pong/circle.webp");
-	spdlog::info("img {}", img);
 
 	SDL_Surface *surf = IMG_Load(img.c_str());
 	if (!surf) {

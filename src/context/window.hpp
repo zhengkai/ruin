@@ -103,19 +103,16 @@ public:
 		float gs = std::floor(ww / gw < wh / gh ? ww / gw : wh / gh);
 
 		gridSize = gs;
-		spdlog::info("gridSize = {}, win = {}x{}", gs, winW, winH);
+		spdlog::info("gridSize = {}, win pixel = {}x{}", gs, w, h);
 
 		startX = std::floor((ww - (gs * gw)) / 2);
 		startY = std::floor((wh - (gs * gh)) / 2);
-		spdlog::info("grid1 {}x{}={}, grid pixel: {}x{}, win pixel: {}x{}, "
-					 "start: x={},y={}",
+		spdlog::info("cell num: {}x{}={}, grid pixel: {}x{},  start: x={},y={}",
 			config::gridW,
 			config::gridH,
 			config::gridW * config::gridH,
 			gs * config::gridW,
 			gs * config::gridH,
-			w,
-			h,
 			startX,
 			startY);
 
