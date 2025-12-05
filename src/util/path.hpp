@@ -21,7 +21,12 @@ inline std::string file(const std::filesystem::path in) {
 	for (const auto &dir : config::dirList) {
 		auto fullPath = dir / in;
 		if (fs::exists(fullPath)) {
-			return fullPath.string();
+			auto u8 = fullPath.u8string();
+			std::string s(u8.begin(), u8.end());
+#ifdef _MSC_VER
+			std::ranges::replace(s, '/', '\\');
+#endif
+			return s;
 		}
 	}
 	auto s = in.string();

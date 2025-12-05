@@ -1,23 +1,24 @@
 #pragma once
 
-#include <fstream>
 #include <google/protobuf/util/json_util.h>
 #include <spdlog/spdlog.h>
 #include <string>
 
 namespace util {
 
-inline std::string loadJSONFile(std::string path) {
-	std::ifstream ifs(path);
-	if (!ifs.is_open()) {
-		return "";
+inline std::string loadJSONFile(const std::string &path) {
+
+	SDL_IOStream *io = SDL_IOFromFile(path.c_str(), "rb");
+	if (!io) {
+		return {};
 	}
-	std::string j((std::istreambuf_iterator<char>(ifs)),
-		std::istreambuf_iterator<char>());
-	if (ifs.fail() && !ifs.eof()) {
-		return "";
-	}
-	return j;
+
+	Sint64 size = SDL_GetIOSize(io);
+	std::string buf(size, '\0');
+	SDL_ReadIO(io, buf.data(), size);
+	SDL_CloseIO(io);
+
+	return buf;
 };
 
 inline bool loadJSON(std::string file, google::protobuf::Message &m) {

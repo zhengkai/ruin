@@ -6,6 +6,8 @@
 #include <SDL3_ttf/SDL_ttf.h>
 #endif
 
+static std::filesystem::path fontFile = "asset/font/JetBrainsMono-Regular.otf";
+
 Text::Text() {
 }
 
@@ -19,13 +21,13 @@ bool Text::init(SDL_Renderer *r) {
 		return false;
 	}
 
-	fMono32 = TTF_OpenFont(util::file("JetBrainsMono-Regular.otf").c_str(), 32);
+	fMono32 = TTF_OpenFont(util::file(fontFile).c_str(), 32);
 	if (!fMono32) {
 		error("init fMono32 fail: {}");
 		return false;
 	}
 
-	fMono96 = TTF_OpenFont(util::file("JetBrainsMono-Regular.otf").c_str(), 96);
+	fMono96 = TTF_OpenFont(util::file(fontFile).c_str(), 96);
 	if (!fMono96) {
 		error("init fMono32 fail: {}");
 		return false;
