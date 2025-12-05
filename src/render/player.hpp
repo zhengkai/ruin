@@ -14,17 +14,16 @@ struct Player : base {
 	void init() override {};
 	void render() override {
 
-		const auto &player = d->scene.player;
-		const auto &pose = player.pose;
+		const auto &p = d->scene.player;
+		const auto &po = p.pose;
 
-		const auto sprite = player.asset->sprite.at(pose.type);
+		const auto sprite = p.asset->sprite.at(po.type);
 
-		auto tex = sprite->list[pose.step];
+		auto tex = sprite->list[po.step];
 
-		SDL_FRect dst = {
-			.x = player.x, .y = player.y + 0.5f, .w = 3.0f, .h = 3.0f};
+		SDL_FRect dst = {.x = p.x, .y = p.y + 0.375f, .w = 2.25f, .h = 2.25f};
 
-		if (player.pose.facing == Pose::Facing::Left) {
+		if (po.facing == Pose::Facing::Left) {
 			renderTextureFlipX(tex, dst);
 		} else {
 			renderTexture(tex, dst);

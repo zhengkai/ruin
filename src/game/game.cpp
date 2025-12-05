@@ -1,17 +1,12 @@
 #include "game.h"
-#include "../config.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
 #include "../util/input.hpp"
-#include <algorithm>
 
 static std::string speedMsg = "Speed Level: ";
 
-Game::Game(context::Scene &cs,
-	context::Window &cw,
-	context::Misc &cm,
-	const asset::Asset &asset)
-	: window(cw), misc(cm), scene(Scene(cs, asset)) {
+Game::Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset)
+	: window(cw), scene(Scene(cw.control, cs, asset)) {
 }
 
 Game::~Game() {
@@ -24,27 +19,12 @@ bool Game::parse() {
 	}
 	parseInput();
 
-	scene.parse(window.control);
+	scene.parse();
 
 	return true;
 }
 
 void Game::parseInput() {
-
-	// control speed
-
-	if (input.speed != 0) {
-		int slv = misc.speedLevel + input.speed;
-		slv = std::max(
-			-config::speedLevelMax, std::min(config::speedLevelMax, slv));
-		misc.speedLevel = slv;
-		misc.speed = std::pow(2, slv);
-
-		std::string m = std::to_string((int)std::pow(2, std::abs(slv))) + "x";
-		if (slv < 0) {
-			m = "1/" + m;
-		}
-	}
 
 	// window resize
 
@@ -53,12 +33,6 @@ void Game::parseInput() {
 		wr.w = input.winW;
 		wr.h = input.winH;
 		wr.trigger = true;
-	}
-
-	// show ball
-
-	if (input.space) {
-		window.showBall = !window.showBall;
 	}
 
 	// fullscreen toggle

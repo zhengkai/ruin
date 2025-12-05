@@ -58,7 +58,7 @@ bool Ruin::init() {
 		config::regionNum,
 		util::joinVector(config::region));
 
-	g = std::make_unique<Game>(scene, window, misc, asset);
+	g = std::make_unique<Game>(scene, window, asset);
 
 	return true;
 }

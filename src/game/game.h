@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../asset/asset.hpp"
-#include "../context/misc.h"
 #include "../context/scene.hpp"
 #include "../context/window.hpp"
 #include "../input.hpp"
@@ -11,7 +10,6 @@ class Game {
 
 private:
 	context::Window &window;
-	context::Misc &misc;
 
 	Input input = {};
 	Scene scene;
@@ -20,10 +18,7 @@ private:
 	context::ControlAxis prevAxisB;
 
 public:
-	Game(context::Scene &cs,
-		context::Window &cw,
-		context::Misc &cm,
-		const asset::Asset &asset);
+	Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset);
 	~Game();
 
 	bool parse();

@@ -8,6 +8,7 @@
 class Scene {
 
 private:
+	const context::Control &control;
 	context::Scene &c;
 	const asset::Asset &asset;
 
@@ -15,13 +16,15 @@ private:
 	bool lastRight = true;
 
 public:
-	Scene(context::Scene &c, const asset::Asset &asset)
-		: c(c), asset(asset), player(c, asset) {};
+	Scene(const context::Control &control,
+		context::Scene &c,
+		const asset::Asset &asset)
+		: control(control), c(c), asset(asset), player(control, c, asset) {};
 	~Scene() {};
 
-	bool parse(const context::Control &control) {
+	bool parse() {
 
-		player.parse(control);
+		player.parse();
 
 		c.player.pose = player.pose;
 

@@ -12,18 +12,58 @@
 class Player {
 
 private:
+	const context::Control &control;
 	context::Scene &scene;
 	const asset::Asset &asset;
+	context::Player &p;
 
 public:
+	int jumpCnt = 0;
 	int serial = 0;
 	Pose pose = {};
 	bool lastRight = true;
+	b2Vec2 prevPos = {};
+
+public:
+	Player(const context::Control &control,
+		context::Scene &scene,
+		const asset::Asset &asset)
+		: control(control), scene(scene), asset(asset), p(scene.player) {
+
+		p.asset = this->asset.character.at("samurai");
+		prevPos = p.getPos();
+	};
+	~Player() {};
+
+	void parse() {
+
+		p.command.x = control.axisA.x;
+
+		next();
+
+		// util::poseIsAttack();
+
+		parseFacing(control.axisA.x);
+		if (control.btnX) {
+			parseAttack();
+		}
+		if (control.btnA) {
+			parseJump();
+		}
+		prevPos = p.getPos();
+	}
 
 private:
 	void next() {
 
-		auto dur = scene.player.asset->sprite.at(pose.type)->duration;
+		if (jumpCnt) {
+			jumpCnt++;
+			if (jumpCnt > 30) {
+				jumpCnt = 0;
+			}
+		}
+
+		auto &dur = p.asset->sprite.at(pose.type)->duration;
 
 		auto frameLimit = dur[pose.step];
 
@@ -34,50 +74,77 @@ private:
 			if (static_cast<size_t>(pose.step) >= dur.size()) {
 				pose.step = 0;
 				if (util::poseIsAttack(pose.type)) {
-					pose.type = pb::Pose_Type::Pose_Type_idle;
+					changePose(pb::Pose_Type::Pose_Type_idle);
 				}
 			}
 		}
-	}
 
-public:
-	Player(context::Scene &scene, const asset::Asset &asset)
-		: scene(scene), asset(asset) {
+		if (prevPos.y == p.y) {
+			if (pose.type == pb::Pose_Type::Pose_Type_jump) {
+				changePose(pb::Pose_Type::Pose_Type_idle);
+			}
+		} else {
+			float diff = prevPos.y - p.y;
+			// spdlog::info("y diff {:6f}", prevPos.y - scene.player.y);
+			if ((diff > 0.001f || diff < -0.001f) &&
+				pose.type != pb::Pose_Type::Pose_Type_jump &&
+				!util::poseIsAttack(pose.type)) {
 
-		scene.player.asset = this->asset.character.at("samurai");
-	};
-	~Player() {};
-
-	void parse(const context::Control &control) {
-
-		scene.player.control.x = control.axisA.x;
-
-		next();
-
-		// util::poseIsAttack();
-
-		parseFacing(control);
-		parseAttack(control);
-	}
-
-	void parseAttack(const context::Control &control) {
-		if (!control.btnA) {
-			return;
+				changePose(pb::Pose_Type::Pose_Type_jump);
+			}
 		}
+		if (pose.type == pb::Pose_Type::Pose_Type_idle && control.axisA.x) {
+			changePose(pb::Pose_Type::Pose_Type_run);
+		}
+		if (pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
+			changePose(pb::Pose_Type::Pose_Type_idle);
+		}
+		if (control.btnA) {
+
+			parseJump();
+		}
+	}
+
+	void changePose(pb::Pose_Type p) {
+		if (pose.type != p) {
+			pose.step = 0;
+		}
+		pose.type = p;
+	}
+
+	void parseAttack() {
 		if (!util::poseIsAttack(pose.type)) {
 			pose.type = pb::Pose_Type::Pose_Type_attack1;
 			pose.step = 0;
 		}
 	}
 
-	void parseFacing(const context::Control &control) {
+	void parseJump() {
+
+		if (jumpCnt) {
+			// spdlog::info("jump cooldown {}", jumpCnt);
+			return;
+		}
+
+		if (pose.type != pb::Pose_Type::Pose_Type_idle &&
+			pose.type != pb::Pose_Type::Pose_Type_walk) {
+			return;
+		}
+		jumpCnt = 1;
+
+		scene.player.command.jump = true;
+
+		changePose(pb::Pose_Type::Pose_Type_jump);
+	}
+
+	void parseFacing(const float &x) {
 		if (util::poseIsAttack(pose.type)) {
 			return;
 		}
 		bool right = lastRight;
-		if (control.axisA.x > 0.0f) {
+		if (x > 0.0f) {
 			right = true;
-		} else if (control.axisA.x < 0.0f) {
+		} else if (x < 0.0f) {
 			right = false;
 		}
 		if ((pose.facing == Pose::Facing::Right) != right) {

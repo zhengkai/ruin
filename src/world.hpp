@@ -58,13 +58,20 @@ private:
 		}
 
 		auto &p = d.scene.player;
-		if (p.control.x) {
+
+		if (p.command.x) {
 			auto vel = b2Body_GetLinearVelocity(b2p);
-			vel.x = p.control.x * p.speed;
+			vel.x = p.command.x * p.speed;
 			b2Body_SetLinearVelocity(b2p, vel);
+		}
+		if (p.command.jump) {
+			float mass = b2Body_GetMass(b2p);
+			b2Vec2 impulse = {0.0f, mass * 10.0f};
+			b2Body_ApplyLinearImpulse(b2p, impulse, b2Vec2_zero, true);
 		}
 
 		p.setPos(pos);
+		p.command = {};
 
 		// spdlog::info("player pos {} {}", d.scene.player.x,
 		// d.scene.player.y); spdlog::info( "terrain size {} {}",

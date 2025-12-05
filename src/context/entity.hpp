@@ -6,8 +6,9 @@
 
 namespace context {
 
-struct CharacterControl {
+struct CharacterCommand {
 	float x = 0.0f;
+	bool jump = 0;
 };
 
 struct Entity {
@@ -35,13 +36,13 @@ struct Entity {
 
 struct Character : Entity {
 	std::shared_ptr<asset::Character> asset;
-	CharacterControl control = {};
+	CharacterCommand command = {};
 	float speed = 2.0f;
 };
 struct Player : Character {
 	Player() {
-		w = 1.0f;
-		h = 2.0f;
+		w = 0.75f;
+		h = 1.5f;
 	}
 };
 struct Enemy : Character {};
