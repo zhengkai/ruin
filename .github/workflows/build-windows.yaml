@@ -1,4 +1,4 @@
-name: Build Windows Package
+name: Build Windows Release
 
 on:
   push:
@@ -55,7 +55,7 @@ jobs:
       - name: Download asset
         run: |
           git clone --depth 1 "https://github.com/zhengkai/ruin-asset.git" asset
-          Copy-Item -Recurse 'asset*' 'build\Release' -Exclude '.git*'
+          node misc\copy-asset.mjs
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
