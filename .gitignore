@@ -5,3 +5,5 @@
 /extern
 /gh-pages
 /static
+/cmake-portable
+/vcpkg_installed

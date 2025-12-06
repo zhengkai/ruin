@@ -16,6 +16,8 @@ defaults:
 env:
   CC: clang
   CXX: clang++
+  CMAKE_VERSION: "4.1.2"
+  VCPKG_CACHE_KEY: "vcpkg4"
 
 jobs:
   build-windows:
@@ -23,34 +25,76 @@ jobs:
 
     steps:
 
-      - name: Download CMake ${{ env.CMAKE_VERSION }}
-        env:
-          CMAKE_VERSION: "4.1.2"
-        run: |
-          Invoke-WebRequest -Uri "https://github.com/Kitware/CMake/releases/download/v$env:CMAKE_VERSION/cmake-$env:CMAKE_VERSION-windows-x86_64.msi" -OutFile cmake.msi
-          Start-Process msiexec.exe -ArgumentList "/i", "cmake.msi", "/qn", "/norestart", "ADD_CMAKE_TO_PATH=System" -Wait
-          cmake --version
-          Remove-Item cmake.msi
-
       - name: Checkout
         run: |
           git clone --depth 1 "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" .
 
-      - name: Clone vcpkg
+      - name: Cache CMake ${{ env.CMAKE_VERSION }}
+        id: cache-cmake
+        uses: actions/cache@v4
+        with:
+          path: cmake-portable
+          key: cmake-${{ env.CMAKE_VERSION }}
+
+      - name: Download CMake ${{ env.CMAKE_VERSION }}
+        if: steps.cache-cmake.outputs.cache-hit != 'true'
         run: |
+          Invoke-WebRequest -Uri "https://github.com/Kitware/CMake/releases/download/v$env:CMAKE_VERSION/cmake-$env:CMAKE_VERSION-windows-x86_64.zip" -OutFile cmake.zip
+          Expand-Archive cmake.zip -DestinationPath cmake-portable
+          Remove-Item cmake.zip
+
+      - name: Save CMake Cache
+        if: steps.cache-cmake.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: cmake-portable
+          key: cmake-${{ env.CMAKE_VERSION }}
+
+      - name: Add CMake to PATH
+        run: |
+          $dir = Get-ChildItem -Directory "cmake-portable" | Select-Object -First 1
+          $cmakeBin = Join-Path $dir.FullName "bin"
+          echo "$cmakeBin" >> "$env:GITHUB_PATH"
+          & "$cmakeBin/cmake.exe" --version
+
+      - name: Cache vcpkg
+        id: cache-vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            tool/vcpkg
+            vcpkg_installed
+          key: ${{ env.VCPKG_CACHE_KEY }}-${{ hashFiles('vcpkg.json') }}
+
+      - name: Clone vcpkg
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        run: |
+          $commit = jq -r '.[\"builtin-baseline\"]' vcpkg.json
           cd tool
-          git clone https://github.com/microsoft/vcpkg.git vcpkg
+          git init vcpkg
           cd vcpkg
+          git remote add origin https://github.com/microsoft/vcpkg.git
+          git fetch --depth 1 origin $commit
+          git checkout $commit
           .\bootstrap-vcpkg.bat
           .\vcpkg.exe install --triplet x64-windows
 
-      - name: Configure CMake
+      - name: CMake Configure
         run: |
           mkdir -p build
           cmake -B build -DCMAKE_TOOLCHAIN_FILE="$PWD\tool\vcpkg\scripts\buildsystems\vcpkg.cmake" -DCMAKE_BUILD_TYPE=Release
+          Remove-Item -Recurse -Force .\tool\vcpkg\.git -ErrorAction SilentlyContinue
 
-      - name: Build with CMake
-        run: cmake --build build --config Release -- /m
+      - name: CMake Build
+        run: |
+          cmake --build build --config Release -- /m
+
+      - name: Save vcpkg Cache
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: tool/vcpkg
+          key: ${{ env.VCPKG_CACHE_KEY }}-${{ hashFiles('vcpkg.json') }}
 
       - name: Download asset
         run: |
