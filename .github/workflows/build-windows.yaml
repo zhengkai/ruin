@@ -57,6 +57,11 @@ jobs:
           git clone --depth 1 "https://github.com/zhengkai/ruin-asset.git" asset
           node misc\copy-asset.mjs
 
+      - name: Try run
+        run: |
+          cd build\Release
+          .\ruin.exe --version
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

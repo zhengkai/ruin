@@ -5,11 +5,14 @@
 #include "build.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <cstring>
+#include <spdlog/spdlog.h>
 #ifndef __EMSCRIPTEN__
 #include <SDL3_ttf/SDL_ttf.h>
 #endif
-#include <cstring>
-#include <spdlog/spdlog.h>
+#ifdef _MSC_VER
+#include <windows.h>
+#endif
 
 inline static void doShowVer() {
 	spdlog::info("SDL        = {}.{}.{}",
@@ -44,4 +47,9 @@ inline static void doShowVer() {
 		s += p.string();
 	}
 	spdlog::info("dir        = {}", s);
+
+#ifdef _MSC_VER
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
+#endif
 }

@@ -14,8 +14,13 @@
 inline void spdlogInit() {
 
 #ifdef _MSC_VER
-	SetConsoleOutputCP(CP_UTF8);
-	SetConsoleCP(CP_UTF8);
+	if (!config::versionOnly) {
+		DWORD mode;
+		if (GetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), &mode) == 0) {
+			spdlog::set_level(spdlog::level::off);
+			return;
+		}
+	}
 #endif
 
 #ifndef __EMSCRIPTEN__
