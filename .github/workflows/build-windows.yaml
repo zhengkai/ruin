@@ -36,7 +36,15 @@ jobs:
         run: |
           git clone --depth 1 "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" .
 
+      - name: Cache vcpkg
+        id: cache-vcpkg
+        uses: actions/cache@v4
+        with:
+          path: tool/vcpkg
+          key: vcpkg-${{ hashFiles('vcpkg.json') }}
+
       - name: Clone vcpkg
+        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         run: |
           cd tool
           git clone https://github.com/microsoft/vcpkg.git vcpkg
