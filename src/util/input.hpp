@@ -10,7 +10,10 @@ inline void handleInput(SDL_Event &e, Input &input) {
 
 	switch (e.type) {
 	case SDL_EVENT_KEY_DOWN:
-		input.key(e.key);
+		input.key(e.key, true);
+		break;
+	case SDL_EVENT_KEY_UP:
+		input.key(e.key, false);
 		break;
 	case SDL_EVENT_WINDOW_RESIZED:
 		input.winResize(e.window);

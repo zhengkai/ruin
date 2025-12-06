@@ -26,7 +26,6 @@ struct Input {
 public:
 	bool quit = false;
 	bool stop = false;
-	bool space = false;
 	float x = 0.0f;
 	float y = 0.0f;
 	int winW = 0;
@@ -38,10 +37,12 @@ public:
 	InputButton btnB = {};
 	InputButton btnX = {};
 	InputButton btnY = {};
+
 	InputButton btnU = {};
 	InputButton btnD = {};
 	InputButton btnL = {};
 	InputButton btnR = {};
+
 	InputButton btnRB = {};
 	InputButton btnLB = {};
 	InputTrigger btnLT = {};
@@ -58,31 +59,33 @@ public:
 		winH = w.data2;
 	}
 
-	void key(const SDL_KeyboardEvent &e) {
+	void key(const SDL_KeyboardEvent &e, bool down) {
 		switch (e.key) {
 		case SDLK_ESCAPE:
-			if (!cfgWASM) {
+			if (down && !cfgWASM) {
 				quit = true;
 			}
 			break;
-		case SDLK_UP:
 		case SDLK_RIGHT:
-			speed = 1;
+			axisA.x = down ? 32767 : 0;
+			axisA.hasX = true;
 			break;
-		case SDLK_DOWN:
 		case SDLK_LEFT:
-			speed = -1;
+			axisA.x = down ? -32768 : 0;
+			axisA.hasX = true;
 			break;
 		case SDLK_SPACE:
-			space = true;
+			btnA = {down, true};
 			break;
 		case SDLK_F11:
-			fullscreen = true;
+			if (down) {
+				fullscreen = true;
+			}
 			break;
 		case SDLK_RETURN:
 		case SDLK_RETURN2:
 		case SDLK_KP_ENTER:
-			if (e.mod & SDL_KMOD_ALT) {
+			if (down && (e.mod & SDL_KMOD_ALT)) {
 				fullscreen = true;
 			}
 			break;
