@@ -113,7 +113,7 @@ void sdl::initRender() {
 }
 
 void sdl::renderCounter() {
-	std::string counter = std::to_string(window.serial);
+	std::string counter = std::to_string(window.global.serial);
 	text->rMono32(counter, window.w - 16, 16, Text::Align::RIGHT);
 }
 

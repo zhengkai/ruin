@@ -83,6 +83,9 @@ enum class ColorTheme {
 };
 inline ColorTheme colorTheme = ColorTheme::HCT;
 
+const int cdJump = 30;
+const int cdZoom = 5;
+
 }; // namespace config
 
 #ifdef __EMSCRIPTEN__

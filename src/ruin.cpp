@@ -77,7 +77,7 @@ std::vector<context::Brick> Ruin::genBrick() {
 
 void Ruin::loop() {
 
-	window.serial++;
+	window.global.serial++;
 
 #ifdef __EMSCRIPTEN__
 	auto now = steady_clock::now();

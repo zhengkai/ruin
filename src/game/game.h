@@ -17,6 +17,8 @@ private:
 	context::ControlAxis prevAxisA;
 	context::ControlAxis prevAxisB;
 
+	int cdZoom = 0;
+
 public:
 	Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset);
 	~Game();
@@ -30,4 +32,5 @@ private:
 	void parseInputAxis(const InputAxis &in,
 		context::ControlAxis &prev,
 		context::ControlAxis &out);
+	void parseControl();
 };

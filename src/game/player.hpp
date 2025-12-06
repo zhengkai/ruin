@@ -2,6 +2,7 @@
 
 #include "../asset/asset.hpp"
 #include "../common/pose.hpp"
+#include "../config.hpp"
 #include "../context/entity.hpp"
 #include "../context/scene.hpp"
 #include "../context/window.hpp"
@@ -12,6 +13,7 @@
 class Player {
 
 private:
+	const context::Global &global;
 	const context::Control &control;
 	context::Scene &scene;
 	const asset::Asset &asset;
@@ -25,10 +27,12 @@ public:
 	b2Vec2 prevPos = {};
 
 public:
-	Player(const context::Control &control,
+	Player(const context::Global &global,
+		const context::Control &control,
 		context::Scene &scene,
 		const asset::Asset &asset)
-		: control(control), scene(scene), asset(asset), p(scene.player) {
+		: global(global), control(control), scene(scene), asset(asset),
+		  p(scene.player) {
 
 		p.asset = this->asset.character.at("samurai");
 		prevPos = p.getPos();
@@ -55,13 +59,6 @@ public:
 
 private:
 	void next() {
-
-		if (jumpCnt) {
-			jumpCnt++;
-			if (jumpCnt > 30) {
-				jumpCnt = 0;
-			}
-		}
 
 		auto &dur = p.asset->sprite.at(pose.type)->duration;
 
@@ -99,10 +96,6 @@ private:
 		if (pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
 			changePose(pb::Pose_Type::Pose_Type_idle);
 		}
-		if (control.btnA) {
-
-			parseJump();
-		}
 	}
 
 	void changePose(pb::Pose_Type p) {
@@ -121,21 +114,16 @@ private:
 
 	void parseJump() {
 
-		if (jumpCnt) {
-			// spdlog::info("jump cooldown {}", jumpCnt);
-			return;
-		}
-
 		if (pose.type != pb::Pose_Type::Pose_Type_idle &&
 			pose.type != pb::Pose_Type::Pose_Type_walk &&
 			pose.type != pb::Pose_Type::Pose_Type_run) {
-			// spdlog::info("jump cooldown {}", jumpCnt);
 			return;
 		}
-		jumpCnt = 1;
 
+		if (!global.counter(jumpCnt, config::cdJump)) {
+			return;
+		}
 		scene.player.command.jump = true;
-
 		changePose(pb::Pose_Type::Pose_Type_jump);
 	}
 

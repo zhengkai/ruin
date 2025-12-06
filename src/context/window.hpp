@@ -58,6 +58,19 @@ struct Boundary {
 	float right = 100.0f;
 };
 
+struct Global {
+	int serial = 0;
+
+public:
+	bool counter(int &cnt, int add) const {
+		if (cnt > serial) {
+			return false;
+		}
+		cnt = serial + add;
+		return true;
+	}
+};
+
 struct Window {
 
 public:
@@ -70,11 +83,11 @@ public:
 	float startX = 0.0f;
 	float startY = 0.0f;
 	float gridSize = 0.0f;
-	int serial = 0;
 	WinResize winResize = {};
 	bool showBall = true;
 	bool toggleFullscreen = false;
 	Control control = {};
+	Global global = {};
 
 private:
 	Focus focus = {};
@@ -134,21 +147,35 @@ public:
 		}
 		focus.y = y;
 	};
+
 	void setFocus(Player p) {
 		setFocus(p.x, p.y);
-	}
+	};
 
 	void setBoundary(int x, int y) {
 		boundary.right = static_cast<float>(x);
 		boundary.up = static_cast<float>(y);
 		calcBoundary();
-	}
+	};
 
 	void calcCameraOffset(SDL_FRect &r) {
 		r.x = camera.cx - camera.gridSize * (focus.x - r.x + r.w / 2.0f);
 		r.y = camera.cy + camera.gridSize * (focus.y - r.y - r.h / 2.0f);
 		r.w *= camera.gridSize;
 		r.h *= camera.gridSize;
+	};
+
+	void zoomIn() {
+		if (camera.zoom < 5.0f) {
+			camera.zoom += 0.125f;
+			calcCamera();
+		}
+	};
+	void zoomOut() {
+		if (camera.zoom > 1.0f) {
+			camera.zoom -= 0.125f;
+			calcCamera();
+		}
 	};
 
 private:

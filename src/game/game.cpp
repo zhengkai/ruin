@@ -6,7 +6,7 @@
 static std::string speedMsg = "Speed Level: ";
 
 Game::Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset)
-	: window(cw), scene(Scene(cw.control, cs, asset)) {
+	: window(cw), scene(Scene(cw.global, cw.control, cs, asset)) {
 }
 
 Game::~Game() {
@@ -18,6 +18,8 @@ bool Game::parse() {
 		return false;
 	}
 	parseInput();
+
+	parseControl();
 
 	scene.parse();
 
@@ -76,6 +78,17 @@ void Game::parseInputButton() {
 	}
 	if (input.btnRT.has) {
 		c.btnRT = util::gamepadConvert(input.btnRT.v);
+	}
+}
+
+void Game::parseControl() {
+	const auto &c = window.control;
+	if (c.btnU) {
+		if (window.global.counter(cdZoom, config::cdZoom)) {
+			window.zoomIn();
+		}
+	} else if (c.btnD && window.global.counter(cdZoom, config::cdZoom)) {
+		window.zoomOut();
 	}
 }
 
