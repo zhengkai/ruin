@@ -37,7 +37,7 @@ public:
 
 	void parse() {
 
-		p.command.x = control.axisA.x;
+		p.command.x = control.axisA.x * p.speed;
 
 		next();
 
@@ -127,7 +127,9 @@ private:
 		}
 
 		if (pose.type != pb::Pose_Type::Pose_Type_idle &&
-			pose.type != pb::Pose_Type::Pose_Type_walk) {
+			pose.type != pb::Pose_Type::Pose_Type_walk &&
+			pose.type != pb::Pose_Type::Pose_Type_run) {
+			// spdlog::info("jump cooldown {}", jumpCnt);
 			return;
 		}
 		jumpCnt = 1;

@@ -61,7 +61,7 @@ private:
 
 		if (p.command.x) {
 			auto vel = b2Body_GetLinearVelocity(b2p);
-			vel.x = p.command.x * p.speed;
+			vel.x = p.command.x;
 			b2Body_SetLinearVelocity(b2p, vel);
 		}
 		if (p.command.jump) {
@@ -77,10 +77,12 @@ private:
 		// d.scene.player.y); spdlog::info( "terrain size {} {}",
 		// terrain.size(), d.asset.map.cell.size());
 	};
+
 	void init() {
 		initMap();
 		initPlayer();
 	};
+
 	void initPlayer() {
 		b2BodyDef def = b2DefaultBodyDef();
 		def.type = b2_dynamicBody;
@@ -88,13 +90,32 @@ private:
 		auto &p = d.scene.player;
 		def.position = p.getPos();
 		b2p = b2CreateBody(b2w, &def);
+		b2Body_SetBullet(b2p, true);
 
 		b2Polygon box = b2MakeBox(p.w / 2.0f, p.h / 2.0f);
 		b2ShapeId shape = b2CreatePolygonShape(b2p, &dsd, &box);
 		b2Shape_SetRestitution(shape, 0.0f);
 
 		b2Body_SetBullet(b2p, true);
-	}
+	};
+
+	void initMap2() {
+		std::vector<b2Vec2> points = {
+			{1.0f, 4.5f}, {15.0f, 4.5f}, {15.0f, 5.5f}, {1.0f, 5.5f}};
+
+		b2ChainDef chainDef = b2DefaultChainDef();
+		chainDef.points = points.data();
+		chainDef.count = static_cast<int>(points.size());
+		chainDef.isLoop = true;
+
+		b2BodyDef bd = b2DefaultBodyDef();
+		bd.position = b2Vec2{0.0f, 0.0f};
+		bd.type = b2_staticBody;
+
+		b2BodyId bb = b2CreateBody(b2w, &bd);
+		b2CreateChain(bb, &chainDef);
+	};
+
 	void initMap() {
 
 		b2Polygon box = b2MakeBox(0.5f, 0.5f);
