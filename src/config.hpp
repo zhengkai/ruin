@@ -86,6 +86,9 @@ inline ColorTheme colorTheme = ColorTheme::HCT;
 const int cdJump = 30;
 const int cdZoom = 5;
 
+const float focusSpeed = 0.05f;
+const float focusRange = 3.0f;
+
 }; // namespace config
 
 #ifdef __EMSCRIPTEN__

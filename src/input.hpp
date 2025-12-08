@@ -26,6 +26,7 @@ struct Input {
 public:
 	bool quit = false;
 	bool stop = false;
+	bool space = false;
 	float x = 0.0f;
 	float y = 0.0f;
 	int winW = 0;
@@ -47,8 +48,8 @@ public:
 	InputButton btnLB = {};
 	InputTrigger btnLT = {};
 	InputTrigger btnRT = {};
-	InputAxis axisA = {};
-	InputAxis axisB = {};
+	InputAxis axisL = {};
+	InputAxis axisR = {};
 
 	void Reset() {
 		*this = {};
@@ -67,12 +68,12 @@ public:
 			}
 			break;
 		case SDLK_RIGHT:
-			axisA.x = down ? 32767 : 0;
-			axisA.hasX = true;
+			axisL.x = down ? 32767 : 0;
+			axisL.hasX = true;
 			break;
 		case SDLK_LEFT:
-			axisA.x = down ? -32768 : 0;
-			axisA.hasX = true;
+			axisL.x = down ? -32768 : 0;
+			axisL.hasX = true;
 			break;
 		case SDLK_SPACE:
 			btnA = {down, true};
@@ -95,20 +96,20 @@ public:
 	void gamepadAxis(const SDL_GamepadAxisEvent &e) {
 		switch (e.axis) {
 		case 0:
-			axisA.x = e.value;
-			axisA.hasX = true;
+			axisL.x = e.value;
+			axisL.hasX = true;
 			break;
 		case 1:
-			axisA.y = e.value;
-			axisA.hasY = true;
+			axisL.y = e.value;
+			axisL.hasY = true;
 			break;
 		case 2:
-			axisB.x = e.value;
-			axisB.hasX = true;
+			axisR.x = e.value;
+			axisR.hasX = true;
 			break;
 		case 3:
-			axisB.y = e.value;
-			axisB.hasY = true;
+			axisR.y = e.value;
+			axisR.hasY = true;
 			break;
 		case 4:
 			btnLT.v = e.value;

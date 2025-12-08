@@ -42,6 +42,9 @@ struct WinResize {
 struct Focus {
 	float x = 10.0f;
 	float y = 10.0f;
+
+	float offsetX = 0.0f; // 实际转视角的偏差修正
+	float offsetY = 0.0f;
 };
 
 struct Camera {
@@ -88,9 +91,9 @@ public:
 	bool toggleFullscreen = false;
 	Control control = {};
 	Global global = {};
+	Focus focus = {};
 
 private:
-	Focus focus = {};
 	Camera camera = {};
 	Boundary boundary = {};
 	Boundary focusBoundary = {};
@@ -159,8 +162,14 @@ public:
 	};
 
 	void calcCameraOffset(SDL_FRect &r) {
-		r.x = camera.cx - camera.gridSize * (focus.x - r.x + r.w / 2.0f);
-		r.y = camera.cy + camera.gridSize * (focus.y - r.y - r.h / 2.0f);
+		r.x = camera.cx -
+			camera.gridSize *
+				(focus.x + focus.offsetX * config::focusRange - r.x +
+					r.w / 2.0f);
+		r.y = camera.cy +
+			camera.gridSize *
+				(focus.y + focus.offsetY * config::focusRange - r.y -
+					r.h / 2.0f);
 		r.w *= camera.gridSize;
 		r.h *= camera.gridSize;
 	};

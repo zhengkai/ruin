@@ -7,6 +7,8 @@ static std::string speedMsg = "Speed Level: ";
 
 Game::Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset)
 	: window(cw), scene(Scene(cw.global, cw.control, cs, asset)) {
+
+	window.setBoundary(asset.map.w, asset.map.h);
 }
 
 Game::~Game() {
@@ -47,8 +49,8 @@ void Game::parseInput() {
 	// gamepad
 
 	parseInputButton();
-	parseInputAxis(input.axisA, prevAxisA, window.control.axisA);
-	parseInputAxis(input.axisB, prevAxisB, window.control.axisB);
+	parseInputAxis(input.axisL, prevAxisA, window.control.axisA);
+	parseInputAxis(input.axisR, prevAxisB, window.control.axisB);
 }
 
 void parseInputButton(InputButton &in, bool &out) {
@@ -89,6 +91,22 @@ void Game::parseControl() {
 		}
 	} else if (c.btnD && window.global.counter(cdZoom, config::cdZoom)) {
 		window.zoomOut();
+	}
+
+	if (window.focus.offsetX != c.axisB.x ||
+		window.focus.offsetY != c.axisB.y) {
+
+		float x = window.focus.offsetX - c.axisB.x;
+		float y = window.focus.offsetY - c.axisB.y;
+		float dist = std::sqrt(x * x + y * y);
+		if (dist > config::focusSpeed) {
+			float ratio = config::focusSpeed / dist;
+			window.focus.offsetX -= x * ratio;
+			window.focus.offsetY -= y * ratio;
+		} else {
+			window.focus.offsetX = c.axisB.x;
+			window.focus.offsetY = c.axisB.y;
+		}
 	}
 }
 
