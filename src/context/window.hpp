@@ -156,8 +156,8 @@ public:
 	};
 
 	void setBoundary(int x, int y) {
-		boundary.right = static_cast<float>(x);
-		boundary.up = static_cast<float>(y);
+		boundary.right = static_cast<float>(x - 1);
+		boundary.up = static_cast<float>(y - 1);
 		calcBoundary();
 	};
 

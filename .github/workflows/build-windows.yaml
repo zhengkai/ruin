@@ -17,7 +17,7 @@ env:
   CC: clang
   CXX: clang++
   CMAKE_VERSION: "4.1.2"
-  VCPKG_CACHE_KEY: "vcpkg4"
+  VCPKG_CACHE_KEY: "vcpkg6"
 
 jobs:
   build-windows:
@@ -28,6 +28,8 @@ jobs:
       - name: Checkout
         run: |
           git clone --depth 1 "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" .
+          echo "LOCALAPPDATA=$env:LOCALAPPDATA" >> $env:GITHUB_ENV
+          echo "APPDATA=$env:APPDATA" >> $env:GITHUB_ENV
 
       - name: Cache CMake ${{ env.CMAKE_VERSION }}
         id: cache-cmake
@@ -64,6 +66,8 @@ jobs:
           path: |
             tool/vcpkg
             vcpkg_installed
+            ${{ env.LOCALAPPDATA }}\vcpkg\archives
+            ${{ env.APPDATA }}\vcpkg\archives
           key: ${{ env.VCPKG_CACHE_KEY }}-${{ hashFiles('vcpkg.json') }}
 
       - name: Clone vcpkg
@@ -93,7 +97,11 @@ jobs:
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
-          path: tool/vcpkg
+          path: |
+            tool/vcpkg
+            vcpkg_installed
+            ${{ env.LOCALAPPDATA }}\vcpkg\archives
+            ${{ env.APPDATA }}\vcpkg\archives
           key: ${{ env.VCPKG_CACHE_KEY }}-${{ hashFiles('vcpkg.json') }}
 
       - name: Download asset
