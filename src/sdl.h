@@ -4,7 +4,7 @@
 #include "context/window.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
-#include "render/text.h"
+#include "text.hpp"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
@@ -22,7 +22,7 @@ private:
 
 	render::renderDep *rd = nullptr;
 	SDL_Renderer *r = nullptr;
-	Text *text = nullptr;
+	Text text = {};
 	// SDL_Texture *bg;
 	SDL_Window *w = nullptr;
 	SDL_Texture *ballTex = nullptr;

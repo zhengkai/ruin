@@ -9,7 +9,7 @@
 #include "render/gamepad.hpp"
 #include "render/map.hpp"
 #include "render/player.hpp"
-#include "render/text.h"
+#include "text.hpp"
 #include "util/path.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
@@ -59,8 +59,6 @@ bool sdl::init() {
 		return false;
 	}
 
-	rd = new render::renderDep(cb, asset, r, scene, misc, window);
-
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);
 
@@ -89,8 +87,7 @@ bool sdl::init() {
 
 	calcGrid(window.w, window.h);
 
-	text = new Text();
-	if (text->init(r)) {
+	if (text.init(r)) {
 		spdlog::trace("text inited");
 	} else {
 		spdlog::error("Failed to init text");
@@ -98,11 +95,13 @@ bool sdl::init() {
 	}
 
 	initRender();
-
 	return true;
 }
 
 void sdl::initRender() {
+
+	rd = new render::renderDep(text, cb, asset, r, scene, misc, window);
+
 	renderList.emplace_back(std::make_unique<render::Map>(rd));
 	renderList.emplace_back(std::make_unique<render::Player>(rd));
 	renderList.emplace_back(std::make_unique<render::Debug>(rd));
@@ -114,7 +113,7 @@ void sdl::initRender() {
 
 void sdl::renderCounter() {
 	std::string counter = std::to_string(window.global.serial);
-	text->rMono32(
+	text.rMono32(
 		counter, static_cast<int>(window.w) - 16, 16, Text::Align::RIGHT);
 }
 
@@ -377,11 +376,6 @@ void sdl::calcGrid(float wf, float hf) {
 }
 
 sdl::~sdl() {
-	if (text) {
-		delete text;
-		text = nullptr;
-	}
-
 	if (rd) {
 		delete rd;
 		rd = nullptr;
