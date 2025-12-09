@@ -28,6 +28,8 @@ struct Player : base {
 		} else {
 			renderTexture(tex, dst);
 		}
+
+		text("player");
 	};
 };
 }; // namespace render

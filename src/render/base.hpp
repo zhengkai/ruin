@@ -36,5 +36,8 @@ struct base {
 	bool renderUIFillRect(SDL_FRect &rect) {
 		return SDL_RenderFillRect(d->r, &rect);
 	};
+	void text(std::string text) {
+		d->text.rMono32(text, 16, d->window.h / 2.0f, Text::Align::LEFT);
+	};
 };
 }; // namespace render
