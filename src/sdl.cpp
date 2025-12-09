@@ -114,7 +114,8 @@ void sdl::initRender() {
 
 void sdl::renderCounter() {
 	std::string counter = std::to_string(window.global.serial);
-	text->rMono32(counter, window.w - 16, 16, Text::Align::RIGHT);
+	text->rMono32(
+		counter, static_cast<int>(window.w) - 16, 16, Text::Align::RIGHT);
 }
 
 void sdl::render() {
@@ -153,8 +154,6 @@ void sdl::render() {
 	for (auto &ren : renderList) {
 		ren->render();
 	}
-
-	// renderGamepad();
 
 	SDL_RenderPresent(r);
 }
@@ -364,28 +363,17 @@ bool sdl::toggleFullscreen() {
 	return true;
 }
 
-void sdl::calcGrid(int winW, int winH) {
+void sdl::calcGrid(float wf, float hf) {
 
 	float scale = SDL_GetWindowDisplayScale(w);
 	spdlog::info("start sdl::calcGrid, window display scale {:.1f}", scale);
 
-	float ww = static_cast<float>(winW);
-	float wh = static_cast<float>(winH);
 #ifndef _MSC_VER
-	ww *= scale;
-	wh *= scale;
+	wf *= scale;
+	hf *= scale;
 #endif
 
-	window.calcGrid(winW, winH, ww, wh);
-}
-
-void sdl::renderGamepad() {
-
-	std::string x = std::to_string(misc.gamepadX);
-	std::string y = std::to_string(misc.gamepadY);
-
-	text->rMono32(x, 512, 512, Text::Align::RIGHT);
-	text->rMono32(y, 512, 554, Text::Align::RIGHT);
+	window.calcGrid(wf, hf);
 }
 
 sdl::~sdl() {
@@ -436,8 +424,10 @@ std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
 
 	SDL_SetStringProperty(
 		props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, config::winTitle);
-	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, cw.w);
-	SDL_SetNumberProperty(props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, cw.h);
+	SDL_SetNumberProperty(
+		props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, static_cast<float>(cw.w));
+	SDL_SetNumberProperty(
+		props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, static_cast<float>(cw.h));
 	SDL_SetNumberProperty(props,
 		SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER,
 		SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);

@@ -77,10 +77,8 @@ public:
 struct Window {
 
 public:
-	int w = 800;
-	int h = 800;
-	float wf = 800.0f;
-	float hf = 800.0f;
+	float w = 800.0f;
+	float h = 800.0f;
 	float scale = 1.0f;
 	float cellSize = 0.0f;
 	float startX = 0.0f;
@@ -100,29 +98,25 @@ private:
 
 public:
 	void setSize(float inW, float inH) {
-		wf = inW;
-		hf = inH;
-		w = static_cast<int>(inW);
-		h = static_cast<int>(inH);
+		w = inW;
+		h = inH;
 	}
 
-	void calcGrid(int winW, int winH, float ww, float wh) {
+	void calcGrid(float w, float h) {
 
-		w = winW;
-		h = winH;
-		wf = ww;
-		hf = wh;
+		this->w = w;
+		this->h = h;
 
 		float gw = config::gridWF;
 		float gh = config::gridHF;
 
-		float gs = std::floor(ww / gw < wh / gh ? ww / gw : wh / gh);
+		float gs = std::floor(w / gw < h / gh ? w / gw : h / gh);
 
 		gridSize = gs;
 		spdlog::info("gridSize = {}, win pixel = {}x{}", gs, w, h);
 
-		startX = std::floor((ww - (gs * gw)) / 2);
-		startY = std::floor((wh - (gs * gh)) / 2);
+		startX = std::floor((w - (gs * gw)) / 2);
+		startY = std::floor((h - (gs * gh)) / 2);
 		spdlog::info("cell num: {}x{}={}, grid pixel: {}x{},  start: x={},y={}",
 			config::gridW,
 			config::gridH,
@@ -190,16 +184,16 @@ public:
 private:
 	void calcCamera() {
 		camera.gridSize = gridSize * camera.zoom;
-		camera.cx = std::round(wf / 2.0f);
-		camera.cy = std::round(hf / 2.0f);
+		camera.cx = std::round(w / 2.0f);
+		camera.cy = std::round(h / 2.0f);
 		calcBoundary();
 	}
 	void calcBoundary() {
-		auto hw = wf / 2.0f / camera.gridSize - 0.5f;
+		auto hw = w / 2.0f / camera.gridSize - 0.5f;
 		focusBoundary.left = hw;
 		focusBoundary.right = boundary.right - hw;
 
-		auto hh = hf / 2.0f / camera.gridSize - 0.5f;
+		auto hh = h / 2.0f / camera.gridSize - 0.5f;
 		focusBoundary.down = hh;
 		focusBoundary.up = boundary.up - hh;
 	}

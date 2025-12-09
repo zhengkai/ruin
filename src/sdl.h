@@ -48,7 +48,7 @@ private:
 	void renderResize();
 	void renderBall(std::shared_ptr<context::Ball> b, SDL_Color c);
 	void renderBrick();
-	void calcGrid(int winW, int winH);
+	void calcGrid(float wf, float hf);
 	void calcRegionSize();
 	bool toggleFullscreen();
 	void renderGamepad();

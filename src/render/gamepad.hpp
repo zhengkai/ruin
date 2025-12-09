@@ -96,8 +96,8 @@ struct Gamepad : base {
 		float grid = 50.0f;
 
 		auto &w = d->window;
-		float x = w.wf - grid * 18.25f;
-		float y = w.hf - grid * 4.0f;
+		float x = w.w - grid * 18.25f;
+		float y = w.h - grid * 4.0f;
 
 		r.x = x + r.x * grid;
 		r.y = y + r.y * grid;
