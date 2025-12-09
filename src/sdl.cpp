@@ -1,12 +1,14 @@
 #include "sdl.h"
 #include "asset/init.hpp"
 #include "config.hpp"
+#include "context/ball.h"
 #include "context/scene.hpp"
 #include "context/window.hpp"
 #include "render/base.hpp"
 #include "render/debug.hpp"
 #include "render/dep.hpp"
 #include "render/gamepad.hpp"
+#include "render/info.hpp"
 #include "render/map.hpp"
 #include "render/player.hpp"
 #include "text.hpp"
@@ -100,21 +102,16 @@ bool sdl::init() {
 
 void sdl::initRender() {
 
-	rd = new render::renderDep(text, cb, asset, r, scene, misc, window);
+	rd = new render::renderDep(text, asset, r, scene, misc, window);
 
 	renderList.emplace_back(std::make_unique<render::Map>(rd));
 	renderList.emplace_back(std::make_unique<render::Player>(rd));
 	renderList.emplace_back(std::make_unique<render::Debug>(rd));
 	renderList.emplace_back(std::make_unique<render::Gamepad>(rd));
+	renderList.emplace_back(std::make_unique<render::Info>(rd));
 	for (auto &ren : renderList) {
 		ren->init();
 	}
-}
-
-void sdl::renderCounter() {
-	std::string counter = std::to_string(window.global.serial);
-	text.rMono32(
-		counter, static_cast<int>(window.w) - 16, 16, Text::Align::RIGHT);
 }
 
 void sdl::render() {
@@ -147,8 +144,6 @@ void sdl::render() {
 			}
 		}
 	}
-
-	renderCounter();
 
 	for (auto &ren : renderList) {
 		ren->render();

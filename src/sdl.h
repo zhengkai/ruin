@@ -1,5 +1,6 @@
 #pragma once
 
+#include "context/ball.h"
 #include "context/scene.hpp"
 #include "context/window.hpp"
 #include "render/base.hpp"
@@ -44,7 +45,6 @@ public:
 
 private:
 	void renderControlMsg();
-	void renderCounter();
 	void renderResize();
 	void renderBall(std::shared_ptr<context::Ball> b, SDL_Color c);
 	void renderBrick();

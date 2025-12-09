@@ -54,13 +54,13 @@ public:
 #endif
 		return true;
 	};
-	void rMono32(std::string text, int x, int y, Align align) {
+	void rMono32(std::string text, int x, int y, Align align) const {
 #ifndef __EMSCRIPTEN__
 		render(fMono32, text, x, y, align, 32.0f);
 #endif
 	};
 
-	void rMono96(std::string text, int x, int y, Align align) {
+	void rMono96(std::string text, int x, int y, Align align) const {
 #ifndef __EMSCRIPTEN__
 		render(fMono96, text, x, y, align, 96.0f);
 #endif
@@ -73,7 +73,7 @@ private:
 		int x,
 		int y,
 		Align align,
-		float size) {
+		float size) const {
 
 		SDL_Color color = {230, 230, 230, 255};
 
@@ -123,7 +123,7 @@ private:
 		SDL_DestroyTexture(texture);
 	};
 #endif
-	void error(std::string_view msg) {
+	void error(std::string_view msg) const {
 		spdlog::error("{}: {}", msg, SDL_GetError());
 	};
 };
