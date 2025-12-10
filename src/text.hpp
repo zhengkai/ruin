@@ -33,12 +33,15 @@ public:
 		CENTER,
 		RIGHT,
 	};
-	Text() {
-
-	};
+	Text() {};
 	~Text() {
 		r = nullptr;
 	};
+
+	TTF_Font *getMono32() const {
+		return fMono32;
+	}
+
 	bool init(SDL_Renderer *r) {
 #ifndef __EMSCRIPTEN__
 		this->r = r;

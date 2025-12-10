@@ -23,13 +23,13 @@ struct Player : base {
 
 		SDL_FRect dst = {.x = p.x, .y = p.y + 0.375f, .w = 2.25f, .h = 2.25f};
 
+		text(std::format("x={:.3f}, y={:.3f}", p.x, p.y), dst);
+
 		if (po.facing == Pose::Facing::Left) {
 			renderTextureFlipX(tex, dst);
 		} else {
 			renderTexture(tex, dst);
 		}
-
-		text("player");
 	};
 };
 }; // namespace render

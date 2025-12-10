@@ -16,6 +16,11 @@ struct Info : base {
 
 		d->text.rMono32(
 			BUILD_TIMESTAMP, 16, d->window.h - 48.0f, Text::Align::LEFT);
+
+		d->text.rMono32(std::to_string(d->window.camera.gridSize),
+			16,
+			d->window.h - 96.0f,
+			Text::Align::LEFT);
 	};
 };
 

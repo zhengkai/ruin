@@ -90,9 +90,9 @@ public:
 	Control control = {};
 	Global global = {};
 	Focus focus = {};
+	Camera camera = {};
 
 private:
-	Camera camera = {};
 	Boundary boundary = {};
 	Boundary focusBoundary = {};
 
