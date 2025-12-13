@@ -76,14 +76,15 @@ private:
 			}
 		}
 
+		p.prevSpeed.x = p.x - prevPos.x;
+		p.prevSpeed.y = p.y - prevPos.y;
+
 		if (prevPos.y == p.y) {
 			if (pose.type == pb::Pose_Type::Pose_Type_jump) {
 				changePose(pb::Pose_Type::Pose_Type_idle);
 			}
 		} else {
-			float diff = prevPos.y - p.y;
-			// spdlog::info("y diff {:6f}", prevPos.y - scene.player.y);
-			if ((diff > 0.001f || diff < -0.001f) &&
+			if ((p.prevSpeed.y > 0.001f || p.prevSpeed.y < -0.001f) &&
 				pose.type != pb::Pose_Type::Pose_Type_jump &&
 				!util::poseIsAttack(pose.type)) {
 

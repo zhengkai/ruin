@@ -59,11 +59,11 @@ private:
 
 		auto &p = d.scene.player;
 
-		if (p.command.x) {
-			auto vel = b2Body_GetLinearVelocity(b2p);
-			vel.x = p.command.x;
-			b2Body_SetLinearVelocity(b2p, vel);
-		}
+		// 左右移动
+		auto vel = b2Body_GetLinearVelocity(b2p);
+		vel.x = p.command.x;
+		b2Body_SetLinearVelocity(b2p, vel);
+
 		if (p.command.jump) {
 			float mass = b2Body_GetMass(b2p);
 			b2Vec2 impulse = {0.0f, mass * 10.0f};

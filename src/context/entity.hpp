@@ -19,6 +19,7 @@ struct Entity {
 	float h = 1.0f;
 	int z = 0;
 	Pose pose = {};
+	b2Vec2 prevSpeed = {};
 
 	virtual ~Entity() = default;
 
