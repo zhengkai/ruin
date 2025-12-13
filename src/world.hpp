@@ -3,6 +3,7 @@
 #include "asset/asset.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
+#include "util/matrix.hpp"
 #include <box2d/box2d.h>
 
 inline static b2ShapeDef dsd = [] {
@@ -118,6 +119,8 @@ private:
 
 	void initMap() {
 
+		mapChain();
+
 		b2Polygon box = b2MakeBox(0.5f, 0.5f);
 		for (const auto &b : d.asset.map.cell) {
 
@@ -139,10 +142,21 @@ private:
 				d.asset.map.cell.size());
 		}
 	};
+
+	void mapChain() {
+		auto &map = d.asset.map;
+		auto m = util::Matrix<int>(map.w, map.h, -1);
+		for (const auto &c : map.cell) {
+			int x = static_cast<int>(c.x);
+			int y = static_cast<int>(c.y);
+			m[x][y] = c.id;
+		};
+		m.dumpASCII();
+	};
 };
 
 inline std::unique_ptr<World> createWorld(
 	context::Scene &cs, asset::Asset &asset) {
 	worldDep d(cs, asset);
 	return std::make_unique<World>(std::move(d));
-}
+};
