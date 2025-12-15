@@ -3,6 +3,7 @@
 #include "asset/asset.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
+#include "map/island.hpp"
 #include "util/matrix.hpp"
 #include <box2d/box2d.h>
 
@@ -145,13 +146,15 @@ private:
 
 	void mapChain() {
 		auto &map = d.asset.map;
-		auto m = util::Matrix<int>(map.w, map.h, -1);
+		auto m = util::Matrix<uint8_t>(map.w, map.h, 0);
 		for (const auto &c : map.cell) {
 			int x = static_cast<int>(c.x);
 			int y = static_cast<int>(c.y);
-			m[x][y] = c.id;
+			m[x][y] = c.tileName > 0 ? 1 : 0;
 		};
 		m.dumpASCII();
+
+		::map::Island(m);
 	};
 };
 
