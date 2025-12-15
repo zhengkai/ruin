@@ -1,6 +1,6 @@
 #pragma once
 
-namespace map {
+namespace terrain {
 
 struct IslandPos {
 	std::size_t x;
@@ -10,16 +10,16 @@ struct IslandPos {
 };
 
 struct IslandPosHash {
-	size_t operator()(const map::IslandPos &p) const noexcept {
+	size_t operator()(const IslandPos &p) const noexcept {
 		return p.x * 1315423911u + p.y;
 	}
 };
-}; // namespace map
+}; // namespace terrain
 
 namespace std {
 
-template <> struct hash<::map::IslandPos> {
-	std::size_t operator()(const ::map::IslandPos &p) const noexcept {
+template <> struct hash<terrain::IslandPos> {
+	std::size_t operator()(const terrain::IslandPos &p) const noexcept {
 		std::size_t h1 = std::hash<std::size_t>{}(p.x);
 		std::size_t h2 = std::hash<std::size_t>{}(p.y);
 		return h1 ^ (h2 << 1);

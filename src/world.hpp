@@ -3,7 +3,7 @@
 #include "asset/asset.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
-#include "map/island.hpp"
+#include "terrain/island.hpp"
 #include "util/matrix.hpp"
 #include <box2d/box2d.h>
 
@@ -153,8 +153,7 @@ private:
 			m[x][y] = c.tileName > 0 ? 1 : 0;
 		};
 		m.dumpASCII();
-
-		::map::Island(m);
+		terrain::Island(m);
 	};
 };
 

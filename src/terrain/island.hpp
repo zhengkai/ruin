@@ -6,7 +6,7 @@
 #include <spdlog/spdlog.h>
 #include <unordered_map>
 
-namespace map {
+namespace terrain {
 
 struct IslandChecker {
 	util::Matrix<uint8_t> &src;
@@ -62,4 +62,4 @@ inline std::vector<util::Matrix<uint8_t>> Island(util::Matrix<uint8_t> &m) {
 
 	return li;
 };
-}; // namespace map
+}; // namespace terrain

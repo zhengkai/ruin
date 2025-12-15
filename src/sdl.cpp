@@ -11,6 +11,7 @@
 #include "render/info.hpp"
 #include "render/map.hpp"
 #include "render/player.hpp"
+#include "render/terrain-chain.hpp"
 #include "text.hpp"
 #include "util/path.hpp"
 #include <SDL3/SDL.h>
@@ -109,6 +110,7 @@ void sdl::initRender() {
 	renderList.emplace_back(std::make_unique<render::Debug>(rd));
 	renderList.emplace_back(std::make_unique<render::Gamepad>(rd));
 	renderList.emplace_back(std::make_unique<render::Info>(rd));
+	renderList.emplace_back(std::make_unique<render::TerrainChain>(rd));
 	for (auto &ren : renderList) {
 		ren->init();
 	}
