@@ -9,7 +9,7 @@ namespace render {
 
 struct TerrainChain : base {
 
-	std::vector<std::vector<terrain::IslandPos>> island;
+	std::vector<std::vector<terrain::IslandPos>> outline;
 
 	using base::base;
 	void init() override {
@@ -20,23 +20,24 @@ struct TerrainChain : base {
 			int y = static_cast<int>(c.y);
 			m[x][y] = c.tileName > 0 ? 1 : 0;
 		};
-		island = terrain::Island(m);
+		auto island = terrain::Island(m);
+		auto size = island.size();
+		outline.reserve(size);
+		for (auto &is : island) {
+			outline.emplace_back(terrain::Outline(is));
+		}
 	};
 	void render() override {
 		SDL_SetRenderDrawColor(d->r, 0, 0, 0, 255);
-		for (auto &is : island) {
-			auto li = terrain::Outline(is);
-
-			for (auto &p : li) {
-				std::vector<SDL_FPoint> pts;
-				for (auto &q : p) {
-					pts.push_back(SDL_FPoint{
-						100.0f + static_cast<float>(q.x * 30),
-						d->window.h - 100.0f - static_cast<float>(q.y * 30),
-					});
-				}
-				SDL_RenderLines(d->r, pts.data(), static_cast<int>(pts.size()));
+		for (auto &o : outline) {
+			std::vector<SDL_FPoint> pts;
+			for (auto &q : o) {
+				pts.push_back(SDL_FPoint{
+					100.0f + static_cast<float>(q.x * 30),
+					d->window.h - 100.0f - static_cast<float>(q.y * 30),
+				});
 			}
+			SDL_RenderLines(d->r, pts.data(), static_cast<int>(pts.size()));
 		}
 	};
 };
