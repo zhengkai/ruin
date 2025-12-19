@@ -1,9 +1,11 @@
 #pragma once
 
 #include "island-pos.hpp"
+#include <algorithm>
 #include <map>
 #include <spdlog/spdlog.h>
 #include <unordered_map>
+#include <vector>
 
 namespace terrain {
 
@@ -35,10 +37,10 @@ static std::unordered_multimap<IslandPos, IslandPos> genBasicOutline(
 	return adj;
 };
 
-static std::vector<std::vector<IslandPos>> walkOutline(
+static std::vector<IslandPos> walkOutline(
 	std::unordered_multimap<IslandPos, IslandPos> &adj) {
 
-	std::vector<std::vector<IslandPos>> re;
+	std::vector<IslandPos> re;
 
 	// 从某个点开始，遍历轮廓线
 	while (!adj.empty()) {
@@ -46,7 +48,7 @@ static std::vector<std::vector<IslandPos>> walkOutline(
 		IslandPos start = it->first;
 		IslandPos curr = start;
 		std::vector<IslandPos> outline;
-		outline.push_back(start);
+		// outline.push_back(start);
 
 		do {
 			auto range = adj.equal_range(curr);
@@ -72,15 +74,42 @@ static std::vector<std::vector<IslandPos>> walkOutline(
 			curr = next;
 		} while (curr != start);
 
-		re.push_back(outline);
+		if (outline.size() > re.size()) {
+			re = outline;
+		}
 	}
 
 	return re;
 };
 
-static std::vector<IslandPos> mergeCollinear(const std::vector<IslandPos> &in) {
-	if (in.size() <= 2)
+static std::size_t minXYIndex(const std::vector<IslandPos> &v) {
+	auto it = std::min_element(
+		v.begin(), v.end(), [](const IslandPos &a, const IslandPos &b) {
+			if (a.x != b.x) {
+				return a.x < b.x;
+			}
+			return a.y > b.y; // y 大的在前（左上角优先）
+		});
+	return static_cast<std::size_t>(it - v.begin());
+};
+
+// 以左上角点开始，防止随机截断导致合并路径出错
+static void rotateOutline(std::vector<IslandPos> &v) {
+	auto idx = minXYIndex(v);
+	if (idx == 0) {
+		return;
+	}
+	std::rotate(v.begin(), v.begin() + idx, v.end());
+};
+
+// 将一条直线上的所有点合并为两个端点
+static std::vector<IslandPos> mergeCollinear(std::vector<IslandPos> &in) {
+
+	if (in.size() <= 2) {
 		return in;
+	}
+
+	in.push_back(in[0]); // 闭合
 
 	std::vector<IslandPos> out;
 	out.reserve(in.size());
@@ -93,18 +122,18 @@ static std::vector<IslandPos> mergeCollinear(const std::vector<IslandPos> &in) {
 		auto &B = out[out.size() - 1];
 		auto &C = in[i];
 
-		auto dx1 = B.x - A.x;
-		auto dy1 = B.y - A.y;
-		auto dx2 = C.x - B.x;
-		auto dy2 = C.y - B.y;
+		auto a1 = A.x == B.x;
+		auto b1 = B.x == C.x;
 
 		// 同方向直线，吞掉 B
-		if (dx1 == dx2 && dy1 == dy2) {
+		if (a1 == b1) {
 			out.back() = C;
 		} else {
 			out.push_back(C);
 		}
 	}
+
+	out.pop_back(); // 解除闭合
 
 	return out;
 }
@@ -115,18 +144,8 @@ std::vector<IslandPos> Outline(const std::vector<IslandPos> &pl) {
 
 	auto re = walkOutline(adj);
 
-	if (re.size() == 1) {
-		return mergeCollinear(re[0]);
-	}
+	rotateOutline(re);
 
-	std::size_t maxLen = 0;
-	std::size_t maxIdx = 0;
-	for (std::size_t i = 0; i < re.size(); ++i) {
-		if (re[i].size() > maxLen) {
-			maxLen = re[i].size();
-			maxIdx = i;
-		}
-	}
-	return mergeCollinear(re[maxIdx]);
+	return mergeCollinear(re);
 };
 }; // namespace terrain

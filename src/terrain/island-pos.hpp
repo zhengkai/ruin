@@ -1,5 +1,8 @@
 #pragma once
 
+#include <fmt/format.h>
+#include <fmt/ranges.h>
+
 namespace terrain {
 
 struct IslandPos {
@@ -7,6 +10,14 @@ struct IslandPos {
 	std::size_t y;
 
 	auto operator<=>(const IslandPos &) const = default;
+
+	IslandPos dir(const IslandPos &b) {
+		return {b.x - x, b.y - y};
+	}
+
+	bool sameDir(const IslandPos &b) {
+		return x == b.x && y == b.y;
+	}
 };
 
 struct IslandPosHash {
@@ -34,3 +45,17 @@ template <> struct hash<terrain::IslandPos> {
 	}
 };
 }; // namespace std
+
+namespace fmt {
+
+template <> struct formatter<terrain::IslandPos> {
+	constexpr auto parse(format_parse_context &ctx) {
+		return ctx.begin();
+	}
+
+	template <typename FormatContext>
+	auto format(const terrain::IslandPos &p, FormatContext &ctx) const {
+		return format_to(ctx.out(), "({}, {})", p.x, p.y);
+	}
+};
+}; // namespace fmt

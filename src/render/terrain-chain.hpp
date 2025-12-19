@@ -28,8 +28,8 @@ struct TerrainChain : base {
 		}
 	};
 	void render() override {
-		SDL_SetRenderDrawColor(d->r, 0, 0, 0, 255);
 		for (auto &o : outline) {
+			SDL_SetRenderDrawColor(d->r, 255, 50, 50, 255);
 			std::vector<SDL_FPoint> pts;
 			for (auto &q : o) {
 				pts.push_back(SDL_FPoint{
@@ -38,6 +38,13 @@ struct TerrainChain : base {
 				});
 			}
 			SDL_RenderLines(d->r, pts.data(), static_cast<int>(pts.size()));
+
+			SDL_SetRenderDrawColor(d->r, 50, 255, 50, 255);
+
+			auto &start = pts[0];
+			auto &end = pts[pts.size() - 1];
+
+			SDL_RenderLine(d->r, start.x, start.y, end.x, end.y);
 		}
 	};
 };
