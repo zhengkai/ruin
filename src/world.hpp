@@ -3,6 +3,7 @@
 #include "asset/asset.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
+#include "physics/physics.hpp"
 #include "terrain/outline.hpp"
 #include <box2d/box2d.h>
 
@@ -26,6 +27,7 @@ class World {
 private:
 	b2WorldId b2w;
 	worldDep d;
+	physics::Physics physics;
 
 	b2BodyId b2p;
 	std::vector<b2BodyId> terrain;
@@ -80,8 +82,16 @@ private:
 	};
 
 	void init() {
+		initPhysics();
 		initMap();
 		initPlayer();
+	};
+
+	void initPhysics() {
+		for (const auto &c : d.asset.map.cell) {
+			physics.addTile(c.x, c.y);
+		}
+		physics.dump();
 	};
 
 	void initPlayer() {
