@@ -1,6 +1,5 @@
 #include "ruin.h"
 #include "config.hpp"
-#include "context/misc.h"
 #include "context/window.hpp"
 #include "game/game.h"
 #include "sdl.h"
@@ -28,7 +27,7 @@ bool Ruin::init() {
 
 	spdlog::info("ruin start");
 
-	s = createSDL(scene, window, misc, asset);
+	s = createSDL(scene, window, asset);
 	if (!s) {
 		spdlog::error("sdl create failed");
 	}

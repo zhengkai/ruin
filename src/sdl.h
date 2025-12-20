@@ -16,7 +16,6 @@ class sdl {
 private:
 	context::Scene &scene;
 	context::Window &window;
-	context::Misc &misc;
 	asset::Asset &asset;
 
 	render::renderDep *rd = nullptr;
@@ -30,7 +29,6 @@ private:
 public:
 	sdl(context::Scene &cs,
 		context::Window &cw,
-		context::Misc &cm,
 		asset::Asset &asset,
 		SDL_Renderer *r,
 		SDL_Window *w);
@@ -50,7 +48,5 @@ private:
 
 inline void initWinSize(context::Window &cw);
 
-std::unique_ptr<sdl> createSDL(context::Scene &cs,
-	context::Window &cw,
-	context::Misc &cm,
-	asset::Asset &asset);
+std::unique_ptr<sdl> createSDL(
+	context::Scene &cs, context::Window &cw, asset::Asset &asset);

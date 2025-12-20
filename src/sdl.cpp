@@ -25,11 +25,10 @@ static SDL_AppResult SDL_Fail() {
 
 sdl::sdl(context::Scene &cs,
 	context::Window &cw,
-	context::Misc &cm,
 	asset::Asset &asset,
 	SDL_Renderer *r,
 	SDL_Window *w)
-	: scene(cs), window(cw), misc(cm), asset(asset), r(r), w(w) {
+	: scene(cs), window(cw), asset(asset), r(r), w(w) {
 }
 
 inline void initWinSize(context::Window &cw) {
@@ -84,7 +83,7 @@ bool sdl::init() {
 
 void sdl::initRender() {
 
-	rd = new render::renderDep(text, asset, r, scene, misc, window);
+	rd = new render::renderDep(text, asset, r, scene, window);
 
 	renderList.emplace_back(std::make_unique<render::Map>(rd));
 	renderList.emplace_back(std::make_unique<render::Player>(rd));
@@ -176,10 +175,8 @@ sdl::~sdl() {
 	SDL_Quit();
 }
 
-std::unique_ptr<sdl> createSDL(context::Scene &cs,
-	context::Window &cw,
-	context::Misc &cm,
-	asset::Asset &asset) {
+std::unique_ptr<sdl> createSDL(
+	context::Scene &cs, context::Window &cw, asset::Asset &asset) {
 
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
 		SDL_Fail();
@@ -220,5 +217,5 @@ std::unique_ptr<sdl> createSDL(context::Scene &cs,
 		return nullptr;
 	}
 
-	return std::make_unique<sdl>(cs, cw, cm, asset, r, w);
+	return std::make_unique<sdl>(cs, cw, asset, r, w);
 }

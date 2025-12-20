@@ -1,6 +1,5 @@
 #pragma once
 
-#include "context/misc.h"
 #include "context/window.hpp"
 #include "game/game.h"
 #include "sdl.h"
@@ -12,7 +11,6 @@ class Ruin {
 private:
 	context::Scene scene = {};
 	context::Window window = {};
-	context::Misc misc = {};
 	asset::Asset asset = {};
 
 	std::unique_ptr<Time> t = std::make_unique<Time>();
