@@ -129,6 +129,7 @@ void sdl::render() {
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
 	SDL_RenderClear(r);
 
+	/*
 	renderBrick();
 
 	if (window.showBall) {
@@ -146,6 +147,7 @@ void sdl::render() {
 			}
 		}
 	}
+	 */
 
 	for (auto &ren : renderList) {
 		ren->render();
