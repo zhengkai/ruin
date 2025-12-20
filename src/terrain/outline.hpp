@@ -1,6 +1,9 @@
 #pragma once
 
+#include "../asset/asset.hpp"
+#include "../util/matrix.hpp"
 #include "island-pos.hpp"
+#include "island.hpp"
 #include <algorithm>
 #include <map>
 #include <spdlog/spdlog.h>
@@ -138,7 +141,7 @@ static std::vector<IslandPos> mergeCollinear(std::vector<IslandPos> &in) {
 	return out;
 }
 
-std::vector<IslandPos> Outline(const std::vector<IslandPos> &pl) {
+inline std::vector<IslandPos> Outline(const std::vector<IslandPos> &pl) {
 
 	auto adj = genBasicOutline(pl);
 
@@ -148,4 +151,26 @@ std::vector<IslandPos> Outline(const std::vector<IslandPos> &pl) {
 
 	return mergeCollinear(re);
 };
+
+inline std::vector<std::vector<terrain::IslandPos>> MapOutline(
+	const asset::Map &map) {
+
+	auto m = util::Matrix<uint8_t>(map.w, map.h, 0);
+	for (const auto &c : map.cell) {
+		int x = static_cast<int>(c.x);
+		int y = static_cast<int>(c.y);
+		m[x][y] = c.tileName > 0 ? 1 : 0;
+	};
+	auto island = Island(m);
+	auto size = island.size();
+
+	std::vector<std::vector<terrain::IslandPos>> outline;
+	outline.reserve(size);
+	for (auto &is : island) {
+		outline.emplace_back(terrain::Outline(is));
+	}
+
+	return outline;
+};
+
 }; // namespace terrain

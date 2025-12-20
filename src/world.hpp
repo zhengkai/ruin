@@ -3,8 +3,7 @@
 #include "asset/asset.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
-#include "terrain/island.hpp"
-#include "util/matrix.hpp"
+#include "terrain/outline.hpp"
 #include <box2d/box2d.h>
 
 inline static b2ShapeDef dsd = [] {
@@ -48,7 +47,7 @@ public:
 private:
 	void _step(float deltaTime) {
 
-		b2World_Step(b2w, deltaTime, 1);
+		b2World_Step(b2w, deltaTime, 16);
 		auto pos = b2Body_GetPosition(b2p);
 		if (pos.x < 0.0f || pos.y < 0.0f) {
 			pos.x = 10.0f;
@@ -101,27 +100,11 @@ private:
 		b2Body_SetBullet(b2p, true);
 	};
 
-	void initMap2() {
-		std::vector<b2Vec2> points = {
-			{1.0f, 4.5f}, {15.0f, 4.5f}, {15.0f, 5.5f}, {1.0f, 5.5f}};
-
-		b2ChainDef chainDef = b2DefaultChainDef();
-		chainDef.points = points.data();
-		chainDef.count = static_cast<int>(points.size());
-		chainDef.isLoop = true;
-
-		b2BodyDef bd = b2DefaultBodyDef();
-		bd.position = b2Vec2{0.0f, 0.0f};
-		bd.type = b2_staticBody;
-
-		b2BodyId bb = b2CreateBody(b2w, &bd);
-		b2CreateChain(bb, &chainDef);
-	};
-
 	void initMap() {
 
 		mapChain();
 
+		/*
 		b2Polygon box = b2MakeBox(0.5f, 0.5f);
 		for (const auto &b : d.asset.map.cell) {
 
@@ -136,6 +119,7 @@ private:
 			b2ShapeId si = b2CreatePolygonShape(bb, &dsd, &box);
 			b2Shape_SetRestitution(si, 0.0f);
 		}
+		 */
 
 		if (!terrain.size()) {
 			spdlog::warn("terrain size 0, asset cell size: {}",
@@ -145,15 +129,40 @@ private:
 	};
 
 	void mapChain() {
-		auto &map = d.asset.map;
-		auto m = util::Matrix<uint8_t>(map.w, map.h, 0);
-		for (const auto &c : map.cell) {
-			int x = static_cast<int>(c.x);
-			int y = static_cast<int>(c.y);
-			m[x][y] = c.tileName > 0 ? 1 : 0;
-		};
-		m.dumpASCII();
-		terrain::Island(m);
+		auto outline = terrain::MapOutline(d.asset.map);
+		for (auto &o : outline) {
+			std::vector<b2Vec2> pts;
+			pts.reserve(o.size());
+
+			std::size_t minX = 100000;
+			std::size_t minY = 100000;
+			for (auto &p : o) {
+				if (p.x < minX) {
+					minX = p.x;
+				}
+				if (p.y < minY) {
+					minY = p.y;
+				}
+			}
+
+			for (auto &p : o) {
+				pts.push_back(b2Vec2{.x = static_cast<float>(p.x - minX),
+					.y = static_cast<float>(p.y - minY)});
+			}
+
+			b2ChainDef cd = b2DefaultChainDef();
+			cd.points = pts.data();
+			cd.count = static_cast<int>(pts.size());
+			cd.isLoop = true;
+
+			b2BodyDef bd = b2DefaultBodyDef();
+			bd.position = b2Vec2{.x = static_cast<float>(minX) - 0.5f,
+				.y = static_cast<float>(minY) - 0.5f};
+			bd.type = b2_staticBody;
+
+			b2BodyId bb = b2CreateBody(b2w, &bd);
+			b2CreateChain(bb, &cd);
+		}
 	};
 };
 

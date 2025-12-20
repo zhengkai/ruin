@@ -1,8 +1,6 @@
 #pragma once
 
-#include "../terrain/island.hpp"
 #include "../terrain/outline.hpp"
-#include "../util/matrix.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -13,19 +11,7 @@ struct TerrainChain : base {
 
 	using base::base;
 	void init() override {
-		auto &map = d->asset.map;
-		auto m = util::Matrix<uint8_t>(map.w, map.h, 0);
-		for (const auto &c : map.cell) {
-			int x = static_cast<int>(c.x);
-			int y = static_cast<int>(c.y);
-			m[x][y] = c.tileName > 0 ? 1 : 0;
-		};
-		auto island = terrain::Island(m);
-		auto size = island.size();
-		outline.reserve(size);
-		for (auto &is : island) {
-			outline.emplace_back(terrain::Outline(is));
-		}
+		outline = terrain::MapOutline(d->asset.map);
 	};
 	void render() override {
 		for (auto &o : outline) {
