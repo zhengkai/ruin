@@ -3,7 +3,6 @@
 #include "context/misc.h"
 #include "context/window.hpp"
 #include "game/game.h"
-#include "region.hpp"
 #include "sdl.h"
 #include "time.hpp"
 #include "world.hpp"
@@ -14,7 +13,6 @@ private:
 	context::Scene scene = {};
 	context::Window window = {};
 	context::Misc misc = {};
-	context::BallCluster cb = {};
 	asset::Asset asset = {};
 
 	std::unique_ptr<Time> t = std::make_unique<Time>();
@@ -22,10 +20,6 @@ private:
 	std::unique_ptr<Game> g;
 	std::unique_ptr<World> w;
 	steady_clock::time_point prev;
-	std::vector<std::unique_ptr<Region>> region;
-
-private:
-	std::vector<context::Brick> genBrick();
 
 public:
 	bool stop = false;
@@ -34,5 +28,4 @@ public:
 	void loop();
 	void run();
 	bool init();
-	bool initBrick();
 };

@@ -12,13 +12,6 @@ inline bool versionOnly = false;
 inline bool helpOnly = false;
 inline std::string verbose = "info";
 
-// classic: The ball only moves at 45-degree diagonal angles,
-// similar to vnglst/ruin-wars
-inline bool classic = false;
-
-// 球半径小于 0.5 时，会出现长期垂直/水平方向运动，看起来不太自然
-constexpr float ballRadius = 0.57f;
-
 inline std::vector<std::filesystem::path> dirList;
 
 inline const std::filesystem::path assetDir = "asset";
@@ -38,11 +31,6 @@ inline const char *winTitle = "Ruin Test";
 const SDL_Color colorBg = {16, 64, 128, 255};
 
 const float brickBorder = 1.0f;
-
-inline std::vector<int> region;
-inline int regionNum;
-inline int ballNum;
-const int regionNumDefault = 6;
 
 const int gridWDefault = 60;
 const int gridHDefault = 32;
@@ -65,16 +53,6 @@ inline void setGrid(int w, int h) {
 	gridWF = static_cast<float>(gridW);
 	gridHF = static_cast<float>(gridH);
 }
-
-inline void setRegion(std::vector<int> r) {
-	region = r;
-	regionNum = static_cast<int>(region.size());
-	ballNum = 0;
-	for (int i = 0; i < regionNum; i++) {
-		ballNum += region[i];
-	}
-	powerAvg = static_cast<float>(brickTotal) / static_cast<float>(ballNum);
-};
 
 enum class ColorTheme {
 	HCT,

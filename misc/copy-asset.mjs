@@ -67,7 +67,6 @@ function walk(obj, cb) {
 	walk(manifest, copy);
 	copy(MANIFEST);
 	copy("map.json")
-	copy("pong/circle.webp");
 	copy("font/JetBrainsMono-Regular.otf");
 
 })();

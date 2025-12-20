@@ -102,9 +102,8 @@ private:
 
 	void initMap() {
 
-		mapChain();
+		// mapChain();
 
-		/*
 		b2Polygon box = b2MakeBox(0.5f, 0.5f);
 		for (const auto &b : d.asset.map.cell) {
 
@@ -119,7 +118,6 @@ private:
 			b2ShapeId si = b2CreatePolygonShape(bb, &dsd, &box);
 			b2Shape_SetRestitution(si, 0.0f);
 		}
-		 */
 
 		if (!terrain.size()) {
 			spdlog::warn("terrain size 0, asset cell size: {}",

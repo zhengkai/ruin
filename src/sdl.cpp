@@ -1,7 +1,6 @@
 #include "sdl.h"
 #include "asset/init.hpp"
 #include "config.hpp"
-#include "context/ball.h"
 #include "context/scene.hpp"
 #include "context/window.hpp"
 #include "render/base.hpp"
@@ -24,14 +23,13 @@ static SDL_AppResult SDL_Fail() {
 	return SDL_APP_FAILURE;
 }
 
-sdl::sdl(context::BallCluster &cb,
-	context::Scene &cs,
+sdl::sdl(context::Scene &cs,
 	context::Window &cw,
 	context::Misc &cm,
 	asset::Asset &asset,
 	SDL_Renderer *r,
 	SDL_Window *w)
-	: scene(cs), window(cw), misc(cm), asset(asset), cb(cb), r(r), w(w) {
+	: scene(cs), window(cw), misc(cm), asset(asset), r(r), w(w) {
 }
 
 inline void initWinSize(context::Window &cw) {
@@ -66,23 +64,6 @@ bool sdl::init() {
 	SDL_RenderClear(r);
 
 	SDL_RenderPresent(r);
-	auto img = util::file("asset/pong/circle.webp");
-
-	SDL_Surface *surf = IMG_Load(img.c_str());
-	if (!surf) {
-		spdlog::error("Failed to load ball image");
-		SDL_Fail();
-		return false;
-	}
-	ballTex = SDL_CreateTextureFromSurface(r, surf);
-
-	SDL_DestroySurface(surf);
-
-	if (!ballTex) {
-		spdlog::error("ball SDL_CreateTextureFromSurface failed");
-		SDL_Fail();
-		return false;
-	}
 
 	// int drawableWidth, drawableHeight;
 	// SDL_GetCurrentRenderOutputSize(r, &drawableWidth, &drawableHeight);
@@ -129,26 +110,6 @@ void sdl::render() {
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
 	SDL_RenderClear(r);
 
-	/*
-	renderBrick();
-
-	if (window.showBall) {
-		auto gl = cb.group;
-		for (auto &bg : gl) {
-			for (auto &b : bg->list) {
-
-				auto bc = bg->color;
-				if (gl.size() == 2) {
-					bc = gl[1 - bg->region]->color;
-				} else {
-					bc = bc.Lighten(0.5);
-				}
-				renderBall(b, bc.ToColor());
-			}
-		}
-	}
-	 */
-
 	for (auto &ren : renderList) {
 		ren->render();
 	}
@@ -164,191 +125,6 @@ void sdl::renderResize() {
 	spdlog::info("sdl::renderResize called");
 	wr.trigger = false;
 	calcGrid(wr.w, wr.h);
-}
-
-void sdl::renderBrick() {
-
-	SDL_FRect rect;
-
-	auto rl = misc.brick;
-
-	std::vector<SDL_FRect> edges;
-
-	calcRegionSize();
-
-	bool cw = false, cn = false, ce = false, cs = false;
-
-	for (const auto &b : rl) {
-		rect.w = this->window.gridSize;
-		rect.h = this->window.gridSize;
-		rect.x = this->window.startX + b.x * this->window.gridSize;
-		rect.y = this->window.startY + b.y * this->window.gridSize;
-
-		SDL_FRect corner;
-		corner.w = config::brickBorder;
-		corner.h = config::brickBorder;
-		if (b.region < 0) {
-			if (config::brickBorder <= 0.0f) {
-				continue;
-			}
-			corner.x = rect.x - config::brickBorder;
-			corner.y = rect.y - config::brickBorder;
-			edges.push_back(corner);
-
-			corner.x = rect.x + rect.w;
-			corner.y = rect.y - config::brickBorder;
-			edges.push_back(corner);
-
-			corner.x = rect.x + rect.w;
-			corner.y = rect.y + rect.h;
-			edges.push_back(corner);
-
-			corner.x = rect.x - config::brickBorder;
-			corner.y = rect.y + rect.h;
-			edges.push_back(corner);
-			continue;
-		}
-
-		if (config::brickBorder > 0.0f) {
-			cw = false;
-			cn = false;
-			ce = false;
-			cs = false;
-			auto s = b.side;
-			if (s.e < 0 || rl[s.e].region != b.region) {
-				ce = true;
-				rect.w -= config::brickBorder;
-			}
-			if (s.s < 0 || rl[s.s].region != b.region) {
-				cs = true;
-				rect.h -= config::brickBorder;
-			}
-			if (s.w < 0 || rl[s.w].region != b.region) {
-				cw = true;
-				rect.x += config::brickBorder;
-				rect.w -= config::brickBorder;
-			}
-			if (s.n < 0 || rl[s.n].region != b.region) {
-				cn = true;
-				rect.y += config::brickBorder;
-				rect.h -= config::brickBorder;
-			}
-		}
-
-		auto group = cb.group[b.region];
-		auto bc = group->color;
-
-		// double power = b.power * 2.0f;
-		double power = b.power;
-
-		auto g = group->gradation;
-		power = ((b.x - group->size.x) / group->size.w * g.w) *
-			((b.y - group->size.y) / group->size.h * g.h);
-
-		// spdlog::info(
-		// 	"power={:.2f} bx={} wf={} gx={} gw={} x-rate={:.2f} x-final={:.2f}",
-		// 	power,
-		// 	b.x,
-		// 	config::gridWF,
-		// 	group->size.x,
-		// 	group->size.w,
-		// 	(b.x - group->size.x) / group->size.w,
-		// 	(b.x - group->size.x) / group->size.w * g.w);
-
-		SDL_Color c = bc.Lighten(power).ToColor();
-
-		SDL_SetRenderDrawColor(r, c.r, c.g, c.b, 255);
-		SDL_RenderFillRect(r, &rect);
-
-		if (config::brickBorder > 0.0f) {
-			c = config::colorBg;
-			SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
-
-			if (cw && cn) {
-				corner.x = rect.x - config::brickBorder * 2.0f;
-				corner.y = rect.y - config::brickBorder * 2.0f;
-				SDL_RenderFillRect(r, &corner);
-			}
-			if (cn && ce) {
-				corner.x = rect.x + rect.w + config::brickBorder;
-				corner.y = rect.y - config::brickBorder * 2.0f;
-				SDL_RenderFillRect(r, &corner);
-			}
-			if (ce && cs) {
-				corner.x = rect.x + rect.w + config::brickBorder;
-				corner.y = rect.y + rect.h + config::brickBorder;
-				edges.push_back(corner);
-			}
-			if (cs && cw) {
-				corner.x = rect.x - config::brickBorder * 2.0f;
-				corner.y = rect.y + rect.h + config::brickBorder;
-				edges.push_back(corner);
-			}
-		}
-	}
-
-	if (config::brickBorder > 0.0f) {
-		auto c = config::colorBg;
-		SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
-		for (const auto &e : edges) {
-			SDL_RenderFillRect(r, &e);
-		}
-	}
-}
-
-void sdl::calcRegionSize() {
-	struct RegionSize {
-		int w;
-		int e;
-		int n;
-		int s;
-	};
-	std::vector<RegionSize> li;
-	auto gl = cb.group;
-	li.reserve(gl.size());
-	for (size_t i = 0; i < gl.size(); i++) {
-		li.push_back(
-			RegionSize{.w = config::gridW, .e = 0, .n = config::gridH, .s = 0});
-	}
-
-	for (const auto &b : misc.brick) {
-		if (b.region < 0) {
-			continue;
-		}
-		auto g = gl[b.region];
-		auto &r = li[b.region];
-		if (r.w > b.x) {
-			r.w = b.x;
-		}
-		if (r.e < b.x) {
-			r.e = b.x;
-		}
-		if (r.n > b.y) {
-			r.n = b.y;
-		}
-		if (r.s < b.y) {
-			r.s = b.y;
-		}
-		g->size.x = static_cast<float>(r.w);
-		g->size.w = std::max(3.0f, static_cast<float>(r.e) - g->size.x);
-		g->size.y = static_cast<float>(r.n);
-		g->size.h = std::max(3.0f, static_cast<float>(r.s) - g->size.y);
-	}
-}
-
-void sdl::renderBall(std::shared_ptr<context::Ball> b, SDL_Color c) {
-
-	SDL_FRect rect;
-	rect.x = window.startX + (b->pos.x - config::ballRadius) * window.gridSize;
-	rect.y = window.startY + (b->pos.y - config::ballRadius) * window.gridSize;
-	rect.w = window.gridSize * config::ballRadius / 0.5f;
-	rect.h = rect.w;
-
-	// spdlog::trace("ball = {} {} {}", rect.x, rect.y, rect.w);
-
-	SDL_SetTextureColorMod(ballTex, c.r, c.g, c.b);
-
-	SDL_RenderTexture(r, ballTex, nullptr, &rect);
 }
 
 bool sdl::toggleFullscreen() {
@@ -400,8 +176,7 @@ sdl::~sdl() {
 	SDL_Quit();
 }
 
-std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
-	context::Scene &cs,
+std::unique_ptr<sdl> createSDL(context::Scene &cs,
 	context::Window &cw,
 	context::Misc &cm,
 	asset::Asset &asset) {
@@ -445,5 +220,5 @@ std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
 		return nullptr;
 	}
 
-	return std::make_unique<sdl>(cb, cs, cw, cm, asset, r, w);
+	return std::make_unique<sdl>(cs, cw, cm, asset, r, w);
 }

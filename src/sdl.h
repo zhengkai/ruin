@@ -1,6 +1,5 @@
 #pragma once
 
-#include "context/ball.h"
 #include "context/scene.hpp"
 #include "context/window.hpp"
 #include "render/base.hpp"
@@ -19,7 +18,6 @@ private:
 	context::Window &window;
 	context::Misc &misc;
 	asset::Asset &asset;
-	context::BallCluster &cb;
 
 	render::renderDep *rd = nullptr;
 	SDL_Renderer *r = nullptr;
@@ -30,8 +28,7 @@ private:
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:
-	sdl(context::BallCluster &cb,
-		context::Scene &cs,
+	sdl(context::Scene &cs,
 		context::Window &cw,
 		context::Misc &cm,
 		asset::Asset &asset,
@@ -46,19 +43,14 @@ public:
 private:
 	void renderControlMsg();
 	void renderResize();
-	void renderBall(std::shared_ptr<context::Ball> b, SDL_Color c);
-	void renderBrick();
 	void calcGrid(float wf, float hf);
-	void calcRegionSize();
 	bool toggleFullscreen();
-	void renderGamepad();
 	void initRender();
 };
 
 inline void initWinSize(context::Window &cw);
 
-std::unique_ptr<sdl> createSDL(context::BallCluster &cb,
-	context::Scene &cs,
+std::unique_ptr<sdl> createSDL(context::Scene &cs,
 	context::Window &cw,
 	context::Misc &cm,
 	asset::Asset &asset);
