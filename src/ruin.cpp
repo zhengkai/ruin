@@ -1,13 +1,10 @@
 #include "ruin.h"
-#include "config.hpp"
 #include "context/window.hpp"
 #include "game/game.h"
+#include "physics/create.hpp"
 #include "sdl.h"
-#include "util/print.hpp"
-#include "util/rand.hpp"
 #include "world.hpp"
 #include <SDL3/SDL_events.h>
-#include <algorithm>
 #include <spdlog/spdlog.h>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -37,9 +34,11 @@ bool Ruin::init() {
 	}
 	spdlog::trace("sdl init done");
 
-	w = createWorld(scene, asset);
+	// w = createWorld(scene, asset);
 
 	g = std::make_unique<Game>(scene, window, asset);
+
+	p = physics::Create(scene, asset).get();
 
 	return true;
 }
@@ -64,7 +63,9 @@ void Ruin::loop() {
 		return;
 	}
 
-	w->step();
+	if (w) {
+		w->step();
+	}
 
 	s->render();
 }
