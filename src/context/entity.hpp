@@ -40,6 +40,7 @@ struct Character : Entity {
 	std::shared_ptr<asset::Character> asset;
 	CharacterCommand command = {};
 	float speed = 5.0f;
+	std::size_t physicsSerial = 0;
 };
 struct Player : Character {
 	Player() {

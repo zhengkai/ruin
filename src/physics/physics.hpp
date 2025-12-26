@@ -24,7 +24,27 @@ public:
 	Physics() {};
 	~Physics() {};
 
-	void step() {};
+	void step() {
+		spdlog::info("physics tick");
+
+		IntersectResult re = {};
+		for (auto &[_, b] : world.body) {
+			bool hit = false;
+			int i = 0;
+			for (auto &[_, t] : world.tile) {
+				i++;
+				b.checkIntersects(t, re);
+				if (re.overall != ContactType::None) {
+					hit = true;
+					break;
+				}
+			}
+			if (!hit) {
+				b.y -= 0.1f;
+			}
+			spdlog::info("body {} {} {}", b.serial, i, world.tile.size());
+		};
+	};
 
 	void clean() {};
 
@@ -45,6 +65,10 @@ public:
 		world.tile[serial] = t;
 		return serial;
 	};
+
+	Body &getBody(std::size_t serial) {
+		return world.body.at(serial);
+	}
 
 private:
 	std::size_t genSerial() {

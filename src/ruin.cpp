@@ -66,6 +66,18 @@ void Ruin::loop() {
 	if (w) {
 		w->step();
 	}
+	if (p) {
+		p->step();
+	}
+
+	syncPos();
 
 	s->render();
+}
+
+void Ruin::syncPos() {
+	auto &sp = scene.player;
+	auto pos = p->getBody(sp.physicsSerial);
+	sp.x = pos.x;
+	sp.y = pos.y;
 }

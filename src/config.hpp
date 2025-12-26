@@ -23,7 +23,7 @@ const float speedMin = speed / 1.2f;
 const float speedClassic = 30.0f * std::numbers::sqrt2_v<float> / 2.0f;
 const float gravity = speed * 10.0f;
 
-const int fps = 60;
+const int fps = 20;
 const float fpsDeltaTime = 1.0f / static_cast<float>(fps);
 
 inline const char *winTitle = "Ruin Test";

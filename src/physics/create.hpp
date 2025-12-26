@@ -20,6 +20,7 @@ public:
 		p = std::make_unique<Physics>();
 
 		initPlayer();
+		initTile();
 	};
 	~Create() {};
 	std::unique_ptr<Physics> get() {
@@ -28,16 +29,22 @@ public:
 
 private:
 	void initPlayer() {
+		auto &sp = scene.player;
 		float x = 10.0f;
 		float y = 13.0f;
-		float w = scene.player.w / 2.0f;
-		float h = scene.player.h / 2.0f;
-		p->addBody(x, y, w, h);
+		float w = sp.w / 2.0f;
+		float h = sp.h / 2.0f;
+		sp.physicsSerial = p->addBody(x, y, w, h);
 	};
 
 	void initTile() {
-		for (const auto &b : asset.map.cell) {
-			p->addTile(b.x, b.y);
+		auto &cl = asset.map.cell;
+		if (!cl.size()) {
+			spdlog::warn("No map cells to init tiles.");
+			return;
+		}
+		for (const auto &c : cl) {
+			p->addTile(c.x, c.y);
 		}
 	};
 };

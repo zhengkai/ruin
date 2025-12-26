@@ -28,4 +28,5 @@ public:
 	void loop();
 	void run();
 	bool init();
+	void syncPos();
 };
