@@ -1,7 +1,7 @@
 #pragma once
 
 #include "context/window.hpp"
-#include "game/game.h"
+#include "game/game.hpp"
 #include "physics/physics.hpp"
 #include "sdl.h"
 #include "time.hpp"

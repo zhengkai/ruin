@@ -57,7 +57,6 @@ add_executable(${PROJ}
 	src/main.cpp
 	src/ruin.cpp
 	src/sdl.cpp
-	src/game/game.cpp
 
 	src/util/material/cam.cpp
 	src/util/material/hct_solver.cpp

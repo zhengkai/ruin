@@ -1,6 +1,6 @@
 #include "ruin.h"
 #include "context/window.hpp"
-#include "game/game.h"
+#include "game/game.hpp"
 #include "physics/create.hpp"
 #include "sdl.h"
 #include "world.hpp"
