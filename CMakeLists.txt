@@ -86,23 +86,6 @@ if (EMSCRIPTEN)
 	set_target_properties(${PROJ} PROPERTIES SUFFIX ".html")
 endif()
 
-target_precompile_headers(${PROJ} PRIVATE
-	<box2d/box2d.h>
-	<SDL3/SDL.h>
-	<SDL3/SDL_events.h>
-	<SDL3/SDL_error.h>
-	<SDL3_image/SDL_image.h>
-	<google/protobuf/runtime_version.h>
-	<chrono>
-	<cmath>
-	<cstdio>
-	<cstring>
-	<fmt/format.h>
-	<random>
-	<string>
-	<vector>
-)
-
 target_link_libraries(${PROJ} PRIVATE
 	box2d::box2d
 	fmt::fmt

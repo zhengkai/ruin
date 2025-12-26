@@ -2,6 +2,7 @@
 
 #include "../asset/character.hpp"
 #include "../common/pose.hpp"
+#include <SDL3/SDL_rect.h>
 #include <box2d/box2d.h>
 
 namespace context {

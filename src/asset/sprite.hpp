@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pb/pose.pb.h"
+#include <SDL3_image/SDL_image.h>
 
 namespace asset {
 

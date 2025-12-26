@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../pb/asset.pb.h"
+#include <SDL3/SDL_rect.h>
 
 namespace asset {
 

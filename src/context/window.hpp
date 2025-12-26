@@ -2,6 +2,7 @@
 
 #include "../config.hpp"
 #include "entity.hpp"
+#include <SDL3/SDL_rect.h>
 #include <spdlog/spdlog.h>
 
 namespace context {
