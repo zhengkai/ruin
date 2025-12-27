@@ -34,6 +34,8 @@ public:
 		: global(global), control(control), scene(scene), asset(asset),
 		  p(scene.player) {
 
+		spdlog::info("scene {}", this->scene.player.id);
+
 		p.asset = this->asset.character.at("samurai");
 		prevPos = p.getPos();
 	};
@@ -124,7 +126,7 @@ private:
 		if (!global.counter(jumpCnt, config::cdJump)) {
 			return;
 		}
-		scene.player.command.jump = true;
+		p.command.jump = true;
 		changePose(pb::Pose_Type::Pose_Type_jump);
 	}
 

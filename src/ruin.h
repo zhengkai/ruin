@@ -28,5 +28,6 @@ public:
 	void loop();
 	void run();
 	bool init();
+	void parseCommand();
 	void syncPos();
 };

@@ -2,7 +2,6 @@
 
 #include <SDL3/SDL_pixels.h>
 #include <filesystem>
-#include <numbers>
 #include <spdlog/spdlog.h>
 
 namespace config {
@@ -20,11 +19,16 @@ inline const std::filesystem::path assetManifest = "manifest.json";
 const float speed = 30.0f;
 const float speedMax = speed * 1.2f;
 const float speedMin = speed / 1.2f;
-const float speedClassic = 30.0f * std::numbers::sqrt2_v<float> / 2.0f;
-const float gravity = speed * 10.0f;
 
 const int fps = 20;
 const float fpsDeltaTime = 1.0f / static_cast<float>(fps);
+
+const float gravity = 2.0f / 10.0f / static_cast<float>(fps);
+const float gravityUp = 1.0f / 10.0f / static_cast<float>(fps);
+const float jumpForce = 20.0f / 10.0f / static_cast<float>(fps);
+
+const float physicsScanRange =
+	5.0f; // 坐标差别超过这个的物体（无论大小）直接不检测碰撞
 
 inline const char *winTitle = "Ruin Test";
 

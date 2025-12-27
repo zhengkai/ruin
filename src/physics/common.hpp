@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cmath>
 #include <cstdint>
 
 namespace physics {
@@ -11,12 +10,14 @@ enum class ContactType : uint8_t {
 	Overlap // 穿透
 };
 
-struct IntersectResult {
-	ContactType overall = ContactType::None;
-	ContactType u = ContactType::None;
-	ContactType d = ContactType::None;
-	ContactType l = ContactType::None;
-	ContactType r = ContactType::None;
+struct IntersectEvent {
+	bool hit = false;
+	bool touch = false;
+	bool overlap = false;
+	float u = -1.0f;
+	float d = -1.0f;
+	float l = -1.0f;
+	float r = -1.0f;
 
 	void Reset() {
 		*this = {};
@@ -29,34 +30,28 @@ struct Box {
 	float w; // half witdth
 	float h; // half height
 
-	void checkIntersects(const Box &b, IntersectResult &re) const {
+	void checkIntersects(const Box &b, IntersectEvent &re) const {
 
-		ContactType l = ContactType::None;
-		ContactType r = ContactType::None;
+		float l = -1.0f;
+		float r = -1.0f;
 
 		if (x < b.x) {
 			float diff = x + w + b.w;
 			if (diff < b.x) {
 				re.Reset();
 				return;
-			} else if (diff == b.x) {
-				r = ContactType::Touch;
-			} else {
-				r = ContactType::Overlap;
-			}
+			};
+			r = diff - b.x;
 		} else if (x > b.x) {
 			float diff = b.x + b.w + w;
 			if (diff < x) {
 				re.Reset();
 				return;
-			} else if (diff == x) {
-				l = ContactType::Touch;
-			} else {
-				l = ContactType::Overlap;
 			}
+			l = diff - x;
 		} else {
-			l = ContactType::Overlap;
-			r = ContactType::Overlap;
+			l = b.w + w;
+			r = l;
 		}
 
 		if (y < b.y) {
@@ -64,29 +59,26 @@ struct Box {
 			if (diff < b.y) {
 				re.Reset();
 				return;
-			} else if (diff == b.y) {
-				re.u = ContactType::Touch;
-			} else {
-				re.u = ContactType::Overlap;
 			}
+			re.u = diff - b.y;
 		} else if (y > b.y) {
 			float diff = b.y + b.h + h;
 			if (diff < y) {
 				re.Reset();
 				return;
-			} else if (diff == y) {
-				re.d = ContactType::Touch;
-			} else {
-				re.d = ContactType::Overlap;
 			}
+			re.d = diff - y;
 		} else {
-			re.u = ContactType::Overlap;
-			re.d = ContactType::Overlap;
+			re.u = b.h + h;
+			re.d = re.u;
 		}
 
 		re.l = l;
 		re.r = r;
-		re.overall = ContactType::Overlap;
+
+		re.hit = true;
+		re.touch = re.d == 0.0f || re.u == 0.0f || re.l == 0.0f || re.r == 0.0f;
+		re.overlap = re.d > 0.0f || re.u > 0.0f || re.l > 0.0f || re.r > 0.0f;
 	};
 };
 
