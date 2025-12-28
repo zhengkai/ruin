@@ -9,4 +9,12 @@ enum class MovementState {
 	Dashing,
 };
 
+enum class Direction {
+	None,
+	Up,
+	Down,
+	Left,
+	Right,
+};
+
 }; // namespace physics

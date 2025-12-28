@@ -1,6 +1,8 @@
 #pragma once
 
+#include "state.hpp"
 #include <cstdint>
+#include <spdlog/spdlog.h>
 
 namespace physics {
 
@@ -8,6 +10,17 @@ enum class ContactType : uint8_t {
 	None,	// 完全不相交
 	Touch,	// 贴边
 	Overlap // 穿透
+};
+
+struct Touch {
+	bool u = false;
+	bool d = false;
+	bool l = false;
+	bool r = false;
+
+	void Reset() {
+		*this = {};
+	}
 };
 
 struct IntersectEvent {
@@ -81,6 +94,85 @@ struct Box {
 		re.hit = true;
 		re.touch = re.d == 0.0f || re.u == 0.0f || re.l == 0.0f || re.r == 0.0f;
 		re.overlap = re.d > 0.0f || re.u > 0.0f || re.l > 0.0f || re.r > 0.0f;
+	};
+
+	float getRollback(const Box &b, Direction d) const {
+
+		float rb;
+		switch (d) {
+
+		case Direction::Down:
+			if (!overlapX(b)) {
+				return -1.0f;
+			}
+			rb = (b.y + b.h) - (y - h);
+			if (rb < 0.0f) {
+				return -1.0f;
+			}
+			break;
+
+		case Direction::Up:
+			if (!overlapX(b)) {
+				return -1.0f;
+			}
+			rb = (y + h) - (b.y - b.h);
+			if (rb < 0.0f) {
+				return -1.0f;
+			}
+			break;
+
+		case Direction::Left:
+			if (!overlapY(b)) {
+				return -1.0f;
+			}
+			rb = (b.x + b.w) - (x - w);
+			if (rb < 0.0f) {
+				return -1.0f;
+			}
+			break;
+
+		case Direction::Right:
+			if (!overlapY(b)) {
+				return -1.0f;
+			}
+			rb = (x + w) - (b.x - b.w);
+			if (rb < 0.0f) {
+				return -1.0f;
+			}
+			break;
+
+		default:
+			return -1.0f;
+			break;
+		}
+
+		return rb;
+	};
+
+	bool overlapX(const Box &b) const {
+		if (x < b.x) {
+			if (x + w <= b.x - b.w) {
+				return false;
+			}
+		} else if (x > b.x) {
+			if (b.x + b.w < x - w) {
+				return false;
+			}
+		}
+		return true;
+	};
+
+	bool overlapY(const Box &b) const {
+		if (y < b.y) {
+			if (y + h <= b.y - b.h) {
+				return false;
+			}
+		} else if (y > b.y) {
+			if (b.y + b.h < y - h) {
+				return false;
+			}
+		}
+		return true;
 	};
 };
 

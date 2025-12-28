@@ -87,11 +87,6 @@ void Ruin::parseCommand() {
 		b.vy = config::jumpForce;
 	}
 	b.vx = cmd.x;
-	spdlog::warn("player vx: {}, player x: {}, y: {}, serial: {}",
-		b.vx,
-		b.x,
-		b.y,
-		b.serial);
 };
 
 void Ruin::syncPos() {
