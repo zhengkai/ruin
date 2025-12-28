@@ -7,8 +7,8 @@
 namespace physics {
 
 struct World {
-	std::unordered_map<std::size_t, Tile> tile;
-	std::unordered_map<std::size_t, Body> body;
+	std::unordered_map<std::size_t, Tile> tile = {};
+	std::unordered_map<std::size_t, Body> body = {};
 };
 
 }; // namespace physics

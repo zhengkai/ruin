@@ -73,8 +73,10 @@ struct Box {
 			re.d = re.u;
 		}
 
-		re.l = l;
-		re.r = r;
+		if (re.u > 0.0f || re.d > 0.0f) {
+			re.l = l;
+			re.r = r;
+		}
 
 		re.hit = true;
 		re.touch = re.d == 0.0f || re.u == 0.0f || re.l == 0.0f || re.r == 0.0f;

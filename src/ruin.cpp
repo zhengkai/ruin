@@ -79,14 +79,19 @@ void Ruin::loop() {
 
 void Ruin::parseCommand() {
 
-	auto body = p->getBody(scene.player.physicsSerial);
+	auto &sp = scene.player;
 
-	auto &p = scene.player;
-	auto &cmd = p.command;
+	auto &b = p->getBody(sp.physicsSerial);
+	auto &cmd = sp.command;
 	if (cmd.jump) {
-		body.vy = config::jumpForce;
+		b.vy = config::jumpForce;
 	}
-	body.vx = cmd.x;
+	b.vx = cmd.x;
+	spdlog::warn("player vx: {}, player x: {}, y: {}, serial: {}",
+		b.vx,
+		b.x,
+		b.y,
+		b.serial);
 };
 
 void Ruin::syncPos() {

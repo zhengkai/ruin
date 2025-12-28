@@ -43,7 +43,7 @@ public:
 		b2DestroyWorld(b2w);
 	}
 	void step() {
-		_step(config::fpsDeltaTime);
+		_step(config::deltaTime);
 	};
 
 private:

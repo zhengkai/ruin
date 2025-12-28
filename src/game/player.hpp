@@ -43,7 +43,7 @@ public:
 
 	void parse() {
 
-		p.command.x = control.axisA.x * p.speed;
+		p.command.x = control.axisA.x * p.speed * config::deltaTime;
 
 		next();
 

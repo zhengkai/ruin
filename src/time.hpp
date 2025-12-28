@@ -10,11 +10,11 @@ using namespace std::chrono;
 class Time {
 public:
 	explicit Time() : start(steady_clock::now()) {
-		ft = std::chrono::duration<float>(config::fpsDeltaTime);
+		ft = std::chrono::duration<float>(config::deltaTime);
 #ifndef __EMSCRIPTEN__
 		spdlog::info("time start, {} fps, {:.6f} s per frame",
 			config::fps,
-			config::fpsDeltaTime);
+			config::deltaTime);
 #endif
 	}
 
