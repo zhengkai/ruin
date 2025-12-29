@@ -24,7 +24,7 @@ const int fps = 20;
 const float deltaTime = 1.0f / static_cast<float>(fps);
 
 const float gravity = 2.0f / 10.0f * deltaTime;
-const float gravityUp = 1.0f / 10.0f * deltaTime;
+const float gravityUp = 1.5f / 10.0f * deltaTime;
 const float jumpForce = 20.0f / 10.0f * deltaTime;
 
 const float physicsScanRange =

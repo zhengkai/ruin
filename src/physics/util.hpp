@@ -65,7 +65,7 @@ inline float CheckRollback(const Body body,
 		rollback = std::max(rollback, rb);
 	}
 
-	spdlog::info("total {}, check {}, effect {}", i, j, k);
+	spdlog::debug("total {}, check {}, effect {}", i, j, k);
 
 	return rollback;
 };

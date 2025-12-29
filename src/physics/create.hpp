@@ -19,6 +19,9 @@ public:
 
 		p = std::make_unique<Physics>();
 
+		p->setSize(static_cast<float>(asset.map.w + 2),
+			static_cast<float>(asset.map.h + 20));
+
 		initPlayer();
 		initTile();
 	};

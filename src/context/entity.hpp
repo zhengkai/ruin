@@ -9,7 +9,7 @@ namespace context {
 
 struct CharacterCommand {
 	float x = 0.0f;
-	bool jump = 0;
+	bool jump = false;
 };
 
 struct Entity {

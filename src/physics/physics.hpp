@@ -29,10 +29,10 @@ public:
 	~Physics() {};
 
 	void step() {
-		spdlog::info("physics tick");
+		// spdlog::info("physics tick");
 		for (auto &[_, b] : world.body) {
 			stepOne(b);
-			if (b.x < 0.0f || b.y < 0.0f) {
+			if (b.x < -2.0f || b.y < -2.0f) {
 				b.x = 10.0f;
 				b.y = 13.0f;
 			}
@@ -41,16 +41,12 @@ public:
 
 	void stepOne(Body &b) {
 
-		if (b.gravity && !b.touch.d) {
-			b.vy -= b.vy > 0.0f ? config::gravityUp : config::gravity;
-		}
+		if (b.gravity &&
+			CheckRollback(b, world.tile, Direction::Down) == -1.0f) {
 
-		if (b.vy < 0.0f) {
-			b.y += b.vy;
-			stepDown(b);
-		} else if (b.vy > 0.0f) {
-			b.y += b.vy;
-			stepUp(b);
+			spdlog::info("gravity {}", b.vy);
+			b.vy -= (b.vy > 0.0f) ? config::gravityUp : config::gravity;
+			spdlog::info("gravity end {}", b.vy);
 		}
 
 		if (b.vx < 0.0f) {
@@ -60,6 +56,15 @@ public:
 			b.x += b.vx;
 			stepRight(b);
 		}
+
+		if (b.vy < 0.0f) {
+			b.y += b.vy;
+			stepDown(b);
+		} else if (b.vy > 0.0f) {
+			b.y += b.vy;
+			stepUp(b);
+		}
+		spdlog::info("step vy {}", b.vy);
 	};
 
 	void stepDown(Body &b) {
@@ -77,7 +82,7 @@ public:
 	};
 	void stepUp(Body &b) {
 		float rb = CheckRollback(b, world.tile, Direction::Up);
-		if (rb < 0.0f) {
+		if (rb > 0.0f) {
 			b.y -= rb;
 			b.vy = 0.0f;
 			b.touch.u = true;
@@ -103,7 +108,7 @@ public:
 	};
 	void stepRight(Body &b) {
 		float rb = CheckRollback(b, world.tile, Direction::Right);
-		if (rb < 0.0f) {
+		if (rb > 0.0f) {
 			b.x -= rb;
 			b.vx = 0.0f;
 			b.touch.r = true;
@@ -119,6 +124,11 @@ public:
 
 	void dump() {
 		spdlog::info("Physics tile count: {}", world.tile.size());
+	};
+
+	void setSize(float w, float h) {
+		world.w = w;
+		world.h = h;
 	};
 
 	int addBody(float x, float y, float w, float h) {
