@@ -33,8 +33,8 @@ public:
 private:
 	void initPlayer() {
 		auto &sp = scene.player;
-		float x = 10.0f;
-		float y = 13.0f;
+		float x = config::posResetX;
+		float y = config::posResetY;
 		float w = sp.w / 2.0f;
 		float h = sp.h / 2.0f;
 		sp.physicsSerial = p->addBody(x, y, w, h);

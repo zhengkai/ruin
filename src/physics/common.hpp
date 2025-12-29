@@ -155,7 +155,7 @@ struct Box {
 				return false;
 			}
 		} else if (x > b.x) {
-			if (b.x + b.w < x - w) {
+			if (b.x + b.w <= x - w) {
 				return false;
 			}
 		}
@@ -168,7 +168,7 @@ struct Box {
 				return false;
 			}
 		} else if (y > b.y) {
-			if (b.y + b.h < y - h) {
+			if (b.y + b.h <= y - h) {
 				return false;
 			}
 		}

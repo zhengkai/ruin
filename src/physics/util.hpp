@@ -60,6 +60,8 @@ inline float CheckRollback(const Body body,
 		j++;
 		float rb = body.getRollback(t, direction);
 		if (rb >= 0.0f) {
+			spdlog::debug(
+				"roll {}, x: {}, y: {}, {}", t.serial, t.x, t.y, direction);
 			k++;
 		}
 		rollback = std::max(rollback, rb);

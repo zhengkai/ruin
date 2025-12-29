@@ -23,9 +23,13 @@ const float speedMin = speed / 1.2f;
 const int fps = 20;
 const float deltaTime = 1.0f / static_cast<float>(fps);
 
-const float gravity = 2.0f / 10.0f * deltaTime;
-const float gravityUp = 1.5f / 10.0f * deltaTime;
-const float jumpForce = 20.0f / 10.0f * deltaTime;
+const float gravity = 4.0f / 10.0f * deltaTime;
+const float gravityUp = 3.0f / 10.0f * deltaTime;
+const float jumpForce = 59.0f / 10.0f * deltaTime;
+const float downSpeedMax = -0.475f;
+
+const float posResetX = 10.0f;
+const float posResetY = 13.0f;
 
 const float physicsScanRange =
 	5.0f; // 坐标差别超过这个的物体（无论大小）直接不检测碰撞

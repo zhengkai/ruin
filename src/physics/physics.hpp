@@ -32,9 +32,11 @@ public:
 		// spdlog::info("physics tick");
 		for (auto &[_, b] : world.body) {
 			stepOne(b);
-			if (b.x < -2.0f || b.y < -2.0f) {
-				b.x = 10.0f;
-				b.y = 13.0f;
+			if (b.x < -2.0f || b.y < -2.0f || b.x > world.w || b.y > world.h) {
+				b.x = config::posResetX;
+				b.y = config::posResetY;
+				b.vx = 0.0f;
+				b.vy = 0.0f;
 			}
 		}
 	};
@@ -44,9 +46,8 @@ public:
 		if (b.gravity &&
 			CheckRollback(b, world.tile, Direction::Down) == -1.0f) {
 
-			spdlog::info("gravity {}", b.vy);
 			b.vy -= (b.vy > 0.0f) ? config::gravityUp : config::gravity;
-			spdlog::info("gravity end {}", b.vy);
+			b.vy = std::max(b.vy, config::downSpeedMax);
 		}
 
 		if (b.vx < 0.0f) {
@@ -64,7 +65,6 @@ public:
 			b.y += b.vy;
 			stepUp(b);
 		}
-		spdlog::info("step vy {}", b.vy);
 	};
 
 	void stepDown(Body &b) {
