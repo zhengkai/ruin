@@ -4,6 +4,7 @@
 #include "../config.hpp"
 #include "../context/scene.hpp"
 #include "body.hpp"
+#include "common.hpp"
 #include "tile.hpp"
 #include "util.hpp"
 #include "world.hpp"
@@ -23,112 +24,34 @@ public:
 
 private:
 	std::size_t serial = 0;
+	std::unordered_map<std::size_t, Speed> forSubStep = {};
 
 public:
 	Physics() {};
 	~Physics() {};
 
 	void step() {
-		// spdlog::info("physics tick");
-		for (auto &[_, b] : world.body) {
-			stepOne(b);
-			if (b.x < -2.0f || b.y < -2.0f || b.x > world.w || b.y > world.h) {
-				b.x = config::posResetX;
-				b.y = config::posResetY;
-				b.vx = 0.0f;
-				b.vy = 0.0f;
+
+		checkSpeed();
+
+		for (auto &[id, b] : world.body) {
+			Speed a = {.vx = b.vx, .vy = b.vy};
+			Speed c = {};
+			Speed n = {};
+			if (limitSpeed(a, c, n)) {
+				forSubStep[id] = n;
 			}
-		}
-	};
-
-	void stepOne(Body &b) {
-
-		if (b.gravity &&
-			CheckRollback(b, world.tile, Direction::Down) == -1.0f) {
-
-			b.vy -= (b.vy > 0.0f) ? config::gravityUp : config::gravity;
-			b.vy = std::max(b.vy, config::downSpeedMax);
+			stepOne(b, c.vx, c.vy);
 		}
 
-		if (b.vx < 0.0f) {
-			b.x += b.vx;
-			stepLeft(b);
-		} else if (b.vx > 0.0f) {
-			b.x += b.vx;
-			stepRight(b);
+		while (!forSubStep.empty()) {
+			subStep();
 		}
 
-		if (b.vy < 0.0f) {
-			b.y += b.vy;
-			stepDown(b);
-		} else if (b.vy > 0.0f) {
-			b.y += b.vy;
-			stepUp(b);
+		for (auto &[_, b] : world.body) {
+			checkReset(b);
+			CheckTouch(b, world.tile);
 		}
-	};
-
-	void stepDown(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Down);
-		if (rb > 0.0f) {
-			b.y += rb;
-			b.vy = 0.0f;
-			b.touch.d = true;
-		} else if (rb == 0.0f) {
-			b.y += rb;
-			b.touch.d = true;
-		} else {
-			b.touch.d = false;
-		}
-	};
-	void stepUp(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Up);
-		if (rb > 0.0f) {
-			b.y -= rb;
-			b.vy = 0.0f;
-			b.touch.u = true;
-		} else if (rb == 0.0f) {
-			b.y -= rb;
-			b.touch.u = true;
-		} else {
-			b.touch.u = false;
-		}
-	};
-	void stepLeft(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Left);
-		if (rb > 0.0f) {
-			b.x += rb;
-			b.vx = 0.0f;
-			b.touch.l = true;
-		} else if (rb == 0.0f) {
-			b.x += rb;
-			b.touch.l = true;
-		} else {
-			b.touch.l = false;
-		}
-	};
-	void stepRight(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Right);
-		if (rb > 0.0f) {
-			b.x -= rb;
-			b.vx = 0.0f;
-			b.touch.r = true;
-		} else if (rb == 0.0f) {
-			b.x -= rb;
-			b.touch.r = true;
-		} else {
-			b.touch.r = false;
-		}
-	};
-
-	void clean() {};
-
-	void dump() {
-		spdlog::info("Physics tile count: {}", world.tile.size());
-	};
-
-	void setSize(float w, float h) {
-		world.w = w;
-		world.h = h;
 	};
 
 	int addBody(float x, float y, float w, float h) {
@@ -148,6 +71,146 @@ public:
 	Body &getBody(std::size_t serial) {
 		return world.body.at(serial);
 	}
+
+	void dump() {
+		spdlog::info("Physics tile count: {}", world.tile.size());
+	};
+
+	void setSize(float w, float h) {
+		world.w = w;
+		world.h = h;
+	};
+
+private:
+	void subStep() {
+
+		std::vector<std::size_t> toErase;
+
+		for (auto &[id, s] : forSubStep) {
+			Speed a = {.vx = s.vx, .vy = s.vy};
+			Speed c = {};
+			Speed n = {};
+
+			if (limitSpeed(a, c, n)) {
+				forSubStep[id] = n;
+			} else {
+				toErase.push_back(id);
+			}
+
+			auto &b = world.body.at(id);
+			stepOneSub(b, c.vx, c.vy);
+		}
+
+		for (auto id : toErase) {
+			forSubStep.erase(id);
+		}
+	};
+
+	void checkSpeed() {
+		for (auto &[_, b] : world.body) {
+			if (!b.enable) {
+				continue;
+			}
+			if (b.gravity && !b.touch.d) {
+				b.vy -= (b.vy > 0.0f) ? config::gravityUp : config::gravity;
+				b.vy = std::max(b.vy, config::downSpeedMax);
+			}
+		}
+	};
+
+	void stepOne(Body &b, float vx, float vy) {
+
+		if (vx < 0.0f) {
+			if (!b.touch.l) {
+				b.x += vx;
+				stepLeft(b);
+			}
+		} else if (vx > 0.0f) {
+			if (!b.touch.r) {
+				b.x += vx;
+				stepRight(b);
+			}
+		}
+
+		if (vy < 0.0f) {
+			if (!b.touch.d) {
+				b.y += vy;
+				stepDown(b);
+			}
+		} else if (vy > 0.0f) {
+			if (!b.touch.u) {
+				b.y += vy;
+				stepUp(b);
+			}
+		}
+	};
+
+	void stepOneSub(Body &b, float vx, float vy) {
+
+		if (vx < 0.0f) {
+			b.x += vx;
+			stepLeft(b);
+		} else if (vx > 0.0f) {
+			b.x += vx;
+			stepRight(b);
+		}
+
+		if (vy < 0.0f) {
+			b.y += vy;
+			stepDown(b);
+		} else if (vy > 0.0f) {
+			b.y += vy;
+			stepUp(b);
+		}
+	};
+
+	void stepDown(Body &b) {
+		float rb = CheckRollback(b, world.tile, Direction::Down);
+		if (rb > 0.0f) {
+			b.y += rb;
+			b.vy = 0.0f;
+		} else if (rb == 0.0f) {
+			b.y += rb;
+		}
+	};
+	void stepUp(Body &b) {
+		float rb = CheckRollback(b, world.tile, Direction::Up);
+		if (rb > 0.0f) {
+			b.y -= rb;
+			b.vy = 0.0f;
+		} else if (rb == 0.0f) {
+			b.y -= rb;
+		}
+	};
+	void stepLeft(Body &b) {
+		float rb = CheckRollback(b, world.tile, Direction::Left);
+		if (rb > 0.0f) {
+			b.x += rb;
+			b.vx = 0.0f;
+		} else if (rb == 0.0f) {
+			b.x += rb;
+		}
+	};
+	void stepRight(Body &b) {
+		float rb = CheckRollback(b, world.tile, Direction::Right);
+		if (rb > 0.0f) {
+			b.x -= rb;
+			b.vx = 0.0f;
+		} else if (rb == 0.0f) {
+			b.x -= rb;
+		}
+	};
+
+	void checkReset(Body &b) {
+		if (b.x < -2.0f || b.y < -2.0f || b.x > world.w || b.y > world.h) {
+			b.x = config::posResetX;
+			b.y = config::posResetY;
+			b.vx = 0.0f;
+			b.vy = 0.0f;
+		}
+	};
+
+	void clean() {};
 
 private:
 	std::size_t genSerial() {

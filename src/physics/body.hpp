@@ -2,11 +2,10 @@
 
 #include "common.hpp"
 #include <cstddef>
-#include <vector>
 
 namespace physics {
 
-struct Body : Box {
+struct Body : Box, Speed {
 	std::size_t serial;
 	bool enable = true;
 	Touch touch = {};
@@ -17,7 +16,7 @@ struct Body : Box {
 };
 
 inline Body newBody(std::size_t serial, float x, float y, float w, float h) {
-	return Body{Box{x, y, w, h}, serial};
+	return Body{Box{x, y, w, h}, Speed{}, serial};
 }
 
 }; // namespace physics

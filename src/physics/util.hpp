@@ -9,29 +9,45 @@
 
 namespace physics {
 
-inline std::vector<IntersectEvent> CheckIntersects(
-	const Body body, const std::unordered_map<std::size_t, Tile> &tl) {
-	IntersectEvent e = {};
-	auto el = std::vector<IntersectEvent>{};
+inline void CheckTouch(
+	Body &b, const std::unordered_map<std::size_t, Tile> &tl) {
 
-	float l = body.x - body.w - config::physicsScanRange;
-	float r = body.x + body.w + config::physicsScanRange;
-	float u = body.y - body.h - config::physicsScanRange;
-	float d = body.y + body.h + config::physicsScanRange;
+	b.touch = {};
+
+	float l = b.x - b.w - config::physicsScanRange;
+	float r = b.x + b.w + config::physicsScanRange;
+	float u = b.y + b.h + config::physicsScanRange;
+	float d = b.y - b.h - config::physicsScanRange;
+
 	for (auto &[_, t] : tl) {
-		if (!t.enable || t.x < l || t.x > r || t.y < u || t.y > d) {
+		if (!t.enable || t.x < l || t.x > r || t.y < d || t.y > u) {
 			continue;
 		}
-		body.checkIntersects(t, e);
-		if (!e.hit) {
-			continue;
+		if (!b.touch.l && b.getRollback(t, Direction::Left) != -1.0f) {
+			b.touch.l = true;
 		}
-		el.push_back(e);
+		if (!b.touch.r && b.getRollback(t, Direction::Right) != -1.0f) {
+			spdlog::info("touch right tile {}, {} {}, {} {}",
+				t.serial,
+				t.x,
+				t.y,
+				b.x,
+				b.y);
+			b.touch.r = true;
+		}
+		if (!b.touch.u && b.getRollback(t, Direction::Up) != -1.0f) {
+			b.touch.u = true;
+		}
+		if (!b.touch.d && b.getRollback(t, Direction::Down) != -1.0f) {
+			b.touch.d = true;
+		}
+		if (b.touch.l && b.touch.r && b.touch.u && b.touch.d) {
+			break;
+		}
 	}
-	return el;
-};
+}
 
-inline float CheckRollback(const Body body,
+inline float CheckRollback(const Body &body,
 	const std::unordered_map<std::size_t, Tile> &tl,
 	Direction direction) {
 
@@ -72,6 +88,39 @@ inline float CheckRollback(const Body body,
 	return rollback;
 };
 
+inline bool limitSpeed(Speed &origin, Speed &now, Speed &next) {
+
+	bool overSpeed = false;
+
+	if (origin.vx > config::halfFloat) {
+		now.vx = config::halfFloat;
+		next.vx = origin.vx - config::halfFloat;
+		overSpeed = true;
+	} else if (origin.vx < config::halfFloatNegative) {
+		now.vx = config::halfFloatNegative;
+		next.vx = origin.vx + config::halfFloat;
+		overSpeed = true;
+	} else {
+		now.vx = origin.vx;
+		next.vx = 0.0f;
+	}
+
+	if (origin.vy > config::halfFloat) {
+		now.vy = config::halfFloat;
+		next.vy = origin.vy - config::halfFloat;
+		overSpeed = true;
+	} else if (origin.vy < config::halfFloatNegative) {
+		now.vy = config::halfFloatNegative;
+		next.vy = origin.vy + config::halfFloat;
+		overSpeed = true;
+	} else {
+		now.vy = origin.vy;
+		next.vy = 0.0f;
+	}
+
+	return overSpeed;
+};
+
 inline IntersectEvent IntersectsOverall(const std::vector<IntersectEvent> &el) {
 	IntersectEvent eo = {};
 	for (auto &e : el) {
@@ -91,5 +140,4 @@ inline IntersectEvent IntersectsOverall(const std::vector<IntersectEvent> &el) {
 	}
 	return eo;
 };
-
 }; // namespace physics

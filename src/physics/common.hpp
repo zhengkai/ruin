@@ -37,6 +37,11 @@ struct IntersectEvent {
 	}
 };
 
+struct Speed {
+	float vx = 0.0f;
+	float vy = 0.0f;
+};
+
 struct Box {
 	float x;
 	float y;
@@ -109,6 +114,9 @@ struct Box {
 			if (rb < 0.0f) {
 				return -1.0f;
 			}
+			if (rb >= (b.h + h)) {
+				return -1.0f;
+			}
 			break;
 
 		case Direction::Up:
@@ -117,6 +125,9 @@ struct Box {
 			}
 			rb = (y + h) - (b.y - b.h);
 			if (rb < 0.0f) {
+				return -1.0f;
+			}
+			if (rb >= (b.h + h)) {
 				return -1.0f;
 			}
 			break;
@@ -129,6 +140,9 @@ struct Box {
 			if (rb < 0.0f) {
 				return -1.0f;
 			}
+			if (rb > (b.w + w)) {
+				return -1.0f;
+			}
 			break;
 
 		case Direction::Right:
@@ -137,6 +151,9 @@ struct Box {
 			}
 			rb = (x + w) - (b.x - b.w);
 			if (rb < 0.0f) {
+				return -1.0f;
+			}
+			if (rb >= (b.w + w)) {
 				return -1.0f;
 			}
 			break;

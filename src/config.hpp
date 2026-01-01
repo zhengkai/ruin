@@ -6,6 +6,9 @@
 
 namespace config {
 
+const float halfFloat = 0.49609375; // 127/256
+const float halfFloatNegative = 0.0f - halfFloat;
+
 inline bool fullscreen = false;
 inline bool versionOnly = false;
 inline bool helpOnly = false;
@@ -26,10 +29,10 @@ const float deltaTime = 1.0f / static_cast<float>(fps);
 const float gravity = 4.0f / 10.0f * deltaTime;
 const float gravityUp = 3.0f / 10.0f * deltaTime;
 const float jumpForce = 59.0f / 10.0f * deltaTime;
-const float downSpeedMax = -0.475f;
+const float downSpeedMax = -1.25f;
 
-const float posResetX = 10.0f;
-const float posResetY = 13.0f;
+const float posResetX = 11.0f;
+const float posResetY = 17.0f;
 
 const float physicsScanRange =
 	5.0f; // 坐标差别超过这个的物体（无论大小）直接不检测碰撞
