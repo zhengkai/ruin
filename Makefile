@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-export RUIN_DIR := $(CURDIR)/static
+export RUIN_DIR := $(CURDIR)/build/Release
 
 default:
 	./run.sh
