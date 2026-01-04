@@ -11,24 +11,26 @@
 
 namespace physics {
 
-struct Dep {
-	context::Scene &scene;
-};
-
 class Physics {
 
 public:
 	World world;
 
 private:
+	context::Scene &scene;
 	std::size_t serial = 0;
 	std::unordered_map<std::size_t, Speed> forSubStep = {};
+	int mapIdx = -1;
 
 public:
-	Physics() {};
+	Physics(context::Scene &cs) : scene(cs) {
+		updateMap();
+	};
 	~Physics() {};
 
 	void step() {
+
+		updateMap();
 
 		checkSpeed();
 
@@ -59,24 +61,12 @@ public:
 		return serial;
 	};
 
-	int addTile(float x, float y) {
-		auto serial = genSerial();
-		auto t = newTile(serial, x, y);
-		world.tile[serial] = t;
-		return serial;
-	};
-
 	Body &getBody(std::size_t serial) {
 		return world.body.at(serial);
 	}
 
 	void dump() {
 		spdlog::info("Physics tile count: {}", world.tile.size());
-	};
-
-	void setSize(float w, float h) {
-		world.w = w;
-		world.h = h;
 	};
 
 private:
@@ -213,6 +203,47 @@ private:
 private:
 	std::size_t genSerial() {
 		return ++serial;
+	};
+
+	void updateMap() {
+		auto &m = scene.map;
+		if (mapIdx == m->idx) {
+			return;
+		}
+
+		world.Reset(m->w, m->h);
+
+		initPlayer();
+		initTile();
+
+		mapIdx = m->idx;
+	}
+
+	void initPlayer() {
+		auto &sp = scene.player;
+		float x = config::posResetX;
+		float y = config::posResetY;
+		float w = sp.w / 2.0f;
+		float h = sp.h / 2.0f;
+		sp.physicsSerial = addBody(x, y, w, h);
+	};
+
+	void initTile() {
+		auto &cl = scene.map->cell;
+		if (!cl.size()) {
+			spdlog::warn("No map cells to init tiles.");
+			return;
+		}
+		for (const auto &c : cl) {
+			addTile(c.x, c.y);
+		}
+	};
+
+	int addTile(float x, float y) {
+		auto serial = genSerial();
+		auto t = newTile(serial, x, y);
+		world.tile[serial] = t;
+		return serial;
 	};
 };
 }; // namespace physics

@@ -1,7 +1,7 @@
 #include "ruin.h"
 #include "context/window.hpp"
 #include "game/game.hpp"
-#include "physics/create.hpp"
+#include "physics/physics.hpp"
 #include "sdl.h"
 #include <SDL3/SDL_events.h>
 #include <spdlog/spdlog.h>
@@ -37,7 +37,7 @@ bool Ruin::init() {
 
 	g = std::make_unique<Game>(scene, window, asset);
 
-	p = physics::Create(scene).get();
+	p = std::make_unique<physics::Physics>(scene);
 
 	return true;
 }
