@@ -6,7 +6,7 @@ message Pose {
 		unknown = 0;
 		walk = 1;
 		run = 2;
-		attack1 = 3;
+		attack = 3;
 		attack2 = 4;
 		attack3 = 5;
 		jump = 6;

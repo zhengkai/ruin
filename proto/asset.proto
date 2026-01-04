@@ -2,6 +2,7 @@ syntax = "proto3";
 package pb;
 
 import "pose.proto";
+import "map.proto";
 
 message Size {
 	uint32 w = 1;
@@ -19,7 +20,7 @@ message Tileset {
 	Size size = 3;
 }
 
-message CharacterSprite {
+message Sprite {
 	Pose.Type pose = 1;
 	string path = 2;
 	repeated uint32 step = 3;
@@ -27,10 +28,17 @@ message CharacterSprite {
 
 message CharacterAsset {
 	string name = 1;
-	repeated CharacterSprite sprite = 2;
+	repeated Sprite sprite = 2;
+}
+
+message AnimalAsset {
+	string name = 1;
+	repeated Sprite sprite = 2;
 }
 
 message AssetManifest {
 	repeated CharacterAsset character = 1;
-	repeated Tileset tileset = 2;
+	repeated AnimalAsset animal = 2;
+	repeated Tileset tileset = 3;
+	repeated Map map = 4;
 }

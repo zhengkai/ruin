@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 "use strict";
 
 import fs from "fs";
@@ -5,27 +7,43 @@ import path from "path";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const rootDir = dirname(dirname(fileURLToPath(import.meta.url)));
+const __filename = fileURLToPath(import.meta.url);
+const jsonCache = {};
 
 const SOURCE = "asset";
 const MANIFEST = "manifest.json";
 
-const srcDir = path.join(rootDir, SOURCE);
-const dstDir = path.join(rootDir, "build", "Release");
-
-
 (() => {
 
-	if (!fs.existsSync(srcDir)) {
-		console.error("asset dir not found:", srcDir);
+	// 确定目录
+
+	const rootDir = dirname(__filename);
+	let tmpDir = rootDir;
+	while (true) {
+		if (fs.existsSync(path.join(tmpDir, SOURCE, MANIFEST))) {
+			break;
+		}
+		tmpDir = dirname(tmpDir);
+		if (!(tmpDir?.length > 1)) {
+			console.error(`no asset dir found at ${rootDir}`);
+			return;
+		}
+	}
+	const srcDir = path.join(tmpDir, SOURCE);
+
+	tmpDir = path.join(tmpDir, "build", "Release");
+	if (!fs.existsSync(tmpDir)) {
+		console.error(`no target dir found: ${tmpDir}`);
 		return;
 	}
+	const dstDir = path.join(tmpDir, SOURCE);
 
+	console.info();
+	console.info("srcDir:", srcDir);
+	console.info("dstDir:", dstDir);
+	console.info();
 
-	if (!fs.existsSync(dstDir)) {
-		console.error("target dir not found:", dstDir);
-		return;
-	}
+	// 开始处理
 
 	const copy = (p) => {
 		const src = path.join(srcDir, p);
@@ -34,16 +52,13 @@ const dstDir = path.join(rootDir, "build", "Release");
 			return;
 		}
 
-		const dst = path.join(dstDir, SOURCE, p);
+		const dst = path.join(dstDir, p);
 		fs.mkdirSync(path.dirname(dst), { recursive: true });
 		fs.copyFileSync(src, dst);
 
 		console.log("copied", src, "=>", dst);
 	}
 
-
-
-	const jsonCache = {};
 
 	const readJSON = (p) => {
 
@@ -94,11 +109,8 @@ const dstDir = path.join(rootDir, "build", "Release");
 
 	const manifest = walk(readJSON(MANIFEST));
 	fs.writeFileSync(
-		path.join(dstDir, SOURCE, MANIFEST),
+		path.join(dstDir, MANIFEST),
 		JSON.stringify(manifest, null, 2),
 		"utf8"
 	);
-
-	// console.log(manifest);
-	console.log(path.join(dstDir, SOURCE, MANIFEST));
 })();

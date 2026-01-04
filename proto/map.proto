@@ -14,7 +14,8 @@ message MapCell {
 }
 
 message Map {
-	uint32 w = 1;
-	uint32 h = 2;
-	repeated MapCell list = 3;
+	string name = 1;
+	uint32 w = 2;
+	uint32 h = 3;
+	repeated MapCell list = 4;
 }
