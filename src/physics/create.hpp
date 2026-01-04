@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../asset/asset.hpp"
 #include "../context/scene.hpp"
 #include "physics.hpp"
 
@@ -10,17 +9,15 @@ class Create {
 
 private:
 	context::Scene &scene;
-	const asset::Asset &asset;
 	std::unique_ptr<Physics> p;
 
 public:
-	Create(context::Scene &scene, const asset::Asset &asset)
-		: scene(scene), asset(asset) {
+	Create(context::Scene &scene) : scene(scene) {
 
 		p = std::make_unique<Physics>();
 
-		p->setSize(static_cast<float>(asset.map.w + 2),
-			static_cast<float>(asset.map.h + 20));
+		p->setSize(static_cast<float>(scene.map->w + 2),
+			static_cast<float>(scene.map->h + 20));
 
 		initPlayer();
 		initTile();
@@ -41,7 +38,7 @@ private:
 	};
 
 	void initTile() {
-		auto &cl = asset.map.cell;
+		auto &cl = scene.map->cell;
 		if (!cl.size()) {
 			spdlog::warn("No map cells to init tiles.");
 			return;

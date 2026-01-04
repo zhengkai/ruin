@@ -11,6 +11,6 @@ namespace asset {
 struct Asset {
 	std::unordered_map<std::string, std::shared_ptr<Character>> character = {};
 	std::unordered_map<pb::Tileset_Name, std::shared_ptr<Tileset>> tileset = {};
-	Map map = {};
+	std::unordered_map<std::string, std::shared_ptr<Map>> map = {};
 };
 }; // namespace asset

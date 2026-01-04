@@ -9,7 +9,7 @@ inline const std::string poseName(::pb::Pose_Type t) {
 };
 
 inline bool poseIsAttack(::pb::Pose_Type t) {
-	return t == ::pb::Pose_Type::Pose_Type_attack1 ||
+	return t == ::pb::Pose_Type::Pose_Type_attack ||
 		t == ::pb::Pose_Type::Pose_Type_attack2 ||
 		t == ::pb::Pose_Type::Pose_Type_attack3;
 };

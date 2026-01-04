@@ -38,7 +38,7 @@ bool Ruin::init() {
 
 	g = std::make_unique<Game>(scene, window, asset);
 
-	p = physics::Create(scene, asset).get();
+	p = physics::Create(scene).get();
 
 	return true;
 }

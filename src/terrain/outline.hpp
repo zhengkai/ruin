@@ -153,10 +153,10 @@ inline std::vector<IslandPos> Outline(const std::vector<IslandPos> &pl) {
 };
 
 inline std::vector<std::vector<terrain::IslandPos>> MapOutline(
-	const asset::Map &map) {
+	const std::shared_ptr<asset::Map> map) {
 
-	auto m = util::Matrix<uint8_t>(map.w, map.h, 0);
-	for (const auto &c : map.cell) {
+	auto m = util::Matrix<uint8_t>(map->w, map->h, 0);
+	for (const auto &c : map->cell) {
 		int x = static_cast<int>(c.x);
 		int y = static_cast<int>(c.y);
 		m[x][y] = c.tileName > 0 ? 1 : 0;

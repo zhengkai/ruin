@@ -2,7 +2,6 @@ syntax = "proto3";
 package pb;
 
 import "pose.proto";
-import "map.proto";
 
 message Size {
 	uint32 w = 1;
@@ -34,11 +33,4 @@ message CharacterAsset {
 message AnimalAsset {
 	string name = 1;
 	repeated Sprite sprite = 2;
-}
-
-message AssetManifest {
-	repeated CharacterAsset character = 1;
-	repeated AnimalAsset animal = 2;
-	repeated Tileset tileset = 3;
-	repeated Map map = 4;
 }

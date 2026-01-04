@@ -18,6 +18,8 @@ struct MapCell {
 };
 
 struct Map {
+	std::string name = "";
+	int idx = -1;
 	int w = 80;
 	int h = 20;
 	std::vector<MapCell> cell;

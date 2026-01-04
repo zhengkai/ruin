@@ -37,6 +37,7 @@ add_library(pb OBJECT
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/pose.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/map.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/manifest.proto
 )
 
 target_include_directories(pb PUBLIC
@@ -46,7 +47,7 @@ target_include_directories(pb PUBLIC
 
 protobuf_generate(
     TARGET pb
-    PROTOS ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
+    PROTOS ${CMAKE_CURRENT_SOURCE_DIR}/proto/manifest.proto
     IMPORT_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/proto
     PROTOC_OUT_DIR ${PROTO_OUT_DIR}
     LANGUAGE cpp

@@ -10,7 +10,7 @@ struct Map : base {
 
 	void init() override {};
 	void render() override {
-		for (const auto &t : d->asset.map.cell) {
+		for (const auto &t : d->scene.map->cell) {
 			auto tile = d->asset.tileset.at(t.tileName)->list.at(t.tileID - 1);
 			auto dst = t.getRect();
 			renderTexture(tile, dst);

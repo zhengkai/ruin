@@ -59,6 +59,8 @@ bool sdl::init() {
 		return false;
 	}
 
+	scene.map = asset.map["ruin-2"];
+
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);
 

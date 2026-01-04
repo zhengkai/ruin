@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../asset/asset.hpp"
 #include "../config.hpp"
 #include "../context/scene.hpp"
 #include "body.hpp"
@@ -14,7 +13,6 @@ namespace physics {
 
 struct Dep {
 	context::Scene &scene;
-	const asset::Asset &asset;
 };
 
 class Physics {

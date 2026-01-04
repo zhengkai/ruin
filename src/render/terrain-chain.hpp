@@ -11,7 +11,7 @@ struct TerrainChain : base {
 
 	using base::base;
 	void init() override {
-		outline = terrain::MapOutline(d->asset.map);
+		outline = terrain::MapOutline(d->scene.map);
 	};
 	void render() override {
 		for (auto &o : outline) {

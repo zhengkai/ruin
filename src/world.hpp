@@ -78,7 +78,7 @@ private:
 
 		// spdlog::info("player pos {} {}", d.scene.player.x,
 		// d.scene.player.y); spdlog::info( "terrain size {} {}",
-		// terrain.size(), d.asset.map.cell.size());
+		// terrain.size(), d.scene.map->cell.size());
 	};
 
 	void init() {
@@ -88,7 +88,7 @@ private:
 	};
 
 	void initPhysics() {
-		for (const auto &c : d.asset.map.cell) {
+		for (const auto &c : d.scene.map->cell) {
 			physics.addTile(c.x, c.y);
 		}
 		physics.dump();
@@ -115,7 +115,7 @@ private:
 		// mapChain();
 
 		b2Polygon box = b2MakeBox(0.5f, 0.5f);
-		for (const auto &b : d.asset.map.cell) {
+		for (const auto &b : d.scene.map->cell) {
 
 			b2BodyDef bd = b2DefaultBodyDef();
 			bd.position = b2Vec2{b.x, b.y};
@@ -132,12 +132,12 @@ private:
 		if (!terrain.size()) {
 			spdlog::warn("terrain size 0, asset cell size: {}",
 				terrain.size(),
-				d.asset.map.cell.size());
+				d.scene.map->cell.size());
 		}
 	};
 
 	void mapChain() {
-		auto outline = terrain::MapOutline(d.asset.map);
+		auto outline = terrain::MapOutline(d.scene.map);
 		for (auto &o : outline) {
 			std::vector<b2Vec2> pts;
 			pts.reserve(o.size());

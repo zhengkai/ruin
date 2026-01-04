@@ -5,7 +5,7 @@
 #include "../util/pose.hpp"
 #include "../util/sprite.hpp"
 #include "asset.hpp"
-#include "pb/asset.pb.h"
+#include "pb/manifest.pb.h"
 #include "pb/map.pb.h"
 #include <google/protobuf/util/json_util.h>
 
@@ -79,10 +79,14 @@ inline bool mergeTileset(SDL_Renderer *r,
 	return true;
 }
 
-inline bool mergeMap(pb::Map &src, Asset &dst) {
+inline std::shared_ptr<Map> convertMap(const pb::Map &src, int idx) {
 
-	int w = static_cast<int>(src.w());
-	int h = static_cast<int>(src.h());
+	auto m = std::make_shared<Map>();
+
+	m->idx = idx;
+
+	m->w = static_cast<int>(src.w());
+	m->h = static_cast<int>(src.h());
 
 	for (const auto &s : src.list()) {
 
@@ -93,23 +97,16 @@ inline bool mergeMap(pb::Map &src, Asset &dst) {
 
 		int id = static_cast<int>(s.id());
 
-		dst.map.cell.emplace_back(MapCell{
+		m->cell.emplace_back(MapCell{
 			.id = id,
 			.tileName = t.name(),
 			.tileID = static_cast<int>(t.id()),
-			.x = static_cast<float>(id % w),
-			.y = static_cast<float>(h - 1 - id / w),
+			.x = static_cast<float>(id % m->w),
+			.y = static_cast<float>(m->h - 1 - id / m->w),
 		});
 	}
 
-	// for (const auto &c : dst.map.cell) {
-	// spdlog::info("cell {} {} {}", c.id, c.x, c.y);
-	// }
-
-	dst.map.w = w;
-	dst.map.h = h;
-
-	return true;
+	return m;
 }
 
 inline bool Load(SDL_Renderer *r, std::filesystem::path dir, Asset &asset) {
@@ -131,14 +128,10 @@ inline bool Load(SDL_Renderer *r, std::filesystem::path dir, Asset &asset) {
 		return false;
 	}
 
-	auto fm = util::file(dir / "map.json");
-	pb::Map map;
-	if (!util::loadJSON(fm, map)) {
-		return false;
-	}
-
-	if (!mergeMap(map, asset)) {
-		return false;
+	int idx = 0;
+	for (auto m : manifest.map()) {
+		asset.map[m.name()] = convertMap(m, idx);
+		idx++;
 	}
 	return true;
 };

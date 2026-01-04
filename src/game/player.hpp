@@ -112,7 +112,7 @@ private:
 
 	void parseAttack() {
 		if (!util::poseIsAttack(pose.type)) {
-			pose.type = pb::Pose_Type::Pose_Type_attack1;
+			pose.type = pb::Pose_Type::Pose_Type_attack;
 			pose.step = 0;
 		}
 	}
