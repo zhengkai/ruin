@@ -19,7 +19,6 @@ endif()
 
 include(cmake/build-info.cmake)
 
-find_package(box2d CONFIG REQUIRED QUIET)
 find_package(fmt CONFIG REQUIRED QUIET)
 find_package(spdlog CONFIG REQUIRED QUIET)
 find_package(CLI11 CONFIG REQUIRED QUIET)
@@ -88,7 +87,6 @@ if (EMSCRIPTEN)
 endif()
 
 target_link_libraries(${PROJ} PRIVATE
-	box2d::box2d
 	fmt::fmt
 	SDL3::SDL3
 	SDL3_image::SDL3_image

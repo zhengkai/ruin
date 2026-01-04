@@ -3,7 +3,6 @@
 #include "game/game.hpp"
 #include "physics/create.hpp"
 #include "sdl.h"
-#include "world.hpp"
 #include <SDL3/SDL_events.h>
 #include <spdlog/spdlog.h>
 #ifdef __EMSCRIPTEN__
@@ -65,9 +64,6 @@ void Ruin::loop() {
 
 	parseCommand();
 
-	if (w) {
-		w->step();
-	}
 	if (p) {
 		p->step();
 	}

@@ -1,9 +1,7 @@
 #pragma once
 
 #include "hct.hpp"
-#include "rand.hpp"
 #include <SDL3/SDL_pixels.h>
-#include <algorithm>
 #include <spdlog/spdlog.h>
 
 namespace util {

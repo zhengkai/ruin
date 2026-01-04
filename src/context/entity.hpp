@@ -2,8 +2,8 @@
 
 #include "../asset/character.hpp"
 #include "../common/pose.hpp"
+#include "../physics/pos.hpp"
 #include <SDL3/SDL_rect.h>
-#include <box2d/box2d.h>
 
 namespace context {
 
@@ -20,14 +20,14 @@ struct Entity {
 	float h = 1.0f;
 	int z = 0;
 	Pose pose = {};
-	b2Vec2 prevSpeed = {};
+	physics::Pos prevSpeed = {};
 
 	virtual ~Entity() = default;
 
-	b2Vec2 getPos() {
-		return b2Vec2{x, y};
+	physics::Pos getPos() {
+		return physics::Pos{x, y};
 	}
-	void setPos(const b2Vec2 &pos) {
+	void setPos(const physics::Pos &pos) {
 		x = pos.x;
 		y = pos.y;
 	}

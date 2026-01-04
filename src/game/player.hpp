@@ -6,6 +6,7 @@
 #include "../context/entity.hpp"
 #include "../context/scene.hpp"
 #include "../context/window.hpp"
+#include "../physics/pos.hpp"
 #include "../util/pose.hpp"
 #include <pb/pose.pb.h>
 #include <spdlog/spdlog.h>
@@ -24,7 +25,7 @@ public:
 	int serial = 0;
 	Pose pose = {};
 	bool lastRight = true;
-	b2Vec2 prevPos = {};
+	physics::Pos prevPos = {};
 
 public:
 	Player(const context::Global &global,

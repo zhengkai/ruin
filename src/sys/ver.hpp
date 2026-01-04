@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../config.hpp"
-#include "box2d/base.h"
 #include "build.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -29,9 +28,6 @@ inline static void doShowVer() {
 		SDL_IMAGE_MAJOR_VERSION,
 		SDL_IMAGE_MINOR_VERSION,
 		SDL_IMAGE_MICRO_VERSION);
-
-	b2Version v = b2GetVersion();
-	spdlog::info("Box2D      = {}.{}.{}", v.major, v.minor, v.revision);
 
 	spdlog::info("git        = {}({}{})",
 		GIT_BRANCH,

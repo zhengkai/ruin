@@ -3,7 +3,6 @@
   "version": "1.1.0",
   "dependencies": [
     "bzip2",
-    "box2d",
     "spdlog",
     "cli11",
     "protobuf",

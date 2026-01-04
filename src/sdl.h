@@ -8,7 +8,6 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_pixels.h>
 #include <SDL3/SDL_render.h>
-#include <box2d/box2d.h>
 #include <memory>
 
 class sdl {
