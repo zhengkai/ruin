@@ -27,6 +27,16 @@ public:
 
 	bool parse() {
 
+		if (control.btnRB) {
+			c.map = asset.map.at("ruin-2");
+			return true;
+		}
+
+		if (control.btnLB) {
+			c.map = asset.map.at("ruin-3");
+			return true;
+		}
+
 		player.parse();
 
 		c.player.pose = player.pose;

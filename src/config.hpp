@@ -31,8 +31,8 @@ const float gravityUp = 3.0f / 10.0f * deltaTime;
 const float jumpForce = 59.0f / 10.0f * deltaTime;
 const float downSpeedMax = -1.25f;
 
-const float posResetX = 11.0f;
-const float posResetY = 17.0f;
+const float posResetX = 10.0f;
+const float posResetY = 11.0f;
 
 const float physicsScanRange =
 	5.0f; // 坐标差别超过这个的物体（无论大小）直接不检测碰撞

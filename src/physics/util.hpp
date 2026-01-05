@@ -27,12 +27,6 @@ inline void CheckTouch(
 			b.touch.l = true;
 		}
 		if (!b.touch.r && b.getRollback(t, Direction::Right) != -1.0f) {
-			spdlog::info("touch right tile {}, {} {}, {} {}",
-				t.serial,
-				t.x,
-				t.y,
-				b.x,
-				b.y);
 			b.touch.r = true;
 		}
 		if (!b.touch.u && b.getRollback(t, Direction::Up) != -1.0f) {
