@@ -2,6 +2,7 @@
 
 #include "../util/file.hpp"
 #include "../util/path.hpp"
+#include "../util/pos.hpp"
 #include "../util/pose.hpp"
 #include "../util/sprite.hpp"
 #include "asset.hpp"
@@ -88,7 +89,7 @@ inline std::shared_ptr<Map> convertMap(const pb::Map &src, int idx) {
 	m->w = static_cast<int>(src.w());
 	m->h = static_cast<int>(src.h());
 
-	for (const auto &s : src.list()) {
+	for (const auto &s : src.terrain()) {
 
 		auto t = s.tile();
 		if (!t.id() || !t.name()) {
@@ -97,12 +98,11 @@ inline std::shared_ptr<Map> convertMap(const pb::Map &src, int idx) {
 
 		int id = static_cast<int>(s.id());
 
-		m->cell.emplace_back(MapCell{
+		m->terrain.emplace_back(MapCell{
 			.id = id,
 			.tileName = t.name(),
 			.tileID = static_cast<int>(t.id()),
-			.x = static_cast<float>(id % m->w),
-			.y = static_cast<float>(m->h - 1 - id / m->w),
+			.pos = util::convertIDToPos(id, m),
 		});
 	}
 

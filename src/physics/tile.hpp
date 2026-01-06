@@ -10,8 +10,8 @@ struct Tile : Box {
 	bool enable = true;
 };
 
-inline Tile newTile(std::size_t serial, float x, float y) {
-	return Tile{Box{x, y, 0.5f, 0.5f}, serial};
+inline Tile newTile(std::size_t serial, Pos pos) {
+	return Tile{Box{pos, 0.5f, 0.5f}, serial};
 };
 
 }; // namespace physics

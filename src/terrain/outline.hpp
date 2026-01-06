@@ -156,9 +156,9 @@ inline std::vector<std::vector<terrain::IslandPos>> MapOutline(
 	const std::shared_ptr<asset::Map> map) {
 
 	auto m = util::Matrix<uint8_t>(map->w, map->h, 0);
-	for (const auto &c : map->cell) {
-		int x = static_cast<int>(c.x);
-		int y = static_cast<int>(c.y);
+	for (const auto &c : map->terrain) {
+		int x = static_cast<int>(c.pos.x);
+		int y = static_cast<int>(c.pos.y);
 		m[x][y] = c.tileName > 0 ? 1 : 0;
 	};
 	auto island = Island(m);

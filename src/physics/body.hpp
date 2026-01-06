@@ -16,7 +16,7 @@ struct Body : Box, Speed {
 };
 
 inline Body newBody(std::size_t serial, float x, float y, float w, float h) {
-	return Body{Box{x, y, w, h}, Speed{}, serial};
+	return Body{Box{Pos{x, y}, w, h}, Speed{}, serial};
 }
 
 }; // namespace physics

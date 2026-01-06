@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pos.hpp"
 #include "state.hpp"
 #include <cstdint>
 #include <spdlog/spdlog.h>
@@ -42,9 +43,7 @@ struct Speed {
 	float vy = 0.0f;
 };
 
-struct Box {
-	float x;
-	float y;
+struct Box : Pos {
 	float w; // half witdth
 	float h; // half height
 

@@ -13,7 +13,7 @@ struct Debug : base {
 
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
-		for (const auto &t : d->scene.map->cell) {
+		for (const auto &t : d->scene.map->terrain) {
 			SDL_FRect rect = t.getRect();
 			renderFillRect(rect);
 		}

@@ -85,22 +85,24 @@ const MANIFEST = "manifest.json";
 	};
 
 	const walk = (o) => {
-		const ks = Object.keys(o);
-		for (const k of ks) {
-			const v = o[k];
-			if (k === "path") {
-				if (ks.length === 1 && v.endsWith(".json")) {
-					o = walk(readJSON(v));
+
+		if (Array.isArray(o)) {
+			o = o.map(v => walk(v));
+			return o;
+		}
+
+		if (typeof o === "object") {
+			const ks = Object.keys(o);
+			for (const k of ks) {
+				const v = o[k];
+				if (k === "path") {
+					if (ks.length === 1 && v.endsWith(".json")) {
+						o = walk(readJSON(v));
+						continue;
+					}
+					copy(v);
 					continue;
 				}
-				copy(v);
-				continue;
-			}
-			if (Array.isArray(v)) {
-				o[k] = v.map(i => walk(i));
-				continue;
-			}
-			if (typeof o === "object") {
 				o[k] = walk(v);
 			}
 		}

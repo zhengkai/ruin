@@ -229,19 +229,19 @@ private:
 	};
 
 	void initTile() {
-		auto &cl = scene.map->cell;
+		auto &cl = scene.map->terrain;
 		if (!cl.size()) {
 			spdlog::warn("No map cells to init tiles.");
 			return;
 		}
 		for (const auto &c : cl) {
-			addTile(c.x, c.y);
+			addTile(c.pos);
 		}
 	};
 
-	int addTile(float x, float y) {
+	int addTile(const Pos &pos) {
 		auto serial = genSerial();
-		auto t = newTile(serial, x, y);
+		auto t = newTile(serial, pos);
 		world.tile[serial] = t;
 		return serial;
 	};
