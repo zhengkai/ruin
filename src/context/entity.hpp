@@ -3,6 +3,7 @@
 #include "../asset/character.hpp"
 #include "../common/pose.hpp"
 #include "../physics/pos.hpp"
+#include "../physics/rect.hpp"
 #include <SDL3/SDL_rect.h>
 
 namespace context {
@@ -12,12 +13,8 @@ struct CharacterCommand {
 	bool jump = false;
 };
 
-struct Entity {
+struct Entity : physics::Rect {
 	int id = 0;
-	float x = 0.0f;
-	float y = 0.0f;
-	float w = 1.0f;
-	float h = 1.0f;
 	int z = 0;
 	Pose pose = {};
 	physics::Pos prevSpeed = {};
@@ -25,15 +22,16 @@ struct Entity {
 	virtual ~Entity() = default;
 
 	physics::Pos getPos() {
-		return physics::Pos{x, y};
-	}
+		return *this;
+	};
+
 	void setPos(const physics::Pos &pos) {
 		x = pos.x;
 		y = pos.y;
-	}
+	};
 	SDL_FRect getRect() {
 		return SDL_FRect{.x = x, .y = y, .w = w, .h = h};
-	}
+	};
 };
 
 struct Character : Entity {

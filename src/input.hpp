@@ -75,6 +75,12 @@ public:
 			axisL.x = down ? -32768 : 0;
 			axisL.hasX = true;
 			break;
+		case SDLK_UP:
+			btnU = {down, true};
+			break;
+		case SDLK_DOWN:
+			btnD = {down, true};
+			break;
 		case SDLK_SPACE:
 			btnA = {down, true};
 			break;

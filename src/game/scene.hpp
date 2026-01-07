@@ -37,6 +37,15 @@ public:
 			return true;
 		}
 
+		auto &em = c.enterMap;
+		if (em.name != "") {
+			c.map = asset.map.at(em.name);
+			c.player.x = em.x;
+			c.player.y = em.y;
+			em = {};
+			return true;
+		}
+
 		player.parse();
 
 		c.player.pose = player.pose;

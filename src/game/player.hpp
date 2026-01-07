@@ -46,6 +46,14 @@ public:
 
 		p.command = {};
 
+		if (control.btnU && enterMap()) {
+			spdlog::info("enter map {}, {} {}",
+				scene.enterMap.name,
+				scene.enterMap.x,
+				scene.enterMap.y);
+			return;
+		}
+
 		p.command.x = control.axisA.x * p.speed * config::deltaTime;
 
 		next();
@@ -60,6 +68,25 @@ public:
 			parseJump();
 		}
 		prevPos = p.getPos();
+	}
+
+	bool enterMap() {
+		if (scene.enterMap.name != "") {
+			return false;
+		}
+
+		for (auto &g : scene.map->gate) {
+			spdlog::info("check gate [{}], pos {} {}",
+				g.target.name,
+				g.rect.x,
+				g.rect.y);
+			if (p.isOverlap(g.rect)) {
+				scene.enterMap = g.target;
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 private:

@@ -24,6 +24,8 @@ private:
 
 public:
 	Physics(context::Scene &cs) : scene(cs) {
+		scene.player.x = config::posResetX;
+		scene.player.y = config::posResetY;
 		updateMap();
 	};
 	~Physics() {};
@@ -221,8 +223,8 @@ private:
 
 	void initPlayer() {
 		auto &sp = scene.player;
-		float x = config::posResetX;
-		float y = config::posResetY;
+		float x = sp.x;
+		float y = sp.y;
 		float w = sp.w / 2.0f;
 		float h = sp.h / 2.0f;
 		sp.physicsSerial = addBody(x, y, w, h);

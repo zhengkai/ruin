@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../pb/asset.pb.h"
-#include "../physics/pos.hpp"
+#include "../physics/rect.hpp"
 #include <SDL3/SDL_rect.h>
 
 namespace asset {
@@ -17,12 +17,14 @@ struct MapCell {
 	}
 };
 
-struct MapGate {
+struct MapTarget : physics::Pos {
+	std::string name = "";
+};
+
+struct MapGate : MapTarget {
 	int id = 0;
-	float x = 0.0;
-	float y = 0.0;
-	std::string targetMap = "";
-	physics::Pos targetPos = physics::Pos{.x = 0.0f, .y = 0.0f};
+	physics::Rect rect = {};
+	MapTarget target = {};
 };
 
 struct Map {

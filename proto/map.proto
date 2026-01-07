@@ -15,7 +15,7 @@ message MapCell {
 
 message MapTrigger {
 	uint32 id = 1;
-	oneof triggerType {
+	oneof trigger {
 		MapTriggerGate gate = 2;
 		MapTriggerGate exit = 3;
 		MapTriggerWater water = 4;
@@ -23,7 +23,7 @@ message MapTrigger {
 }
 
 message MapTriggerGate {
-	string targetMap = 1;
+	string map = 1;
 	float x = 2;
 	float y = 3;
 }

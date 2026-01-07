@@ -16,4 +16,13 @@ inline physics::Pos convertIDToPos(int &id, std::shared_ptr<asset::Map> map) {
 	return convertIDToPos(id, map->w, map->h);
 };
 
+inline physics::Rect convertIDToRect(
+	int &id, std::shared_ptr<asset::Map> map, float size = 0.5f) {
+	return {
+		convertIDToPos(id, map->w, map->h),
+		size,
+		size,
+	};
+};
+
 }; // namespace util

@@ -95,15 +95,58 @@ inline std::shared_ptr<Map> convertMap(const pb::Map &src, int idx) {
 		if (!t.id() || !t.name()) {
 			continue;
 		}
-
 		int id = static_cast<int>(s.id());
-
 		m->terrain.emplace_back(MapCell{
 			.id = id,
 			.tileName = t.name(),
 			.tileID = static_cast<int>(t.id()),
 			.pos = util::convertIDToPos(id, m),
 		});
+	}
+
+	for (const auto &t : src.trigger()) {
+		switch (t.trigger_case()) {
+		case pb::MapTrigger::kGate: {
+			auto &g = t.gate();
+			int id = static_cast<int>(t.id());
+			m->gate.emplace_back(MapGate{
+				.id = id,
+				.rect = util::convertIDToRect(id, m),
+				.target =
+					{
+						{g.x(), g.y()},
+						g.map(),
+					},
+			});
+			break;
+		}
+		case pb::MapTrigger::kExit: {
+			auto e = t.exit();
+			int id = static_cast<int>(t.id());
+			m->exit.emplace_back(MapGate{
+				.id = id,
+				.rect = util::convertIDToRect(id, m),
+				.target =
+					{
+						{e.x(), e.y()},
+						e.map(),
+					},
+			});
+			break;
+		}
+		case pb::MapTrigger::TRIGGER_NOT_SET:
+		default:
+			spdlog::info("unknown trigger");
+			break;
+		}
+	}
+
+	for (auto &g : m->gate) {
+		spdlog::info("  gate id={} target={}@({},{})",
+			g.id,
+			g.target.name,
+			g.target.x,
+			g.target.y);
 	}
 
 	return m;

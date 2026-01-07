@@ -136,13 +136,8 @@ private:
 
 	void parseControl() {
 		const auto &c = window.control;
-		if (c.btnU) {
-			if (window.global.counter(cdZoom, config::cdZoom)) {
-				window.zoomIn();
-			}
-		} else if (c.btnD && window.global.counter(cdZoom, config::cdZoom)) {
-			window.zoomOut();
-		}
+
+		// parseZoom();
 
 		if (window.focus.offsetX != c.axisB.x ||
 			window.focus.offsetY != c.axisB.y) {
@@ -159,5 +154,16 @@ private:
 				window.focus.offsetY = c.axisB.y;
 			}
 		};
+	};
+
+	void parseZoom() {
+		const auto &c = window.control;
+		if (c.btnU) {
+			if (window.global.counter(cdZoom, config::cdZoom)) {
+				window.zoomIn();
+			}
+		} else if (c.btnD && window.global.counter(cdZoom, config::cdZoom)) {
+			window.zoomOut();
+		}
 	};
 };
