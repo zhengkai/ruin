@@ -7,13 +7,23 @@ namespace render {
 
 struct TerrainChain : base {
 
+	int mapIdx = -1;
 	std::vector<std::vector<terrain::IslandPos>> outline;
 
 	using base::base;
 	void init() override {
-		outline = terrain::MapOutline(d->scene.map);
+		updateMap();
+	};
+	void updateMap() {
+		auto &m = d->scene.map;
+		if (mapIdx == m->idx) {
+			return;
+		}
+		mapIdx = m->idx;
+		outline = terrain::MapOutline(m);
 	};
 	void render() override {
+		updateMap();
 		for (auto &o : outline) {
 			SDL_SetRenderDrawColor(d->r, 255, 50, 50, 255);
 			std::vector<SDL_FPoint> pts;
