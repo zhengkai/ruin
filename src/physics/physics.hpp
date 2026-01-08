@@ -56,9 +56,9 @@ public:
 		}
 	};
 
-	int addBody(float x, float y, float w, float h) {
+	int addBody(const physics::Rect &rect) {
 		auto serial = genSerial();
-		auto b = newBody(serial, x, y, w, h);
+		auto b = newBody(serial, rect.x, rect.y, rect.w, rect.h);
 		world.body[serial] = b;
 		return serial;
 	};
@@ -223,11 +223,7 @@ private:
 
 	void initPlayer() {
 		auto &sp = scene.player;
-		float x = sp.x;
-		float y = sp.y;
-		float w = sp.w / 2.0f;
-		float h = sp.h / 2.0f;
-		sp.physicsSerial = addBody(x, y, w, h);
+		sp.physicsSerial = addBody(sp);
 	};
 
 	void initTile() {

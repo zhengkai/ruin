@@ -41,7 +41,7 @@ public:
 		if (em.name != "") {
 			c.map = asset.map.at(em.name);
 			c.player.x = em.x;
-			c.player.y = em.y;
+			c.player.y = em.y + c.player.h - 0.5f; // 修正体型变化导致的高度差
 			em = {};
 			return true;
 		}

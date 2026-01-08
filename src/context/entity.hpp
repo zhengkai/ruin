@@ -30,7 +30,7 @@ struct Entity : physics::Rect {
 		y = pos.y;
 	};
 	SDL_FRect getRect() {
-		return SDL_FRect{.x = x, .y = y, .w = w, .h = h};
+		return SDL_FRect{.x = x, .y = y, .w = w * 2.0f, .h = h * 2.0f};
 	};
 };
 
@@ -42,8 +42,8 @@ struct Character : Entity {
 };
 struct Player : Character {
 	Player() {
-		w = 0.75f;
-		h = 1.5f;
+		w = 0.375f;
+		h = 0.75f;
 	}
 };
 struct Enemy : Character {};
