@@ -37,7 +37,7 @@ public:
 
 		spdlog::info("scene {}", this->scene.player.id);
 
-		p.asset = this->asset.character.at("samurai");
+		p.asset = this->asset.sprite.at("samurai");
 		prevPos = p.getPos();
 	};
 	~Player() {};

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../asset/character.hpp"
+#include "../asset/sprite.hpp"
 #include "../common/pose.hpp"
 #include "../physics/pos.hpp"
 #include "../physics/rect.hpp"
@@ -35,7 +35,7 @@ struct Entity : physics::Rect {
 };
 
 struct Character : Entity {
-	std::shared_ptr<asset::Character> asset;
+	std::shared_ptr<asset::SpriteBox> asset;
 	CharacterCommand command = {};
 	float speed = 5.0f;
 	std::size_t physicsSerial = 0;

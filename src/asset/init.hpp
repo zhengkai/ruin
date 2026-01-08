@@ -3,7 +3,6 @@
 #include "../util/file.hpp"
 #include "../util/path.hpp"
 #include "../util/pos.hpp"
-#include "../util/pose.hpp"
 #include "../util/sprite.hpp"
 #include "asset.hpp"
 #include "pb/manifest.pb.h"
@@ -18,42 +17,18 @@ inline bool mergeCharacter(SDL_Renderer *r,
 	Asset &dst) {
 
 	for (const auto &sc : src.character()) {
-
-		auto dc = std::make_shared<Character>();
-		dc->name = sc.name();
-		dst.character[dc->name] = dc;
-
-		for (const auto &row : sc.sprite()) {
-
-			auto sp = std::make_shared<Sprite>();
-			sp->pose = row.pose();
-
-			auto file = dir / row.path();
-			sp->list = util::loadSpriteFrames(r, file);
-			if (sp->list.empty()) {
-				spdlog::warn("sprite character {} is empty: {}",
-					dc->name,
-					file.string());
-				return false;
-			}
-
-			for (int s : row.step()) {
-				sp->duration.push_back(s);
-			}
-
-			auto size = sp->list.size();
-			if (size == 0 || size != sp->duration.size()) {
-				spdlog::error(
-					"sprite character {}.{} has invalid step size: {} vs {}",
-					dc->name,
-					util::poseName(row.pose()),
-					size,
-					sp->duration.size());
-				return false;
-			}
-
-			dc->sprite.insert({sp->pose, sp});
+		auto dc = std::make_shared<SpriteBox>();
+		if (!dc->import(sc, r, dir)) {
+			continue;
 		}
+		dst.addSprite(dc);
+	}
+	for (const auto &sc : src.animal()) {
+		auto dc = std::make_shared<SpriteBox>();
+		if (!dc->import(sc, r, dir)) {
+			continue;
+		}
+		dst.addSprite(dc);
 	}
 	return true;
 }

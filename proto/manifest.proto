@@ -5,8 +5,8 @@ import "asset.proto";
 import "map.proto";
 
 message AssetManifest {
-	repeated CharacterAsset character = 1;
-	repeated AnimalAsset animal = 2;
+	repeated SpriteBox character = 1;
+	repeated SpriteBox animal = 2;
 	repeated Tileset tileset = 3;
 	repeated Map map = 4;
 }

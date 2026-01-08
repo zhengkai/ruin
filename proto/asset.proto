@@ -25,12 +25,7 @@ message Sprite {
 	repeated uint32 step = 3;
 }
 
-message CharacterAsset {
-	string name = 1;
-	repeated Sprite sprite = 2;
-}
-
-message AnimalAsset {
+message SpriteBox {
 	string name = 1;
 	repeated Sprite sprite = 2;
 }
