@@ -7,6 +7,7 @@
 #include "asset.hpp"
 #include "pb/manifest.pb.h"
 #include "pb/map.pb.h"
+#include "util.hpp"
 #include <google/protobuf/util/json_util.h>
 
 namespace asset {
@@ -82,31 +83,11 @@ inline std::shared_ptr<Map> convertMap(const pb::Map &src, int idx) {
 	for (const auto &t : src.trigger()) {
 		switch (t.trigger_case()) {
 		case pb::MapTrigger::kGate: {
-			auto &g = t.gate();
-			int id = static_cast<int>(t.id());
-			m->gate.emplace_back(MapGate{
-				.id = id,
-				.rect = util::convertIDToRect(id, m),
-				.target =
-					{
-						{g.x(), g.y()},
-						g.map(),
-					},
-			});
+			m->gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), m));
 			break;
 		}
 		case pb::MapTrigger::kExit: {
-			auto e = t.exit();
-			int id = static_cast<int>(t.id());
-			m->exit.emplace_back(MapGate{
-				.id = id,
-				.rect = util::convertIDToRect(id, m),
-				.target =
-					{
-						{e.x(), e.y()},
-						e.map(),
-					},
-			});
+			m->gate.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
 			break;
 		}
 		case pb::MapTrigger::TRIGGER_NOT_SET:
