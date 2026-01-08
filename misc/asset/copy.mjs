@@ -4,44 +4,20 @@
 
 import fs from "fs";
 import path from "path";
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { getAssetDir, MANIFEST } from "./local.mjs";
 
-const __filename = fileURLToPath(import.meta.url);
 const jsonCache = {};
-
-const SOURCE = "asset";
-const MANIFEST = "manifest.json";
 
 (() => {
 
 	// 确定目录
 
-	const rootDir = dirname(__filename);
-	let tmpDir = rootDir;
-	while (true) {
-		if (fs.existsSync(path.join(tmpDir, SOURCE, MANIFEST))) {
-			break;
-		}
-		tmpDir = dirname(tmpDir);
-		if (!(tmpDir?.length > 1)) {
-			console.error(`no asset dir found at ${rootDir}`);
-			return;
-		}
-	}
-	const srcDir = path.join(tmpDir, SOURCE);
-
-	tmpDir = path.join(tmpDir, "build", "Release");
-	if (!fs.existsSync(tmpDir)) {
-		console.error(`no target dir found: ${tmpDir}`);
+	let dir = getAssetDir();
+	if (!dir) {
+		console.error("getAssetDir fail");
 		return;
 	}
-	const dstDir = path.join(tmpDir, SOURCE);
-
-	console.info();
-	console.info("srcDir:", srcDir);
-	console.info("dstDir:", dstDir);
-	console.info();
+	const { srcDir, dstDir } = dir;
 
 	// 开始处理
 
