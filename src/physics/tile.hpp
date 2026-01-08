@@ -1,17 +1,17 @@
 #pragma once
 
-#include "common.hpp"
+#include "rect.hpp"
 #include <cstddef>
 
 namespace physics {
 
-struct Tile : Box {
+struct Tile : Rect {
 	std::size_t serial;
 	bool enable = true;
 };
 
 inline Tile newTile(std::size_t serial, Pos pos) {
-	return Tile{Box{pos, 0.5f, 0.5f}, serial};
+	return Tile{Rect{pos, 0.5f}, serial};
 };
 
 }; // namespace physics

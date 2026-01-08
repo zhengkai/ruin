@@ -1,11 +1,12 @@
 #pragma once
 
 #include "common.hpp"
+#include "rect.hpp"
 #include <cstddef>
 
 namespace physics {
 
-struct Body : Box, Speed {
+struct Body : Rect, Speed {
 	std::size_t serial;
 	bool enable = true;
 	Touch touch = {};
@@ -16,7 +17,7 @@ struct Body : Box, Speed {
 };
 
 inline Body newBody(std::size_t serial, float x, float y, float w, float h) {
-	return Body{Box{Pos{x, y}, w, h}, Speed{}, serial};
+	return Body{Rect{Pos{x, y}, w, h}, Speed{}, serial};
 }
 
 }; // namespace physics

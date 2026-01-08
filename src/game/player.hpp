@@ -47,10 +47,6 @@ public:
 		p.command = {};
 
 		if (control.btnU && enterMap()) {
-			spdlog::info("enter map {}, {} {}",
-				scene.enterMap.name,
-				scene.enterMap.x,
-				scene.enterMap.y);
 			return;
 		}
 
@@ -76,10 +72,6 @@ public:
 		}
 
 		for (auto &g : scene.map->gate) {
-			spdlog::info("check gate [{}], pos {} {}",
-				g.target.name,
-				g.rect.x,
-				g.rect.y);
 			if (p.isOverlap(g.rect)) {
 				scene.enterMap = g.target;
 				return true;
