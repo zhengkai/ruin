@@ -2,6 +2,7 @@
 
 #include "../pb/asset.pb.h"
 #include "../physics/rect.hpp"
+#include "monster.hpp"
 #include <SDL3/SDL_rect.h>
 
 namespace asset {
@@ -27,6 +28,14 @@ struct MapGate : MapTarget {
 	MapTarget target = {};
 };
 
+struct MapMonster : physics::Rect {
+	Monster &def;
+
+	MapMonster(float x, float y, float w, float h, Monster &m)
+		: Rect{Pos{x, y}, w, h}, def(m) {
+	}
+};
+
 struct Map {
 	std::string name = "";
 	int idx = -1;
@@ -35,6 +44,7 @@ struct Map {
 	std::vector<MapCell> terrain;
 	std::vector<MapGate> gate;
 	std::vector<MapGate> exit;
+	std::vector<MapMonster> monster;
 };
 
 }; // namespace asset

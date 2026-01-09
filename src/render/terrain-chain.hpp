@@ -16,6 +16,9 @@ struct TerrainChain : base {
 	};
 	void updateMap() {
 		auto &m = d->scene.map;
+		if (!m) {
+			return;
+		}
 		if (mapIdx == m->idx) {
 			return;
 		}

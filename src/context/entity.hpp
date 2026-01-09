@@ -40,12 +40,13 @@ struct Character : Entity {
 	float speed = 5.0f;
 	std::size_t physicsSerial = 0;
 };
+
 struct Player : Character {
 	Player() {
 		w = 0.375f;
 		h = 0.75f;
 	}
 };
-struct Enemy : Character {};
+struct Monster : Character {};
 
 }; // namespace context

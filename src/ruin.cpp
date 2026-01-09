@@ -77,6 +77,10 @@ void Ruin::parseCommand() {
 
 	auto &sp = scene.player;
 
+	if (!sp.physicsSerial) {
+		return;
+	}
+
 	auto &b = p->getBody(sp.physicsSerial);
 	auto &cmd = sp.command;
 	if (cmd.jump) {
@@ -87,6 +91,10 @@ void Ruin::parseCommand() {
 
 void Ruin::syncPos() {
 	auto &sp = scene.player;
+	if (!sp.physicsSerial) {
+		return;
+	}
+
 	auto pos = p->getBody(sp.physicsSerial);
 	sp.x = pos.x;
 	sp.y = pos.y;

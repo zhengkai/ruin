@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../asset/map.hpp"
-#include "../config.hpp"
 #include "entity.hpp"
 #include <vector>
 
@@ -9,7 +8,7 @@ namespace context {
 
 struct Scene {
 	Player player = {};
-	std::vector<Enemy> enemy;
+	std::vector<Character> monster;
 	std::shared_ptr<asset::Map> map;
 	asset::MapTarget enterMap = {};
 };

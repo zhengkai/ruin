@@ -9,10 +9,10 @@
 #include "render/gamepad.hpp"
 #include "render/info.hpp"
 #include "render/map.hpp"
+#include "render/monster.hpp"
 #include "render/player.hpp"
 #include "render/terrain-chain.hpp"
 #include "text.hpp"
-#include "util/path.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
 #include <memory>
@@ -60,8 +60,6 @@ bool sdl::init() {
 		return false;
 	}
 
-	scene.map = asset.map["ruin-2"];
-
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);
 
@@ -90,6 +88,7 @@ void sdl::initRender() {
 
 	renderList.emplace_back(std::make_unique<render::Map>(rd));
 	renderList.emplace_back(std::make_unique<render::Player>(rd));
+	renderList.emplace_back(std::make_unique<render::Monster>(rd));
 	renderList.emplace_back(std::make_unique<render::Debug>(rd));
 	renderList.emplace_back(std::make_unique<render::Gamepad>(rd));
 	renderList.emplace_back(std::make_unique<render::Info>(rd));

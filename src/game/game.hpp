@@ -29,11 +29,7 @@ private:
 
 public:
 	Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset)
-		: window(cw), scene(Scene(cw.global, cw.control, cs, asset)) {
-
-		window.setBoundary(cs.map->w, cs.map->h);
-	};
-
+		: window(cw), scene(Scene(cw.global, cw.control, cs, asset)) {};
 	~Game() {};
 
 	bool parse() {

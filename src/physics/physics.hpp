@@ -24,8 +24,6 @@ private:
 
 public:
 	Physics(context::Scene &cs) : scene(cs) {
-		scene.player.x = config::posResetX;
-		scene.player.y = config::posResetY;
 		updateMap();
 	};
 	~Physics() {};
@@ -209,6 +207,9 @@ private:
 
 	void updateMap() {
 		auto &m = scene.map;
+		if (!m) {
+			return;
+		}
 		if (mapIdx == m->idx) {
 			return;
 		}
@@ -216,6 +217,7 @@ private:
 		world.Reset(m->w, m->h);
 
 		initPlayer();
+		initMonster();
 		initTile();
 
 		mapIdx = m->idx;
@@ -224,6 +226,12 @@ private:
 	void initPlayer() {
 		auto &sp = scene.player;
 		sp.physicsSerial = addBody(sp);
+	};
+
+	void initMonster() {
+		for (auto &m : scene.monster) {
+			m.physicsSerial = addBody(m);
+		}
 	};
 
 	void initTile() {

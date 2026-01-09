@@ -26,6 +26,10 @@ struct Rect : Pos {
 
 	Rect() : Pos{0.0f, 0.0f}, w(0.5f), h(0.5f) {};
 
+	void updateRect(const Rect &r) {
+		*this = r;
+	};
+
 	SDL_FRect getRect() const {
 		return SDL_FRect{
 			.x = Pos::x, .y = Pos::y, .w = w * 2.0f, .h = h * 2.0f};

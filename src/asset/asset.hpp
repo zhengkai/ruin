@@ -14,7 +14,7 @@ struct Asset {
 	std::unordered_map<std::string, std::shared_ptr<SpriteBox>> sprite = {};
 	std::unordered_map<pb::Tileset_Name, std::shared_ptr<Tileset>> tileset = {};
 	std::unordered_map<std::string, std::shared_ptr<Map>> map = {};
-	std::unordered_map<std::string, std::shared_ptr<Monster>> monster = {};
+	std::unordered_map<std::string, Monster> monster = {};
 
 	void addSprite(std::shared_ptr<SpriteBox> b) {
 

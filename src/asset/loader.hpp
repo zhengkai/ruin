@@ -31,6 +31,7 @@ public:
 
 		mergeCharacter();
 		mergeTileset();
+		mergeMonster();
 
 		int idx = 0;
 		for (auto m : src.map()) {
@@ -77,16 +78,54 @@ private:
 		}
 	}
 
+	void mergeMonster() {
+		for (const auto &sm : src.monster()) {
+
+			auto &name = sm.name();
+
+			if (dst.monster.contains(name)) {
+				spdlog::warn("duplicate monster name: {}", sm.name());
+				ok = false;
+				break;
+			}
+			if (!dst.sprite.contains(sm.sprite())) {
+				spdlog::warn(
+					"missing monster sprite {}.{}", sm.name(), sm.sprite());
+				ok = false;
+				break;
+			}
+
+			dst.monster.emplace(name,
+				Monster{
+					.name = name,
+					.type = sm.type(),
+					.sprite = dst.sprite[sm.sprite()],
+					.w = sm.w(),
+					.h = sm.h(),
+				});
+
+			spdlog::info("monster {}", name);
+		}
+	}
+
 	std::shared_ptr<Map> convertMap(const pb::Map &pm, int idx) {
 
 		auto m = std::make_shared<Map>();
 
 		m->idx = idx;
-
 		m->w = static_cast<int>(pm.w());
 		m->h = static_cast<int>(pm.h());
 
-		for (const auto &s : pm.terrain()) {
+		convertMapTerrain(m, pm.terrain());
+		convertMapTrigger(m, pm.trigger());
+		convertMapMonster(m, pm.monster());
+
+		return m;
+	};
+
+	void convertMapTerrain(std::shared_ptr<Map> m,
+		const google::protobuf::RepeatedPtrField<::pb::MapCell> &li) {
+		for (const auto &s : li) {
 
 			auto t = s.tile();
 			if (!t.id() || !t.name()) {
@@ -100,15 +139,18 @@ private:
 				.pos = util::convertIDToPos(id, m),
 			});
 		}
+	};
 
-		for (const auto &t : pm.trigger()) {
+	void convertMapTrigger(std::shared_ptr<Map> m,
+		const google::protobuf::RepeatedPtrField<::pb::MapTrigger> &li) {
+		for (const auto &t : li) {
 			switch (t.trigger_case()) {
 			case pb::MapTrigger::kGate: {
 				m->gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), m));
 				break;
 			}
 			case pb::MapTrigger::kExit: {
-				m->gate.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
+				m->exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
 				break;
 			}
 			case pb::MapTrigger::TRIGGER_NOT_SET:
@@ -125,8 +167,21 @@ private:
 				g.target.x,
 				g.target.y);
 		}
+	}
 
-		return m;
+	void convertMapMonster(std::shared_ptr<Map> m,
+		const google::protobuf::RepeatedPtrField<::pb::MapMonster> &li) {
+		for (const auto &c : li) {
+			auto &def = dst.monster.at(c.def());
+			float w = def.w;
+			float h = def.h;
+			if (c.scale()) {
+				w *= c.scale();
+				h *= c.scale();
+			}
+			m->monster.emplace_back(
+				MapMonster(c.x(), c.y(), w / 2.0f, h / 2.0f, def));
+		}
 	}
 };
 

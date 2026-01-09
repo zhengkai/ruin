@@ -11,6 +11,10 @@ struct Debug : base {
 	void init() override {};
 	void render() override {
 
+		if (!d->scene.map) {
+			return;
+		}
+
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
 		for (const auto &t : d->scene.map->terrain) {
