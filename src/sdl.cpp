@@ -1,5 +1,5 @@
 #include "sdl.h"
-#include "asset/init.hpp"
+#include "asset/loader.hpp"
 #include "config.hpp"
 #include "context/scene.hpp"
 #include "context/window.hpp"
@@ -54,7 +54,8 @@ bool sdl::init() {
 		SDL_SetWindowFullscreen(w, true);
 	}
 
-	if (!asset::Load(r, config::assetDir, asset)) {
+	auto a = asset::Loader(asset, r, config::assetDir);
+	if (!a.load()) {
 		spdlog::error("Failed to load assets");
 		return false;
 	}

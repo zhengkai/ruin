@@ -2,6 +2,7 @@ syntax = "proto3";
 package pb;
 
 import "asset.proto";
+import "monster.proto";
 import "map.proto";
 
 message AssetManifest {
@@ -9,5 +10,5 @@ message AssetManifest {
 	repeated SpriteBox animal = 2;
 	repeated Tileset tileset = 3;
 	repeated Map map = 4;
+	repeated MonsterDef monster = 5;
 }
-

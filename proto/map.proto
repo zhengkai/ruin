@@ -32,10 +32,18 @@ message MapTriggerWater {
 	float drag = 1;
 }
 
+message MapMonster {
+	string def = 1;
+	float x = 2;
+	float y = 3;
+	float scale = 4;
+}
+
 message Map {
 	string name = 1;
 	uint32 w = 2;
 	uint32 h = 3;
 	repeated MapCell terrain = 4;
 	repeated MapTrigger trigger = 5;
+	repeated MapMonster monster = 6;
 }

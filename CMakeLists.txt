@@ -37,6 +37,7 @@ add_library(pb OBJECT
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/map.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/manifest.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/monster.proto
 )
 
 target_include_directories(pb PUBLIC

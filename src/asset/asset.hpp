@@ -2,6 +2,7 @@
 
 #include "../pb/asset.pb.h"
 #include "map.hpp"
+#include "monster.hpp"
 #include "sprite.hpp"
 #include "tileset.hpp"
 #include <spdlog/spdlog.h>
@@ -13,6 +14,7 @@ struct Asset {
 	std::unordered_map<std::string, std::shared_ptr<SpriteBox>> sprite = {};
 	std::unordered_map<pb::Tileset_Name, std::shared_ptr<Tileset>> tileset = {};
 	std::unordered_map<std::string, std::shared_ptr<Map>> map = {};
+	std::unordered_map<std::string, std::shared_ptr<Monster>> monster = {};
 
 	void addSprite(std::shared_ptr<SpriteBox> b) {
 
