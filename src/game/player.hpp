@@ -22,7 +22,6 @@ private:
 
 public:
 	int jumpCnt = 0;
-	int serial = 0;
 	bool lastRight = true;
 	physics::Pos prevPos = {};
 
@@ -83,50 +82,29 @@ public:
 private:
 	void next() {
 
-		auto &dur = p.asset->sprite.at(p.pose.type)->duration;
-
-		auto frameLimit = dur[p.pose.step];
-
-		serial++;
-		if (serial > frameLimit) {
-			serial = 0;
-			p.pose.step++;
-			if (static_cast<size_t>(p.pose.step) >= dur.size()) {
-				p.pose.step = 0;
-				if (util::poseIsAttack(p.pose.type)) {
-					changePose(pb::Pose_Type::Pose_Type_idle);
-				}
-			}
-		}
+		p.animation();
 
 		p.prevSpeed.x = p.x - prevPos.x;
 		p.prevSpeed.y = p.y - prevPos.y;
 
 		if (prevPos.y == p.y) {
 			if (p.pose.type == pb::Pose_Type::Pose_Type_jump) {
-				changePose(pb::Pose_Type::Pose_Type_idle);
+				p.changePose(pb::Pose_Type::Pose_Type_idle);
 			}
 		} else {
 			if ((p.prevSpeed.y > 0.001f || p.prevSpeed.y < -0.001f) &&
 				p.pose.type != pb::Pose_Type::Pose_Type_jump &&
 				!util::poseIsAttack(p.pose.type)) {
 
-				changePose(pb::Pose_Type::Pose_Type_jump);
+				p.changePose(pb::Pose_Type::Pose_Type_jump);
 			}
 		}
 		if (p.pose.type == pb::Pose_Type::Pose_Type_idle && control.axisA.x) {
-			changePose(pb::Pose_Type::Pose_Type_run);
+			p.changePose(pb::Pose_Type::Pose_Type_run);
 		}
 		if (p.pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
-			changePose(pb::Pose_Type::Pose_Type_idle);
+			p.changePose(pb::Pose_Type::Pose_Type_idle);
 		}
-	}
-
-	void changePose(pb::Pose_Type po) {
-		if (p.pose.type != po) {
-			p.pose.step = 0;
-		}
-		p.pose.type = po;
 	}
 
 	void parseAttack() {
@@ -148,7 +126,7 @@ private:
 			return;
 		}
 		p.command.jump = true;
-		changePose(pb::Pose_Type::Pose_Type_jump);
+		p.changePose(pb::Pose_Type::Pose_Type_jump);
 	}
 
 	void parseFacing(const float &x) {

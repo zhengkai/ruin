@@ -8,5 +8,6 @@ struct Pose {
 		Left,
 		Right,
 	} facing = Facing::Right;
+	int serial = 0;
 	int step = 0;
 };
