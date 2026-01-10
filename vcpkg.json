@@ -6,6 +6,7 @@
     "spdlog",
     "cli11",
     "protobuf",
+    "entt",
     {
       "name": "sdl3",
       "features": ["alsa", "vulkan"],

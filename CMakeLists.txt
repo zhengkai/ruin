@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0.0)
+cmake_minimum_required(VERSION 4.2.0)
 
 project(ruin VERSION 1.2)
 set(PROJ ruin)
@@ -25,6 +25,7 @@ find_package(CLI11 CONFIG REQUIRED QUIET)
 find_package(Protobuf CONFIG REQUIRED QUIET)
 find_package(SDL3 CONFIG REQUIRED QUIET)
 find_package(SDL3_image CONFIG REQUIRED QUIET)
+find_package(EnTT CONFIG REQUIRED QUIET)
 if (NOT EMSCRIPTEN)
 find_package(SDL3_ttf CONFIG REQUIRED QUIET)
 endif()
@@ -94,6 +95,7 @@ target_link_libraries(${PROJ} PRIVATE
 	spdlog::spdlog
 	CLI11::CLI11
 	protobuf::libprotobuf
+	EnTT::EnTT
 )
 if (NOT EMSCRIPTEN)
 target_link_libraries(${PROJ} PRIVATE

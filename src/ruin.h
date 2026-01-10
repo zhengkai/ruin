@@ -5,6 +5,7 @@
 #include "physics/physics.hpp"
 #include "sdl.h"
 #include "time.hpp"
+#include <entt/entt.hpp>
 
 class Ruin {
 
@@ -12,6 +13,7 @@ private:
 	context::Scene scene = {};
 	context::Window window = {};
 	asset::Asset asset = {};
+	entt::registry registry;
 
 	std::unique_ptr<Time> t = std::make_unique<Time>();
 	std::unique_ptr<sdl> s;

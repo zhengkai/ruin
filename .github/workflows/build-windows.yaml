@@ -16,7 +16,7 @@ defaults:
 env:
   CC: clang
   CXX: clang++
-  CMAKE_VERSION: "4.1.2"
+  CMAKE_VERSION: "4.2.1"
   VCPKG_CACHE_KEY: "vcpkg6"
 
 jobs:

@@ -10,11 +10,14 @@
 #endif
 
 Ruin::Ruin() {
-}
+	auto entity = registry.create();
+	auto version = entt::to_version(entity);
+	spdlog::info("entity v{}", version);
+};
 
 Ruin::~Ruin() {
 	stop = true;
-}
+};
 
 bool Ruin::init() {
 
