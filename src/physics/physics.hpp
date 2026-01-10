@@ -54,10 +54,9 @@ public:
 		}
 	};
 
-	int addBody(const physics::Rect &rect) {
+	int addBody(physics::Rect &rect) {
 		auto serial = genSerial();
-		auto b = newBody(serial, rect.x, rect.y, rect.w, rect.h);
-		world.body[serial] = b;
+		world.body.emplace(serial, Body{serial, rect});
 		return serial;
 	};
 
@@ -110,24 +109,24 @@ private:
 
 		if (vx < 0.0f) {
 			if (!b.touch.l) {
-				b.x += vx;
+				b.rect.x += vx;
 				stepLeft(b);
 			}
 		} else if (vx > 0.0f) {
 			if (!b.touch.r) {
-				b.x += vx;
+				b.rect.x += vx;
 				stepRight(b);
 			}
 		}
 
 		if (vy < 0.0f) {
 			if (!b.touch.d) {
-				b.y += vy;
+				b.rect.y += vy;
 				stepDown(b);
 			}
 		} else if (vy > 0.0f) {
 			if (!b.touch.u) {
-				b.y += vy;
+				b.rect.y += vy;
 				stepUp(b);
 			}
 		}
@@ -136,63 +135,64 @@ private:
 	void stepOneSub(Body &b, float vx, float vy) {
 
 		if (vx < 0.0f) {
-			b.x += vx;
+			b.rect.x += vx;
 			stepLeft(b);
 		} else if (vx > 0.0f) {
-			b.x += vx;
+			b.rect.x += vx;
 			stepRight(b);
 		}
 
 		if (vy < 0.0f) {
-			b.y += vy;
+			b.rect.y += vy;
 			stepDown(b);
 		} else if (vy > 0.0f) {
-			b.y += vy;
+			b.rect.y += vy;
 			stepUp(b);
 		}
 	};
 
 	void stepDown(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Down);
+		float rb = CheckRollback(b.rect, world.tile, Direction::Down);
 		if (rb > 0.0f) {
-			b.y += rb;
+			b.rect.y += rb;
 			b.vy = 0.0f;
 		} else if (rb == 0.0f) {
-			b.y += rb;
+			b.rect.y += rb;
 		}
 	};
 	void stepUp(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Up);
+		float rb = CheckRollback(b.rect, world.tile, Direction::Up);
 		if (rb > 0.0f) {
-			b.y -= rb;
+			b.rect.y -= rb;
 			b.vy = 0.0f;
 		} else if (rb == 0.0f) {
-			b.y -= rb;
+			b.rect.y -= rb;
 		}
 	};
 	void stepLeft(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Left);
+		float rb = CheckRollback(b.rect, world.tile, Direction::Left);
 		if (rb > 0.0f) {
-			b.x += rb;
+			b.rect.x += rb;
 			b.vx = 0.0f;
 		} else if (rb == 0.0f) {
-			b.x += rb;
+			b.rect.x += rb;
 		}
 	};
 	void stepRight(Body &b) {
-		float rb = CheckRollback(b, world.tile, Direction::Right);
+		float rb = CheckRollback(b.rect, world.tile, Direction::Right);
 		if (rb > 0.0f) {
-			b.x -= rb;
+			b.rect.x -= rb;
 			b.vx = 0.0f;
 		} else if (rb == 0.0f) {
-			b.x -= rb;
+			b.rect.x -= rb;
 		}
 	};
 
 	void checkReset(Body &b) {
-		if (b.x < -2.0f || b.y < -2.0f || b.x > world.w || b.y > world.h) {
-			b.x = config::posResetX;
-			b.y = config::posResetY;
+		if (b.rect.x < -2.0f || b.rect.y < -2.0f || b.rect.x > world.w ||
+			b.rect.y > world.h) {
+			b.rect.x = config::posResetX;
+			b.rect.y = config::posResetY;
 			b.vx = 0.0f;
 			b.vy = 0.0f;
 		}

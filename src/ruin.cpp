@@ -68,7 +68,7 @@ void Ruin::loop() {
 		p->step();
 	}
 
-	syncPos();
+	// syncPos();
 
 	s->render();
 };
@@ -87,15 +87,4 @@ void Ruin::parseCommand() {
 		b.vy = config::jumpForce;
 	}
 	b.vx = cmd.x;
-};
-
-void Ruin::syncPos() {
-	auto &sp = scene.player;
-	if (!sp.physicsSerial) {
-		return;
-	}
-
-	auto pos = p->getBody(sp.physicsSerial);
-	sp.x = pos.x;
-	sp.y = pos.y;
 };

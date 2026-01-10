@@ -13,26 +13,27 @@ inline void CheckTouch(
 	Body &b, const std::unordered_map<std::size_t, Tile> &tl) {
 
 	b.touch = {};
+	auto &re = b.rect;
 
-	float l = b.x - b.w - config::physicsScanRange;
-	float r = b.x + b.w + config::physicsScanRange;
-	float u = b.y + b.h + config::physicsScanRange;
-	float d = b.y - b.h - config::physicsScanRange;
+	float l = re.x - re.w - config::physicsScanRange;
+	float r = re.x + re.w + config::physicsScanRange;
+	float u = re.y + re.h + config::physicsScanRange;
+	float d = re.y - re.h - config::physicsScanRange;
 
 	for (auto &[_, t] : tl) {
 		if (!t.enable || t.x < l || t.x > r || t.y < d || t.y > u) {
 			continue;
 		}
-		if (!b.touch.l && b.getRollback(t, Direction::Left) != -1.0f) {
+		if (!b.touch.l && re.getRollback(t, Direction::Left) != -1.0f) {
 			b.touch.l = true;
 		}
-		if (!b.touch.r && b.getRollback(t, Direction::Right) != -1.0f) {
+		if (!b.touch.r && re.getRollback(t, Direction::Right) != -1.0f) {
 			b.touch.r = true;
 		}
-		if (!b.touch.u && b.getRollback(t, Direction::Up) != -1.0f) {
+		if (!b.touch.u && re.getRollback(t, Direction::Up) != -1.0f) {
 			b.touch.u = true;
 		}
-		if (!b.touch.d && b.getRollback(t, Direction::Down) != -1.0f) {
+		if (!b.touch.d && re.getRollback(t, Direction::Down) != -1.0f) {
 			b.touch.d = true;
 		}
 		if (b.touch.l && b.touch.r && b.touch.u && b.touch.d) {
@@ -41,22 +42,22 @@ inline void CheckTouch(
 	}
 }
 
-inline float CheckRollback(const Body &body,
+inline float CheckRollback(const Rect &re,
 	const std::unordered_map<std::size_t, Tile> &tl,
 	Direction direction) {
 
 	float l = direction == Direction::Right
-		? body.x + body.w
-		: body.x - body.w - config::physicsScanRange;
+		? re.x + re.w
+		: re.x - re.w - config::physicsScanRange;
 	float r = direction == Direction::Left
-		? body.x - body.w
-		: body.x + body.w + config::physicsScanRange;
+		? re.x - re.w
+		: re.x + re.w + config::physicsScanRange;
 	float u = direction == Direction::Down
-		? body.y - body.h
-		: body.y + body.h + config::physicsScanRange;
+		? re.y - re.h
+		: re.y + re.h + config::physicsScanRange;
 	float d = direction == Direction::Up
-		? body.y + body.h
-		: body.y - body.h - config::physicsScanRange;
+		? re.y + re.h
+		: re.y - re.h - config::physicsScanRange;
 
 	float rollback = -1.0f;
 	int i = 0;
@@ -68,7 +69,7 @@ inline float CheckRollback(const Body &body,
 			continue;
 		}
 		j++;
-		float rb = body.getRollback(t, direction);
+		float rb = re.getRollback(t, direction);
 		if (rb >= 0.0f) {
 			spdlog::debug(
 				"roll {}, x: {}, y: {}, {}", t.serial, t.x, t.y, direction);
