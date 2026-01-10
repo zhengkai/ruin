@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <cstring>
+#include <google/protobuf/stubs/common.h>
 #include <spdlog/spdlog.h>
 #ifndef __EMSCRIPTEN__
 #include <SDL3_ttf/SDL_ttf.h>
@@ -28,6 +29,9 @@ inline static void doShowVer() {
 		SDL_IMAGE_MAJOR_VERSION,
 		SDL_IMAGE_MINOR_VERSION,
 		SDL_IMAGE_MICRO_VERSION);
+
+	spdlog::info("protobuf   = {}",
+		google::protobuf::internal::VersionString(GOOGLE_PROTOBUF_VERSION));
 
 	spdlog::info("git        = {}({}{})",
 		GIT_BRANCH,
