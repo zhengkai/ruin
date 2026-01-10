@@ -23,7 +23,6 @@ private:
 public:
 	int jumpCnt = 0;
 	int serial = 0;
-	Pose pose = {};
 	bool lastRight = true;
 	physics::Pos prevPos = {};
 
@@ -84,17 +83,17 @@ public:
 private:
 	void next() {
 
-		auto &dur = p.asset->sprite.at(pose.type)->duration;
+		auto &dur = p.asset->sprite.at(p.pose.type)->duration;
 
-		auto frameLimit = dur[pose.step];
+		auto frameLimit = dur[p.pose.step];
 
 		serial++;
 		if (serial > frameLimit) {
 			serial = 0;
-			pose.step++;
-			if (static_cast<size_t>(pose.step) >= dur.size()) {
-				pose.step = 0;
-				if (util::poseIsAttack(pose.type)) {
+			p.pose.step++;
+			if (static_cast<size_t>(p.pose.step) >= dur.size()) {
+				p.pose.step = 0;
+				if (util::poseIsAttack(p.pose.type)) {
 					changePose(pb::Pose_Type::Pose_Type_idle);
 				}
 			}
@@ -104,44 +103,44 @@ private:
 		p.prevSpeed.y = p.y - prevPos.y;
 
 		if (prevPos.y == p.y) {
-			if (pose.type == pb::Pose_Type::Pose_Type_jump) {
+			if (p.pose.type == pb::Pose_Type::Pose_Type_jump) {
 				changePose(pb::Pose_Type::Pose_Type_idle);
 			}
 		} else {
 			if ((p.prevSpeed.y > 0.001f || p.prevSpeed.y < -0.001f) &&
-				pose.type != pb::Pose_Type::Pose_Type_jump &&
-				!util::poseIsAttack(pose.type)) {
+				p.pose.type != pb::Pose_Type::Pose_Type_jump &&
+				!util::poseIsAttack(p.pose.type)) {
 
 				changePose(pb::Pose_Type::Pose_Type_jump);
 			}
 		}
-		if (pose.type == pb::Pose_Type::Pose_Type_idle && control.axisA.x) {
+		if (p.pose.type == pb::Pose_Type::Pose_Type_idle && control.axisA.x) {
 			changePose(pb::Pose_Type::Pose_Type_run);
 		}
-		if (pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
+		if (p.pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
 			changePose(pb::Pose_Type::Pose_Type_idle);
 		}
 	}
 
-	void changePose(pb::Pose_Type p) {
-		if (pose.type != p) {
-			pose.step = 0;
+	void changePose(pb::Pose_Type po) {
+		if (p.pose.type != po) {
+			p.pose.step = 0;
 		}
-		pose.type = p;
+		p.pose.type = po;
 	}
 
 	void parseAttack() {
-		if (!util::poseIsAttack(pose.type)) {
-			pose.type = pb::Pose_Type::Pose_Type_attack;
-			pose.step = 0;
+		if (!util::poseIsAttack(p.pose.type)) {
+			p.pose.type = pb::Pose_Type::Pose_Type_attack;
+			p.pose.step = 0;
 		}
 	}
 
 	void parseJump() {
 
-		if (pose.type != pb::Pose_Type::Pose_Type_idle &&
-			pose.type != pb::Pose_Type::Pose_Type_walk &&
-			pose.type != pb::Pose_Type::Pose_Type_run) {
+		if (p.pose.type != pb::Pose_Type::Pose_Type_idle &&
+			p.pose.type != pb::Pose_Type::Pose_Type_walk &&
+			p.pose.type != pb::Pose_Type::Pose_Type_run) {
 			return;
 		}
 
@@ -153,7 +152,7 @@ private:
 	}
 
 	void parseFacing(const float &x) {
-		if (util::poseIsAttack(pose.type)) {
+		if (util::poseIsAttack(p.pose.type)) {
 			return;
 		}
 		bool right = lastRight;
@@ -162,9 +161,9 @@ private:
 		} else if (x < 0.0f) {
 			right = false;
 		}
-		if ((pose.facing == Pose::Facing::Right) != right) {
+		if ((p.pose.facing == Pose::Facing::Right) != right) {
 			lastRight = right;
-			pose.facing = right ? Pose::Facing::Right : Pose::Facing::Left;
+			p.pose.facing = right ? Pose::Facing::Right : Pose::Facing::Left;
 		}
 	}
 };

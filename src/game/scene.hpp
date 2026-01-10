@@ -49,8 +49,6 @@ public:
 
 		player.parse();
 
-		c.player.pose = player.pose;
-
 		return;
 	};
 
