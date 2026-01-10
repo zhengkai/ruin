@@ -107,7 +107,7 @@ jobs:
       - name: Download asset
         run: |
           git clone --depth 1 "https://github.com/zhengkai/ruin-asset.git" asset
-          node misc\copy-asset.mjs
+          node misc\asset\copy.mjs
 
       - name: Try run
         run: |
