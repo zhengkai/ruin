@@ -29,6 +29,7 @@ bool Ruin::init() {
 	s = createSDL(scene, window, asset);
 	if (!s) {
 		spdlog::error("sdl create failed");
+		return false;
 	}
 	if (!s->init()) {
 		spdlog::error("sdl init failed");
