@@ -3,14 +3,15 @@
 #include "config.hpp"
 #include "context/scene.hpp"
 #include "context/window.hpp"
+#include "game/world.hpp"
 #include "render/base.hpp"
 #include "render/debug.hpp"
 #include "render/dep.hpp"
 #include "render/gamepad.hpp"
 #include "render/info.hpp"
 #include "render/map.hpp"
-#include "render/monster.hpp"
-#include "render/player.hpp"
+// #include "render/monster.hpp"
+// #include "render/player.hpp"
 #include "render/terrain-chain.hpp"
 #include "text.hpp"
 #include <SDL3/SDL.h>
@@ -87,8 +88,8 @@ void sdl::initRender() {
 	rd = new render::renderDep(text, asset, r, scene, window);
 
 	renderList.emplace_back(std::make_unique<render::Map>(rd));
-	renderList.emplace_back(std::make_unique<render::Player>(rd));
-	renderList.emplace_back(std::make_unique<render::Monster>(rd));
+	// renderList.emplace_back(std::make_unique<render::Player>(rd));
+	// renderList.emplace_back(std::make_unique<render::Monster>(rd));
 	renderList.emplace_back(std::make_unique<render::Debug>(rd));
 	renderList.emplace_back(std::make_unique<render::Gamepad>(rd));
 	renderList.emplace_back(std::make_unique<render::Info>(rd));
@@ -98,7 +99,9 @@ void sdl::initRender() {
 	}
 }
 
-void sdl::render() {
+void sdl::render(const game::World &world) {
+
+	spdlog::info("render world {}", world.name);
 
 	if (toggleFullscreen()) {
 		return;

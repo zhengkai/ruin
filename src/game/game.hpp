@@ -1,12 +1,17 @@
 #pragma once
 
 #include "../asset/asset.hpp"
-#include "../context/scene.hpp"
+#include "../context/game.hpp"
 #include "../context/window.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
 #include "../util/input.hpp"
-#include "scene.hpp"
+#include "world.hpp"
+#include <algorithm>
+#include <memory>
+#include <vector>
+// #include "scene.hpp"
+#include <entt/entt.hpp>
 
 static void parseInputButton(InputButton &in, bool &out) {
 	if (in.has) {
@@ -14,13 +19,19 @@ static void parseInputButton(InputButton &in, bool &out) {
 	}
 }
 
+namespace game {
+
 class Game {
 
 private:
+	const asset::Asset &asset;
 	context::Window &window;
 
+	context::Game ctx;
+
+	std::vector<std::unique_ptr<World>> world;
+
 	Input input = {};
-	Scene scene;
 
 	context::ControlAxis prevAxisA;
 	context::ControlAxis prevAxisB;
@@ -28,8 +39,13 @@ private:
 	int cdZoom = 0;
 
 public:
-	Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset)
-		: window(cw), scene(Scene(cw.global, cw.control, cs, asset)) {};
+	Game(const asset::Asset &asset_, context::Window &window_)
+		: asset(asset_), window(window_) {
+
+		ctx.enterMap.name = "ruin-2";
+		ctx.enterMap.x = config::posResetX;
+		ctx.enterMap.y = config::posResetY;
+	};
 	~Game() {};
 
 	bool parse() {
@@ -41,7 +57,8 @@ public:
 
 		parseControl();
 
-		scene.parse();
+		checkEnterMap();
+		// scene.parse();
 
 		return true;
 	}
@@ -57,6 +74,10 @@ public:
 			}
 			util::handleInput(e, input);
 		}
+	};
+
+	const World &currentWorld() const {
+		return *world[0];
 	};
 
 private:
@@ -162,4 +183,33 @@ private:
 			window.zoomOut();
 		}
 	};
+
+	void checkEnterMap() {
+		std::string &name = ctx.enterMap.name;
+		if (ctx.enterMap.name == "") {
+			return;
+		}
+
+		auto it = std::ranges::find_if(world,
+			[&](const std::unique_ptr<World> &w) { return w->name == name; });
+
+		if (it != world.end()) {
+			if (it != world.begin()) {
+				std::rotate(world.begin(), it, it + 1);
+			}
+		} else {
+			spdlog::info("new map {}", name);
+			world.insert(
+				world.begin(), std::make_unique<World>(World{name, asset}));
+		}
+
+		world[0]->enter(ctx.enterMap);
+
+		if (world.size() > 5) {
+			world.erase(world.begin() + 5, world.end());
+		}
+
+		ctx.enterMap.name = "";
+	};
 };
+}; // namespace game

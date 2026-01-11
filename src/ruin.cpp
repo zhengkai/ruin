@@ -1,7 +1,6 @@
 #include "ruin.h"
 #include "context/window.hpp"
 #include "game/game.hpp"
-#include "physics/physics.hpp"
 #include "sdl.h"
 #include <SDL3/SDL_events.h>
 #include <spdlog/spdlog.h>
@@ -10,7 +9,7 @@
 #endif
 
 Ruin::Ruin() {
-	auto entity = registry.create();
+	auto entity = reg.create();
 	auto version = entt::to_version(entity);
 	spdlog::info("entity v{}", version);
 };
@@ -39,9 +38,7 @@ bool Ruin::init() {
 
 	// w = createWorld(scene, asset);
 
-	g = std::make_unique<Game>(scene, window, asset);
-
-	p = std::make_unique<physics::Physics>(scene);
+	g = std::make_unique<game::Game>(asset, window);
 
 	return true;
 }
@@ -68,27 +65,21 @@ void Ruin::loop() {
 
 	parseCommand();
 
-	if (p) {
-		p->step();
-	}
-
-	// syncPos();
-
-	s->render();
+	s->render(g->currentWorld());
 };
 
 void Ruin::parseCommand() {
 
-	auto &sp = scene.player;
-
-	if (!sp.physicsSerial) {
-		return;
-	}
-
-	auto &b = p->getBody(sp.physicsSerial);
-	auto &cmd = sp.command;
-	if (cmd.jump) {
-		b.vy = config::jumpForce;
-	}
-	b.vx = cmd.x;
+	//	auto &sp = scene.player;
+	//
+	//	if (!sp.physicsSerial) {
+	//		return;
+	//	}
+	//
+	//	auto &b = p->getBody(sp.physicsSerial);
+	//	auto &cmd = sp.command;
+	//	if (cmd.jump) {
+	//		b.vy = config::jumpForce;
+	//	}
+	//	b.vx = cmd.x;
 };

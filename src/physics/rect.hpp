@@ -26,6 +26,11 @@ struct Rect : Pos {
 
 	Rect() : Pos{0.0f, 0.0f}, w(0.5f), h(0.5f) {};
 
+	void updatePos(const Pos &p) {
+		Pos::x = p.x;
+		Pos::y = p.y;
+	};
+
 	void updateRect(const Rect &r) {
 		*this = r;
 	};
