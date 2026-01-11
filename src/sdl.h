@@ -44,6 +44,10 @@ private:
 	void calcGrid(float wf, float hf);
 	bool toggleFullscreen();
 	void initRender();
+
+	template <typename T> void addRender() {
+		renderList.emplace_back(std::make_unique<T>(rd));
+	}
 };
 
 inline void initWinSize(context::Window &cw);

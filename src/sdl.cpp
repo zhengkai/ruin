@@ -87,13 +87,13 @@ void sdl::initRender() {
 
 	rd = new render::renderDep(text, asset, r, scene, window);
 
-	renderList.emplace_back(std::make_unique<render::Map>(rd));
-	// renderList.emplace_back(std::make_unique<render::Player>(rd));
-	// renderList.emplace_back(std::make_unique<render::Monster>(rd));
-	renderList.emplace_back(std::make_unique<render::Debug>(rd));
-	renderList.emplace_back(std::make_unique<render::Gamepad>(rd));
-	renderList.emplace_back(std::make_unique<render::Info>(rd));
-	renderList.emplace_back(std::make_unique<render::TerrainChain>(rd));
+	addRender<render::Map>();
+	// addRender<render::Player>();
+	// addRender<render::Monster>();
+	addRender<render::Debug>();
+	addRender<render::Gamepad>();
+	addRender<render::Info>();
+	addRender<render::TerrainChain>();
 	for (auto &ren : renderList) {
 		ren->init();
 	}
