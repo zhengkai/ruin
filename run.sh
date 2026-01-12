@@ -33,6 +33,13 @@ cmake \
 
 cmake --build build -j"$(nproc)"
 
+if [ ! -d build/Release/asset/font ]; then
+	(
+		cd misc
+		make asset-copy
+	)
+fi
+
 ./ldd/run.sh
 
 if [ -e ./build/src/build.h ]; then

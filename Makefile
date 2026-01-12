@@ -3,7 +3,7 @@ SHELL:=/bin/bash
 export RUIN_DIR := $(CURDIR)/build/Release
 
 default:
-	./run.sh
+	./run.sh Release
 
 run:
 	# RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2
