@@ -32,6 +32,19 @@ public:
 		}
 	};
 
+	const entt::entity &getPlayer() const {
+		return player;
+	};
+
+	template <typename... Components> const auto view() const {
+		return reg.view<Components...>();
+	};
+
+	template <typename... Components>
+	const auto get(const entt::entity &e) const {
+		return reg.get<Components...>(e);
+	};
+
 	void enter(physics::Pos pos) {
 		spdlog::info("enter map {}", name);
 		auto &rect = reg.get<physics::Rect>(player);

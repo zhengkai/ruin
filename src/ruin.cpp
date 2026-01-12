@@ -8,11 +8,7 @@
 #include <emscripten.h>
 #endif
 
-Ruin::Ruin() {
-	auto entity = reg.create();
-	auto version = entt::to_version(entity);
-	spdlog::info("entity v{}", version);
-};
+Ruin::Ruin() {};
 
 Ruin::~Ruin() {
 	stop = true;

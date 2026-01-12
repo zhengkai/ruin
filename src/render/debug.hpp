@@ -9,7 +9,7 @@ struct Debug : base {
 	using base::base;
 
 	void init() override {};
-	void render() override {
+	void render(const game::World &world) override {
 
 		if (!d->scene.map) {
 			return;
@@ -17,15 +17,11 @@ struct Debug : base {
 
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
-		for (const auto &t : d->scene.map->terrain) {
-			SDL_FRect rect = t.getRect();
-			renderFillRect(rect);
+		auto view = world.view<physics::Rect>();
+		for (auto [_, rect] : view.each()) {
+			auto dst = rect.getRect();
+			renderFillRect(dst);
 		}
-
-		SDL_SetRenderDrawColor(d->r, 100, 130, 255, 128);
-
-		SDL_FRect p = d->scene.player.getRect();
-		renderFillRect(p);
 	};
 };
 }; // namespace render

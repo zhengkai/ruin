@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../common/pose.hpp"
+// #include "../common/pose.hpp"
 #include "base.hpp"
 #include <SDL3_image/SDL_image.h>
 #include <spdlog/spdlog.h>
@@ -12,8 +12,17 @@ struct Player : base {
 	using base::base;
 
 	void init() override {};
-	void render() override {
+	void render(const game::World &world) override {
 
+		auto &e = world.getPlayer();
+
+		auto &rect = world.get<physics::Rect>(e);
+
+		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
+		auto r = rect.getRect();
+		renderFillRect(r);
+
+		/*
 		const auto &p = d->scene.player;
 		const auto &po = p.pose;
 
@@ -30,6 +39,7 @@ struct Player : base {
 		} else {
 			renderTexture(tex, dst);
 		}
+ */
 	};
 };
 }; // namespace render

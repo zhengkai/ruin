@@ -10,8 +10,7 @@
 #include "render/gamepad.hpp"
 #include "render/info.hpp"
 #include "render/map.hpp"
-// #include "render/monster.hpp"
-// #include "render/player.hpp"
+#include "render/player.hpp"
 #include "render/terrain-chain.hpp"
 #include "text.hpp"
 #include <SDL3/SDL.h>
@@ -88,8 +87,7 @@ void sdl::initRender() {
 	rd = new render::renderDep(text, asset, r, scene, window);
 
 	addRender<render::Map>();
-	// addRender<render::Player>();
-	// addRender<render::Monster>();
+	addRender<render::Player>();
 	addRender<render::Debug>();
 	addRender<render::Gamepad>();
 	addRender<render::Info>();
@@ -115,7 +113,7 @@ void sdl::render(const game::World &world) {
 	SDL_RenderClear(r);
 
 	for (auto &ren : renderList) {
-		ren->render();
+		ren->render(world);
 	}
 
 	SDL_RenderPresent(r);

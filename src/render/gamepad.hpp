@@ -9,7 +9,7 @@ struct Gamepad : base {
 	using base::base;
 
 	void init() override {};
-	void render() override {
+	void render(const game::World &_) override {
 
 		auto &c = d->window.control;
 

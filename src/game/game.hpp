@@ -204,6 +204,9 @@ private:
 		}
 
 		world[0]->enter(ctx.enterMap);
+		for (std::size_t i = 1, j = world.size(); i < j; ++i) {
+			World &w = *world[i];
+		}
 
 		if (world.size() > 5) {
 			world.erase(world.begin() + 5, world.end());

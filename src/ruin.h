@@ -12,7 +12,6 @@ private:
 	context::Scene scene = {};
 	context::Window window = {};
 	asset::Asset asset = {};
-	entt::registry reg;
 
 	std::unique_ptr<Time> t = std::make_unique<Time>();
 	std::unique_ptr<sdl> s;
