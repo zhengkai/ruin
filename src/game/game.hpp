@@ -2,10 +2,12 @@
 
 #include "../asset/asset.hpp"
 #include "../context/game.hpp"
+#include "../context/scene.hpp"
 #include "../context/window.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
 #include "../util/input.hpp"
+#include "reg.hpp"
 #include "world.hpp"
 #include <algorithm>
 #include <memory>
@@ -24,8 +26,9 @@ namespace game {
 class Game {
 
 private:
-	const asset::Asset &asset;
+	context::Scene &scene;
 	context::Window &window;
+	const asset::Asset &asset;
 
 	context::Game ctx;
 
@@ -39,8 +42,10 @@ private:
 	int cdZoom = 0;
 
 public:
-	Game(const asset::Asset &asset_, context::Window &window_)
-		: asset(asset_), window(window_) {
+	Game(context::Scene &scene_,
+		context::Window &window_,
+		const asset::Asset &asset_)
+		: scene(scene_), window(window_), asset(asset_) {
 
 		ctx.enterMap.name = "ruin-2";
 		ctx.enterMap.x = config::posResetX;
@@ -48,16 +53,19 @@ public:
 	};
 	~Game() {};
 
-	bool parse() {
+	bool step() {
 
 		if (input.quit) {
 			return false;
 		}
+		checkEnterMap();
+
 		parseInput();
 
 		parseControl();
 
-		checkEnterMap();
+		world[0]->step();
+
 		// scene.parse();
 
 		return true;
@@ -76,8 +84,8 @@ public:
 		}
 	};
 
-	const World &currentWorld() const {
-		return *world[0];
+	const Reg &getReg() const {
+		return world[0]->getReg();
 	};
 
 private:
@@ -202,6 +210,8 @@ private:
 			world.insert(
 				world.begin(), std::make_unique<World>(World{name, asset}));
 		}
+
+		scene.map = asset.map.at(name);
 
 		world[0]->enter(ctx.enterMap);
 		for (std::size_t i = 1, j = world.size(); i < j; ++i) {

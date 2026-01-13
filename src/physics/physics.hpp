@@ -17,20 +17,28 @@ public:
 	World world;
 
 private:
-	context::Scene &scene;
 	std::size_t serial = 0;
 	std::unordered_map<std::size_t, Speed> forSubStep = {};
-	int mapIdx = -1;
 
 public:
-	Physics(context::Scene &cs) : scene(cs) {
-		updateMap();
+	Physics(std::shared_ptr<asset::Map> map) {
+
+		world.Reset(map->w, map->h);
+
+		// initPlayer();
+		// initMonster();
+
+		auto &cl = map->terrain;
+		if (!cl.size()) {
+			spdlog::warn("No map cells to init tiles.");
+		}
+		for (const auto &c : cl) {
+			addTile(c.pos);
+		}
 	};
 	~Physics() {};
 
 	void step() {
-
-		updateMap();
 
 		checkSpeed();
 
@@ -205,45 +213,21 @@ private:
 		return ++serial;
 	};
 
-	void updateMap() {
-		auto &m = scene.map;
-		if (!m) {
-			return;
-		}
-		if (mapIdx == m->idx) {
-			return;
-		}
-
-		world.Reset(m->w, m->h);
-
-		initPlayer();
-		initMonster();
-		initTile();
-
-		mapIdx = m->idx;
+	void initMap() {
 	}
 
-	void initPlayer() {
-		auto &sp = scene.player;
-		sp.physicsSerial = addBody(sp);
-	};
+	// void initPlayer() {
+	// 	auto &sp = scene.player;
+	// 	sp.physicsSerial = addBody(sp);
+	// };
+	//
+	// void initMonster() {
+	// 	for (auto &m : scene.monster) {
+	// 		m.physicsSerial = addBody(m);
+	// 	}
+	// };
 
-	void initMonster() {
-		for (auto &m : scene.monster) {
-			m.physicsSerial = addBody(m);
-		}
-	};
-
-	void initTile() {
-		auto &cl = scene.map->terrain;
-		if (!cl.size()) {
-			spdlog::warn("No map cells to init tiles.");
-			return;
-		}
-		for (const auto &c : cl) {
-			addTile(c.pos);
-		}
-	};
+	void initTile() {};
 
 	int addTile(const Pos &pos) {
 		auto serial = genSerial();

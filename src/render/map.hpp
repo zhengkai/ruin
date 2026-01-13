@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../game/reg.hpp"
 #include "../game/tag.hpp"
-#include "../game/world.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -11,9 +11,9 @@ struct Map : base {
 	using base::base;
 
 	void init() override {};
-	void render(const game::World &world) override {
+	void render(const game::Reg &reg) override {
 
-		auto view = world.view<physics::Rect, game::AssetMapCell>();
+		auto view = reg.view<physics::Rect, game::AssetMapCell>();
 		for (auto [_, rect, mc] : view.each()) {
 			auto t = mc.def;
 			auto tile = d->asset.tileset.at(t.tileName)->list.at(t.tileID - 1);

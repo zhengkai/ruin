@@ -7,23 +7,23 @@ namespace render {
 
 struct TerrainChain : base {
 
-	const game::World *lastWorld = nullptr;
+	const game::Reg *lastWorld = nullptr;
 	std::vector<std::vector<terrain::IslandPos>> outline;
 
 	using base::base;
 	void init() override {};
-	void updateMap(const game::World &world) {
+	void updateMap(const game::Reg &reg) {
 
-		auto cur = std::addressof(world);
+		auto cur = std::addressof(reg);
 		if (lastWorld == cur) {
 			return;
 		}
 		lastWorld = cur;
 
-		outline = terrain::MapOutline(d->asset.map.at(world.name));
+		outline = terrain::MapOutline(d->scene.map);
 	};
-	void render(const game::World &world) override {
-		updateMap(world);
+	void render(const game::Reg &reg) override {
+		updateMap(reg);
 		for (auto &o : outline) {
 			SDL_SetRenderDrawColor(d->r, 255, 50, 50, 255);
 			std::vector<SDL_FPoint> pts;

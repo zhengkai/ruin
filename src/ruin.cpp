@@ -34,7 +34,7 @@ bool Ruin::init() {
 
 	// w = createWorld(scene, asset);
 
-	g = std::make_unique<game::Game>(asset, window);
+	g = std::make_unique<game::Game>(scene, window, asset);
 
 	return true;
 }
@@ -54,14 +54,14 @@ void Ruin::loop() {
 
 	g->loopEvent();
 
-	if (!g->parse()) {
+	if (!g->step()) {
 		stop = true;
 		return;
 	}
 
 	parseCommand();
 
-	s->render(g->currentWorld());
+	s->render(g->getReg());
 };
 
 void Ruin::parseCommand() {

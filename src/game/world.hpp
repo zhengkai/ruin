@@ -2,15 +2,15 @@
 
 #include "../asset/asset.hpp"
 #include "../physics/rect.hpp"
+#include "reg.hpp"
 #include "tag.hpp"
-#include <entt/entt.hpp>
 
 namespace game {
 
 class World {
 
 private:
-	entt::registry reg;
+	Reg reg;
 	entt::entity player;
 
 public:
@@ -20,6 +20,8 @@ public:
 public:
 	World(const std::string &name_, const asset::Asset &asset_)
 		: asset(asset_), name(name_) {
+
+		auto map = asset.map.at(name);
 
 		player = reg.create();
 		reg.emplace<physics::Rect>(player, 10.0f, 10.0f, 0.5f);
@@ -32,17 +34,14 @@ public:
 		}
 	};
 
+	void step() {};
+
+	const Reg &getReg() const {
+		return reg;
+	};
+
 	const entt::entity &getPlayer() const {
 		return player;
-	};
-
-	template <typename... Components> const auto view() const {
-		return reg.view<Components...>();
-	};
-
-	template <typename... Components>
-	const auto get(const entt::entity &e) const {
-		return reg.get<Components...>(e);
 	};
 
 	void enter(physics::Pos pos) {

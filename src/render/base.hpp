@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../game/world.hpp"
+#include "../game/reg.hpp"
 #include "dep.hpp"
 #include <SDL3/SDL_render.h>
 
@@ -17,7 +17,7 @@ struct base {
 	}
 
 	virtual void init() {};
-	virtual void render(const game::World &world) {};
+	virtual void render(const game::Reg &reg) {};
 
 	bool renderTexture(SDL_Texture *t, SDL_FRect &dst) {
 

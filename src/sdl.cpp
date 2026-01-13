@@ -3,6 +3,7 @@
 #include "config.hpp"
 #include "context/scene.hpp"
 #include "context/window.hpp"
+#include "game/reg.hpp"
 #include "game/world.hpp"
 #include "render/base.hpp"
 #include "render/debug.hpp"
@@ -97,9 +98,7 @@ void sdl::initRender() {
 	}
 }
 
-void sdl::render(const game::World &world) {
-
-	spdlog::info("render world {}", world.name);
+void sdl::render(const game::Reg &reg) {
 
 	if (toggleFullscreen()) {
 		return;
@@ -113,7 +112,7 @@ void sdl::render(const game::World &world) {
 	SDL_RenderClear(r);
 
 	for (auto &ren : renderList) {
-		ren->render(world);
+		ren->render(reg);
 	}
 
 	SDL_RenderPresent(r);

@@ -1,6 +1,7 @@
 #pragma once
 
 // #include "../common/pose.hpp"
+#include "../game/reg.hpp"
 #include "base.hpp"
 #include <SDL3_image/SDL_image.h>
 #include <spdlog/spdlog.h>
@@ -12,15 +13,15 @@ struct Player : base {
 	using base::base;
 
 	void init() override {};
-	void render(const game::World &world) override {
+	void render(const game::Reg &_) override {
 
-		auto &e = world.getPlayer();
-
-		auto &rect = world.get<physics::Rect>(e);
-
-		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
-		auto r = rect.getRect();
-		renderFillRect(r);
+		// auto &e = reg.getPlayer();
+		//
+		// auto &rect = reg.get<physics::Rect>(e);
+		//
+		// SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
+		// auto r = rect.getRect();
+		// renderFillRect(r);
 
 		/*
 		const auto &p = d->scene.player;

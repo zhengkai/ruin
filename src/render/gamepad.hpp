@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../game/reg.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -9,7 +10,7 @@ struct Gamepad : base {
 	using base::base;
 
 	void init() override {};
-	void render(const game::World &_) override {
+	void render(const game::Reg &_) override {
 
 		auto &c = d->window.control;
 

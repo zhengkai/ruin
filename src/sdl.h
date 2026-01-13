@@ -36,7 +36,7 @@ public:
 	bool init();
 	void handleInput(SDL_Event *e);
 
-	void render(const game::World &world);
+	void render(const game::Reg &reg);
 
 private:
 	void renderControlMsg();

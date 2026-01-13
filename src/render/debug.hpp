@@ -9,7 +9,7 @@ struct Debug : base {
 	using base::base;
 
 	void init() override {};
-	void render(const game::World &world) override {
+	void render(const game::Reg &reg) override {
 
 		if (!d->scene.map) {
 			return;
@@ -17,7 +17,7 @@ struct Debug : base {
 
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
-		auto view = world.view<physics::Rect>();
+		auto view = reg.view<physics::Rect>();
 		for (auto [_, rect] : view.each()) {
 			auto dst = rect.getRect();
 			renderFillRect(dst);
