@@ -34,6 +34,9 @@ const float downSpeedMax = -1.25f;
 const float posResetX = 10.0f;
 const float posResetY = 11.0f;
 
+const float playerW = 0.375f;
+const float playerH = 0.75f;
+
 const float physicsScanRange =
 	5.0f; // 坐标差别超过这个的物体（无论大小）直接不检测碰撞
 

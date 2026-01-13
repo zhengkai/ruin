@@ -4,7 +4,7 @@
 #include "context/scene.hpp"
 #include "context/window.hpp"
 #include "game/reg.hpp"
-#include "game/world.hpp"
+#include "game/tag.hpp"
 #include "render/base.hpp"
 #include "render/debug.hpp"
 #include "render/dep.hpp"
@@ -105,7 +105,11 @@ void sdl::render(const game::Reg &reg) {
 	}
 	renderResize();
 
-	window.setFocus(scene.player);
+	auto view = reg.view<physics::Rect, game::TagPlayer>();
+	if (auto entity = view.front(); entity != entt::null) {
+		auto &rect = view.get<physics::Rect>(entity);
+		window.setFocus(rect.x, rect.y);
+	}
 
 	auto c = config::colorBg;
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);

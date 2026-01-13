@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../game/tag.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -17,8 +18,8 @@ struct Debug : base {
 
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
-		auto view = reg.view<physics::Rect>();
-		for (auto [_, rect] : view.each()) {
+		auto view = reg.view<physics::Rect, game::AssetMapCell>();
+		for (auto [_, rect, _2] : view.each()) {
 			auto dst = rect.getRect();
 			renderFillRect(dst);
 		}

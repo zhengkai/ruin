@@ -16,8 +16,8 @@ Ruin::~Ruin() {
 
 bool Ruin::init() {
 
-	scene.player.x = 10.0f;
-	scene.player.y = 13.0f;
+	// scene.player.x = 10.0f;
+	// scene.player.y = 13.0f;
 
 	spdlog::info("ruin start");
 

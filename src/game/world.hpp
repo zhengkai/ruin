@@ -1,7 +1,10 @@
 #pragma once
 
 #include "../asset/asset.hpp"
+#include "../asset/sprite.hpp"
+#include "../common/pose.hpp"
 #include "../physics/rect.hpp"
+#include "../util/animation.hpp"
 #include "reg.hpp"
 #include "tag.hpp"
 
@@ -23,9 +26,6 @@ public:
 
 		auto map = asset.map.at(name);
 
-		player = reg.create();
-		reg.emplace<physics::Rect>(player, 10.0f, 10.0f, 0.5f);
-
 		auto m = asset.map.at(name);
 		for (auto &t : m->terrain) {
 			auto e = reg.create();
@@ -34,7 +34,25 @@ public:
 		}
 	};
 
-	void step() {};
+	void enter(physics::Pos pos) {
+		player = reg.create();
+		reg.emplace<physics::Rect>(player, pos, 0.5f);
+		reg.emplace<TagPlayer>(player);
+		reg.emplace<Pose>(player);
+		reg.emplace<std::shared_ptr<asset::SpriteBox>>(
+			player, asset.sprite.at("samurai"));
+	}
+
+	void leave() {
+		reg.destroy(player);
+	};
+
+	void step() {
+		auto view = reg.view<Pose, std::shared_ptr<asset::SpriteBox>>();
+		for (auto [_, pose, box] : view.each()) {
+			util::animation(pose, box);
+		}
+	};
 
 	const Reg &getReg() const {
 		return reg;
@@ -43,13 +61,6 @@ public:
 	const entt::entity &getPlayer() const {
 		return player;
 	};
-
-	void enter(physics::Pos pos) {
-		spdlog::info("enter map {}", name);
-		auto &rect = reg.get<physics::Rect>(player);
-		spdlog::info("enter map done {}", name);
-		rect.updatePos(pos);
-	}
 };
 
 }; // namespace game

@@ -89,26 +89,26 @@ private:
 
 		if (prevPos.y == p.y) {
 			if (p.pose.type == pb::Pose_Type::Pose_Type_jump) {
-				p.changePose(pb::Pose_Type::Pose_Type_idle);
+				p.pose.change(pb::Pose_Type::Pose_Type_idle);
 			}
 		} else {
 			if ((p.prevSpeed.y > 0.001f || p.prevSpeed.y < -0.001f) &&
 				p.pose.type != pb::Pose_Type::Pose_Type_jump &&
 				!util::poseIsAttack(p.pose.type)) {
 
-				p.changePose(pb::Pose_Type::Pose_Type_jump);
+				p.pose.change(pb::Pose_Type::Pose_Type_jump);
 			}
 		}
 		if (p.pose.type == pb::Pose_Type::Pose_Type_idle && control.axisA.x) {
-			p.changePose(pb::Pose_Type::Pose_Type_run);
+			p.pose.change(pb::Pose_Type::Pose_Type_run);
 		}
 		if (p.pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
-			p.changePose(pb::Pose_Type::Pose_Type_idle);
+			p.pose.change(pb::Pose_Type::Pose_Type_idle);
 		}
 	}
 
 	void parseAttack() {
-		if (!util::poseIsAttack(p.pose.type)) {
+		if (!p.pose.isAttack()) {
 			p.pose.type = pb::Pose_Type::Pose_Type_attack;
 			p.pose.step = 0;
 		}
@@ -126,11 +126,11 @@ private:
 			return;
 		}
 		p.command.jump = true;
-		p.changePose(pb::Pose_Type::Pose_Type_jump);
+		p.pose.change(pb::Pose_Type::Pose_Type_jump);
 	}
 
 	void parseFacing(const float &x) {
-		if (util::poseIsAttack(p.pose.type)) {
+		if (p.pose.isAttack()) {
 			return;
 		}
 		bool right = lastRight;

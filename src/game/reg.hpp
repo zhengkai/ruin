@@ -18,7 +18,11 @@ public:
 		reg.destroy(e);
 	}
 
-	template <typename... Components> const auto view() const {
+	template <typename... Components> auto view() {
+		return reg.view<Components...>();
+	};
+
+	template <typename... Components> auto view() const {
 		return reg.view<Components...>();
 	};
 

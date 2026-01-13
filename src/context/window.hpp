@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../config.hpp"
-#include "entity.hpp"
+#include "../physics/rect.hpp"
 #include <SDL3/SDL_rect.h>
 #include <spdlog/spdlog.h>
 
@@ -146,8 +146,8 @@ public:
 		focus.y = y;
 	};
 
-	void setFocus(Player p) {
-		setFocus(p.x, p.y);
+	void setFocus(physics::Pos &pos) {
+		setFocus(pos.x, pos.y);
 	};
 
 	void setBoundary(int x, int y) {

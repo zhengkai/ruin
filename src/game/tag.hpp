@@ -4,6 +4,8 @@
 
 namespace game {
 
+struct TagPlayer {};
+
 struct AssetMapCell {
 	const asset::MapCell &def;
 };
