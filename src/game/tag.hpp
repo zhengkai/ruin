@@ -6,6 +6,8 @@ namespace game {
 
 struct TagPlayer {};
 
+struct TagMonster {};
+
 struct AssetMapCell {
 	const asset::MapCell &def;
 };

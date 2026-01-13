@@ -8,7 +8,7 @@
 #include "../util/event.hpp"
 #include "../util/input.hpp"
 #include "reg.hpp"
-#include "world.hpp"
+#include "zone.hpp"
 #include <algorithm>
 #include <memory>
 #include <vector>
@@ -32,7 +32,7 @@ private:
 
 	context::Game ctx;
 
-	std::vector<std::unique_ptr<World>> world;
+	std::vector<std::unique_ptr<Zone>> world;
 
 	Input input = {};
 
@@ -199,7 +199,7 @@ private:
 		}
 
 		auto it = std::ranges::find_if(world,
-			[&](const std::unique_ptr<World> &w) { return w->name == name; });
+			[&](const std::unique_ptr<Zone> &w) { return w->name == name; });
 
 		if (it != world.end()) {
 			if (it != world.begin()) {
@@ -208,7 +208,7 @@ private:
 		} else {
 			spdlog::info("new map {}", name);
 			world.insert(
-				world.begin(), std::make_unique<World>(World{name, asset}));
+				world.begin(), std::make_unique<Zone>(Zone{name, asset}));
 		}
 
 		scene.map = asset.map.at(name);
@@ -218,7 +218,7 @@ private:
 			world.erase(world.begin() + 5, world.end());
 		}
 		for (std::size_t i = 1, j = world.size(); i < j; ++i) {
-			World &w = *world[i];
+			Zone &w = *world[i];
 			w.leave();
 		}
 

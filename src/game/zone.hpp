@@ -10,7 +10,7 @@
 
 namespace game {
 
-class World {
+class Zone {
 
 private:
 	Reg reg;
@@ -21,16 +21,22 @@ public:
 	const std::string name;
 
 public:
-	World(const std::string &name_, const asset::Asset &asset_)
+	Zone(const std::string &name_, const asset::Asset &asset_)
 		: asset(asset_), name(name_) {
-
-		auto map = asset.map.at(name);
 
 		auto m = asset.map.at(name);
 		for (auto &t : m->terrain) {
 			auto e = reg.create();
 			reg.emplace<physics::Rect>(e, t.pos, 0.5f);
 			reg.emplace<AssetMapCell>(e, t);
+		}
+
+		for (auto &m : m->monster) {
+			auto e = reg.create();
+			reg.emplace<physics::Rect>(e, m);
+			reg.emplace<TagMonster>(player);
+			reg.emplace<Pose>(e);
+			reg.emplace<std::shared_ptr<asset::SpriteBox>>(e, m.def.sprite);
 		}
 	};
 

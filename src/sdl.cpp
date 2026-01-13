@@ -88,7 +88,7 @@ void sdl::initRender() {
 	rd = new render::renderDep(text, asset, r, scene, window);
 
 	addRender<render::Map>();
-	addRender<render::Player>();
+	addRender<render::Sprite>();
 	addRender<render::Debug>();
 	addRender<render::Gamepad>();
 	addRender<render::Info>();

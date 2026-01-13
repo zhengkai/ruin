@@ -14,7 +14,7 @@ public:
 		return reg.create();
 	}
 
-	void destroy(entt::entity e) {
+	void destroy(const entt::entity &e) {
 		reg.destroy(e);
 	}
 
