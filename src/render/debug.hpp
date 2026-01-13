@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../game/tag.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -9,7 +10,7 @@ struct Debug : base {
 	using base::base;
 
 	void init() override {};
-	void render() override {
+	void render(const game::Reg &reg) override {
 
 		if (!d->scene.map) {
 			return;
@@ -17,15 +18,11 @@ struct Debug : base {
 
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
-		for (const auto &t : d->scene.map->terrain) {
-			SDL_FRect rect = t.getRect();
-			renderFillRect(rect);
+		auto view = reg.view<physics::Rect, game::AssetMapCell>();
+		for (auto [_, rect, _2] : view.each()) {
+			auto dst = rect.getRect();
+			renderFillRect(dst);
 		}
-
-		SDL_SetRenderDrawColor(d->r, 100, 130, 255, 128);
-
-		SDL_FRect p = d->scene.player.getRect();
-		renderFillRect(p);
 	};
 };
 }; // namespace render

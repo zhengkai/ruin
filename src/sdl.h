@@ -2,6 +2,7 @@
 
 #include "context/scene.hpp"
 #include "context/window.hpp"
+#include "game/world.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
 #include "text.hpp"
@@ -35,7 +36,7 @@ public:
 	bool init();
 	void handleInput(SDL_Event *e);
 
-	void render();
+	void render(const game::Reg &reg);
 
 private:
 	void renderControlMsg();
@@ -43,6 +44,10 @@ private:
 	void calcGrid(float wf, float hf);
 	bool toggleFullscreen();
 	void initRender();
+
+	template <typename T> void addRender() {
+		renderList.emplace_back(std::make_unique<T>(rd));
+	}
 };
 
 inline void initWinSize(context::Window &cw);

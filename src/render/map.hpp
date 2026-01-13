@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../game/reg.hpp"
+#include "../game/tag.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -9,10 +11,17 @@ struct Map : base {
 	using base::base;
 
 	void init() override {};
-	void render() override {
+	void render(const game::Reg &reg) override {
 
-		auto &m = d->scene.map;
+		auto view = reg.view<physics::Rect, game::AssetMapCell>();
+		for (auto [_, rect, mc] : view.each()) {
+			auto t = mc.def;
+			auto tile = d->asset.tileset.at(t.tileName)->list.at(t.tileID - 1);
+			auto dst = rect.getRect();
+			renderTexture(tile, dst);
+		}
 
+		/*
 		if (!m) {
 			return;
 		}
@@ -28,6 +37,7 @@ struct Map : base {
 			SDL_FRect p = g.rect.getRect();
 			renderFillRect(p);
 		}
+	 */
 	};
 };
 

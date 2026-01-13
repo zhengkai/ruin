@@ -1,12 +1,19 @@
 #pragma once
 
 #include "../asset/asset.hpp"
+#include "../context/game.hpp"
 #include "../context/scene.hpp"
 #include "../context/window.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
 #include "../util/input.hpp"
-#include "scene.hpp"
+#include "reg.hpp"
+#include "world.hpp"
+#include <algorithm>
+#include <memory>
+#include <vector>
+// #include "scene.hpp"
+#include <entt/entt.hpp>
 
 static void parseInputButton(InputButton &in, bool &out) {
 	if (in.has) {
@@ -14,13 +21,20 @@ static void parseInputButton(InputButton &in, bool &out) {
 	}
 }
 
+namespace game {
+
 class Game {
 
 private:
+	context::Scene &scene;
 	context::Window &window;
+	const asset::Asset &asset;
+
+	context::Game ctx;
+
+	std::vector<std::unique_ptr<World>> world;
 
 	Input input = {};
-	Scene scene;
 
 	context::ControlAxis prevAxisA;
 	context::ControlAxis prevAxisB;
@@ -28,20 +42,31 @@ private:
 	int cdZoom = 0;
 
 public:
-	Game(context::Scene &cs, context::Window &cw, const asset::Asset &asset)
-		: window(cw), scene(Scene(cw.global, cw.control, cs, asset)) {};
+	Game(context::Scene &scene_,
+		context::Window &window_,
+		const asset::Asset &asset_)
+		: scene(scene_), window(window_), asset(asset_) {
+
+		ctx.enterMap.name = "ruin-2";
+		ctx.enterMap.x = config::posResetX;
+		ctx.enterMap.y = config::posResetY;
+	};
 	~Game() {};
 
-	bool parse() {
+	bool step() {
 
 		if (input.quit) {
 			return false;
 		}
+		checkEnterMap();
+
 		parseInput();
 
 		parseControl();
 
-		scene.parse();
+		world[0]->step();
+
+		// scene.parse();
 
 		return true;
 	}
@@ -57,6 +82,10 @@ public:
 			}
 			util::handleInput(e, input);
 		}
+	};
+
+	const Reg &getReg() const {
+		return world[0]->getReg();
 	};
 
 private:
@@ -162,4 +191,38 @@ private:
 			window.zoomOut();
 		}
 	};
+
+	void checkEnterMap() {
+		std::string &name = ctx.enterMap.name;
+		if (ctx.enterMap.name == "") {
+			return;
+		}
+
+		auto it = std::ranges::find_if(world,
+			[&](const std::unique_ptr<World> &w) { return w->name == name; });
+
+		if (it != world.end()) {
+			if (it != world.begin()) {
+				std::rotate(world.begin(), it, it + 1);
+			}
+		} else {
+			spdlog::info("new map {}", name);
+			world.insert(
+				world.begin(), std::make_unique<World>(World{name, asset}));
+		}
+
+		scene.map = asset.map.at(name);
+
+		world[0]->enter(ctx.enterMap);
+		if (world.size() > 5) {
+			world.erase(world.begin() + 5, world.end());
+		}
+		for (std::size_t i = 1, j = world.size(); i < j; ++i) {
+			World &w = *world[i];
+			w.leave();
+		}
+
+		ctx.enterMap.name = "";
+	};
 };
+}; // namespace game

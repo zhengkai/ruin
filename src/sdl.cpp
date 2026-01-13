@@ -3,13 +3,14 @@
 #include "config.hpp"
 #include "context/scene.hpp"
 #include "context/window.hpp"
+#include "game/reg.hpp"
+#include "game/tag.hpp"
 #include "render/base.hpp"
 #include "render/debug.hpp"
 #include "render/dep.hpp"
 #include "render/gamepad.hpp"
 #include "render/info.hpp"
 #include "render/map.hpp"
-#include "render/monster.hpp"
 #include "render/player.hpp"
 #include "render/terrain-chain.hpp"
 #include "text.hpp"
@@ -86,33 +87,36 @@ void sdl::initRender() {
 
 	rd = new render::renderDep(text, asset, r, scene, window);
 
-	renderList.emplace_back(std::make_unique<render::Map>(rd));
-	renderList.emplace_back(std::make_unique<render::Player>(rd));
-	renderList.emplace_back(std::make_unique<render::Monster>(rd));
-	renderList.emplace_back(std::make_unique<render::Debug>(rd));
-	renderList.emplace_back(std::make_unique<render::Gamepad>(rd));
-	renderList.emplace_back(std::make_unique<render::Info>(rd));
-	renderList.emplace_back(std::make_unique<render::TerrainChain>(rd));
+	addRender<render::Map>();
+	addRender<render::Player>();
+	addRender<render::Debug>();
+	addRender<render::Gamepad>();
+	addRender<render::Info>();
+	addRender<render::TerrainChain>();
 	for (auto &ren : renderList) {
 		ren->init();
 	}
 }
 
-void sdl::render() {
+void sdl::render(const game::Reg &reg) {
 
 	if (toggleFullscreen()) {
 		return;
 	}
 	renderResize();
 
-	window.setFocus(scene.player);
+	auto view = reg.view<physics::Rect, game::TagPlayer>();
+	if (auto entity = view.front(); entity != entt::null) {
+		auto &rect = view.get<physics::Rect>(entity);
+		window.setFocus(rect.x, rect.y);
+	}
 
 	auto c = config::colorBg;
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
 	SDL_RenderClear(r);
 
 	for (auto &ren : renderList) {
-		ren->render();
+		ren->render(reg);
 	}
 
 	SDL_RenderPresent(r);
