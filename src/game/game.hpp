@@ -32,7 +32,7 @@ private:
 
 	context::Game ctx;
 
-	std::vector<std::unique_ptr<Zone>> world;
+	std::vector<std::unique_ptr<Zone>> zone;
 
 	Input input = {};
 
@@ -64,7 +64,7 @@ public:
 
 		parseControl();
 
-		world[0]->step();
+		zone[0]->step();
 
 		// scene.parse();
 
@@ -85,7 +85,7 @@ public:
 	};
 
 	const Reg &getReg() const {
-		return world[0]->getReg();
+		return zone[0]->getReg();
 	};
 
 private:
@@ -198,27 +198,26 @@ private:
 			return;
 		}
 
-		auto it = std::ranges::find_if(world,
+		auto it = std::ranges::find_if(zone,
 			[&](const std::unique_ptr<Zone> &w) { return w->name == name; });
 
-		if (it != world.end()) {
-			if (it != world.begin()) {
-				std::rotate(world.begin(), it, it + 1);
+		if (it != zone.end()) {
+			if (it != zone.begin()) {
+				std::rotate(zone.begin(), it, it + 1);
 			}
 		} else {
 			spdlog::info("new map {}", name);
-			world.insert(
-				world.begin(), std::make_unique<Zone>(Zone{name, asset}));
+			zone.insert(zone.begin(), std::make_unique<Zone>(name, asset));
 		}
 
 		scene.map = asset.map.at(name);
 
-		world[0]->enter(ctx.enterMap);
-		if (world.size() > 5) {
-			world.erase(world.begin() + 5, world.end());
+		zone[0]->enter(ctx.enterMap);
+		if (zone.size() > 5) {
+			zone.erase(zone.begin() + 5, zone.end());
 		}
-		for (std::size_t i = 1, j = world.size(); i < j; ++i) {
-			Zone &w = *world[i];
+		for (std::size_t i = 1, j = zone.size(); i < j; ++i) {
+			Zone &w = *zone[i];
 			w.leave();
 		}
 

@@ -2,7 +2,6 @@
 
 #include "context/scene.hpp"
 #include "context/window.hpp"
-#include "game/world.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
 #include "text.hpp"

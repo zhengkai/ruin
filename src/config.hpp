@@ -31,7 +31,7 @@ const float gravityUp = 3.0f / 10.0f * deltaTime;
 const float jumpForce = 59.0f / 10.0f * deltaTime;
 const float downSpeedMax = -1.25f;
 
-const float posResetX = 17.0f;
+const float posResetX = 13.0f;
 const float posResetY = 11.0f;
 
 const float playerW = 0.375f;

@@ -11,7 +11,6 @@ inline void animation(Pose &pose, std::shared_ptr<asset::SpriteBox> box) {
 	auto frameLimit = dur[pose.step];
 
 	pose.serial++;
-	spdlog::info("pose.serial {}", pose.serial);
 	if (pose.serial > frameLimit) {
 		pose.serial = 0;
 		pose.step++;

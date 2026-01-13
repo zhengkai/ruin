@@ -12,33 +12,51 @@ private:
 public:
 	[[nodiscard]] entt::entity create() {
 		return reg.create();
-	}
+	};
 
 	void destroy(const entt::entity &e) {
 		reg.destroy(e);
-	}
+	};
 
-	template <typename... Components> auto view() {
+	// view
+
+	template <typename... Components> [[nodiscard]] auto view() {
 		return reg.view<Components...>();
 	};
 
-	template <typename... Components> auto view() const {
+	template <typename... Components> [[nodiscard]] auto view() const {
 		return reg.view<Components...>();
 	};
+
+	// emplace
 
 	template <typename Type, typename... Args>
 	decltype(auto) emplace(entt::entity e, Args &&...args) {
 		return reg.emplace<Type>(e, std::forward<Args>(args)...);
 	}
 
+	// get
+
 	template <typename... Components>
-	decltype(auto) get(const entt::entity &e) {
+	[[nodiscard]] decltype(auto) get(const entt::entity &e) {
 		return reg.get<Components...>(e);
 	};
 
 	template <typename... Components>
-	decltype(auto) get(const entt::entity &e) const {
+	[[nodiscard]] decltype(auto) get(const entt::entity &e) const {
 		return reg.get<Components...>(e);
+	};
+
+	// try_get
+
+	template <typename... Components>
+	[[nodiscard]] decltype(auto) tryGet(const entt::entity &e) {
+		return reg.try_get<Components...>(e);
+	};
+
+	template <typename... Components>
+	[[nodiscard]] decltype(auto) tryGet(const entt::entity &e) const {
+		return reg.try_get<Components...>(e);
 	};
 };
 

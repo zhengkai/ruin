@@ -8,6 +8,8 @@ struct TagPlayer {};
 
 struct TagMonster {};
 
+struct TagPhysics {};
+
 struct AssetMapCell {
 	const asset::MapCell &def;
 };

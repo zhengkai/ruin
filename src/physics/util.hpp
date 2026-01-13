@@ -10,10 +10,10 @@
 namespace physics {
 
 inline void CheckTouch(
-	Body &b, const std::unordered_map<std::size_t, Tile> &tl) {
+	Body &b, Rect &rect, const std::unordered_map<std::size_t, Tile> &tl) {
 
 	b.touch = {};
-	auto &re = b.rect;
+	auto &re = rect;
 
 	float l = re.x - re.w - config::physicsScanRange;
 	float r = re.x + re.w + config::physicsScanRange;

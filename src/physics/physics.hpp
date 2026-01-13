@@ -1,7 +1,8 @@
 #pragma once
 
+#include "../asset/map.hpp"
 #include "../config.hpp"
-#include "../context/scene.hpp"
+#include "../game/reg.hpp"
 #include "body.hpp"
 #include "common.hpp"
 #include "tile.hpp"
@@ -17,16 +18,14 @@ public:
 	World world;
 
 private:
+	game::Reg &reg;
 	std::size_t serial = 0;
-	std::unordered_map<std::size_t, Speed> forSubStep = {};
+	std::unordered_map<entt::entity, Speed> forSubStep = {};
 
 public:
-	Physics(std::shared_ptr<asset::Map> map) {
+	Physics(std::shared_ptr<asset::Map> map, game::Reg &reg_) : reg(reg_) {
 
 		world.Reset(map->w, map->h);
-
-		// initPlayer();
-		// initMonster();
 
 		auto &cl = map->terrain;
 		if (!cl.size()) {
@@ -42,35 +41,27 @@ public:
 
 		checkSpeed();
 
-		for (auto &[id, b] : world.body) {
+		auto view = reg.view<Rect, Body>();
+
+		for (auto [e, rect, b] : view.each()) {
 			Speed a = {.vx = b.vx, .vy = b.vy};
 			Speed c = {};
 			Speed n = {};
 			if (limitSpeed(a, c, n)) {
-				forSubStep[id] = n;
+				forSubStep[e] = n;
 			}
-			stepOne(b, c.vx, c.vy);
+			stepOne(b, rect, c.vx, c.vy);
 		}
 
 		while (!forSubStep.empty()) {
 			subStep();
 		}
 
-		for (auto &[_, b] : world.body) {
-			checkReset(b);
-			CheckTouch(b, world.tile);
+		for (auto [e, rect, b] : view.each()) {
+			checkReset(b, rect);
+			CheckTouch(b, rect, world.tile);
 		}
 	};
-
-	int addBody(physics::Rect &rect) {
-		auto serial = genSerial();
-		world.body.emplace(serial, Body{serial, rect});
-		return serial;
-	};
-
-	Body &getBody(std::size_t serial) {
-		return world.body.at(serial);
-	}
 
 	void dump() {
 		spdlog::info("Physics tile count: {}", world.tile.size());
@@ -79,21 +70,22 @@ public:
 private:
 	void subStep() {
 
-		std::vector<std::size_t> toErase;
+		std::vector<entt::entity> toErase;
 
-		for (auto &[id, s] : forSubStep) {
+		for (auto &[e, s] : forSubStep) {
 			Speed a = {.vx = s.vx, .vy = s.vy};
 			Speed c = {};
 			Speed n = {};
 
 			if (limitSpeed(a, c, n)) {
-				forSubStep[id] = n;
+				forSubStep[e] = n;
 			} else {
-				toErase.push_back(id);
+				toErase.push_back(e);
 			}
 
-			auto &b = world.body.at(id);
-			stepOneSub(b, c.vx, c.vy);
+			auto &b = reg.get<Body>(e);
+			auto &rect = reg.get<Rect>(e);
+			stepOneSub(b, rect, c.vx, c.vy);
 		}
 
 		for (auto id : toErase) {
@@ -102,10 +94,10 @@ private:
 	};
 
 	void checkSpeed() {
-		for (auto &[_, b] : world.body) {
-			if (!b.enable) {
-				continue;
-			}
+
+		auto view = reg.view<Body>();
+
+		for (auto [_, b] : view.each()) {
 			if (b.gravity && !b.touch.d) {
 				b.vy -= (b.vy > 0.0f) ? config::gravityUp : config::gravity;
 				b.vy = std::max(b.vy, config::downSpeedMax);
@@ -113,94 +105,94 @@ private:
 		}
 	};
 
-	void stepOne(Body &b, float vx, float vy) {
+	void stepOne(Body &b, Rect &rect, float vx, float vy) {
 
 		if (vx < 0.0f) {
 			if (!b.touch.l) {
-				b.rect.x += vx;
-				stepLeft(b);
+				rect.x += vx;
+				stepLeft(b, rect);
 			}
 		} else if (vx > 0.0f) {
 			if (!b.touch.r) {
-				b.rect.x += vx;
-				stepRight(b);
+				rect.x += vx;
+				stepRight(b, rect);
 			}
 		}
 
 		if (vy < 0.0f) {
 			if (!b.touch.d) {
-				b.rect.y += vy;
-				stepDown(b);
+				rect.y += vy;
+				stepDown(b, rect);
 			}
 		} else if (vy > 0.0f) {
 			if (!b.touch.u) {
-				b.rect.y += vy;
-				stepUp(b);
+				rect.y += vy;
+				stepUp(b, rect);
 			}
 		}
 	};
 
-	void stepOneSub(Body &b, float vx, float vy) {
+	void stepOneSub(Body &b, Rect rect, float vx, float vy) {
 
 		if (vx < 0.0f) {
-			b.rect.x += vx;
-			stepLeft(b);
+			rect.x += vx;
+			stepLeft(b, rect);
 		} else if (vx > 0.0f) {
-			b.rect.x += vx;
-			stepRight(b);
+			rect.x += vx;
+			stepRight(b, rect);
 		}
 
 		if (vy < 0.0f) {
-			b.rect.y += vy;
-			stepDown(b);
+			rect.y += vy;
+			stepDown(b, rect);
 		} else if (vy > 0.0f) {
-			b.rect.y += vy;
-			stepUp(b);
+			rect.y += vy;
+			stepUp(b, rect);
 		}
 	};
 
-	void stepDown(Body &b) {
-		float rb = CheckRollback(b.rect, world.tile, Direction::Down);
+	void stepDown(Body &b, Rect &rect) {
+		float rb = CheckRollback(rect, world.tile, Direction::Down);
 		if (rb > 0.0f) {
-			b.rect.y += rb;
+			rect.y += rb;
 			b.vy = 0.0f;
 		} else if (rb == 0.0f) {
-			b.rect.y += rb;
+			rect.y += rb;
 		}
 	};
-	void stepUp(Body &b) {
-		float rb = CheckRollback(b.rect, world.tile, Direction::Up);
+	void stepUp(Body &b, Rect &rect) {
+		float rb = CheckRollback(rect, world.tile, Direction::Up);
 		if (rb > 0.0f) {
-			b.rect.y -= rb;
+			rect.y -= rb;
 			b.vy = 0.0f;
 		} else if (rb == 0.0f) {
-			b.rect.y -= rb;
+			rect.y -= rb;
 		}
 	};
-	void stepLeft(Body &b) {
-		float rb = CheckRollback(b.rect, world.tile, Direction::Left);
+	void stepLeft(Body &b, Rect &rect) {
+		float rb = CheckRollback(rect, world.tile, Direction::Left);
 		if (rb > 0.0f) {
-			b.rect.x += rb;
+			rect.x += rb;
 			b.vx = 0.0f;
 		} else if (rb == 0.0f) {
-			b.rect.x += rb;
+			rect.x += rb;
 		}
 	};
-	void stepRight(Body &b) {
-		float rb = CheckRollback(b.rect, world.tile, Direction::Right);
+	void stepRight(Body &b, Rect &rect) {
+		float rb = CheckRollback(rect, world.tile, Direction::Right);
 		if (rb > 0.0f) {
-			b.rect.x -= rb;
+			rect.x -= rb;
 			b.vx = 0.0f;
 		} else if (rb == 0.0f) {
-			b.rect.x -= rb;
+			rect.x -= rb;
 		}
 	};
 
-	void checkReset(Body &b) {
-		if (b.rect.x < -2.0f || b.rect.y < -2.0f || b.rect.x > world.w ||
-			b.rect.y > world.h) {
-			b.rect.x = config::posResetX;
-			b.rect.y = config::posResetY;
+	void checkReset(Body &b, Rect &rect) {
+		if (rect.x < -2.0f || rect.y < -2.0f || rect.x > world.w ||
+			rect.y > world.h) {
+			rect.x = config::posResetX;
+			rect.y = config::posResetY;
 			b.vx = 0.0f;
 			b.vy = 0.0f;
 		}
@@ -212,22 +204,6 @@ private:
 	std::size_t genSerial() {
 		return ++serial;
 	};
-
-	void initMap() {
-	}
-
-	// void initPlayer() {
-	// 	auto &sp = scene.player;
-	// 	sp.physicsSerial = addBody(sp);
-	// };
-	//
-	// void initMonster() {
-	// 	for (auto &m : scene.monster) {
-	// 		m.physicsSerial = addBody(m);
-	// 	}
-	// };
-
-	void initTile() {};
 
 	int addTile(const Pos &pos) {
 		auto serial = genSerial();
