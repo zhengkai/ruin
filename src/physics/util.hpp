@@ -83,7 +83,7 @@ inline float CheckRollback(const Rect &re,
 	return rollback;
 };
 
-inline bool limitSpeed(Speed &origin, Speed &now, Speed &next) {
+inline bool limitSpeed(Vec2 &origin, Vec2 &now, Vec2 &next) {
 
 	bool overSpeed = false;
 

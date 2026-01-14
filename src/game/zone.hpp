@@ -48,7 +48,8 @@ public:
 	void enter(physics::Pos pos) {
 		player = reg.create();
 		reg.emplace<tag::Player>(player);
-		reg.emplace<physics::Rect>(player, pos, 0.5f);
+		reg.emplace<physics::Rect>(
+			player, pos, config::playerW, config::playerH);
 		reg.emplace<physics::Body>(player);
 		reg.emplace<Pose>(player);
 		reg.emplace<tag::PrevPos>(player, pos.x, pos.y);
@@ -64,7 +65,7 @@ public:
 
 		auto v3 = reg.view<physics::Body, tag::Player>();
 		for (auto [_, body] : v3.each()) {
-			body.vx = control.axisA.x * 5.0f * config::deltaTime;
+			stepPlayer(control, body);
 		}
 
 		physics.step();
@@ -78,6 +79,16 @@ public:
 		auto v2 = reg.view<Pose, std::shared_ptr<asset::SpriteBox>>();
 		for (auto [_, pose, box] : v2.each()) {
 			util::animation(pose, box);
+		}
+	};
+
+	void stepPlayer(const context::Control &control, physics::Body &body) {
+		body.vx = control.axisA.x * body.speed;
+
+		if (body.touch.d) {
+			if (control.btnA) {
+				body.vy = config::jumpForce;
+			}
 		}
 	};
 

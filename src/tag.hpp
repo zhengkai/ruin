@@ -15,10 +15,17 @@ struct TouchX {
 
 struct TouchDown {};
 
+struct Jump {};
+
 struct PrevPos {
 	float x;
 	float y;
 };
+
+struct Speed {
+	float v;
+};
+const Speed defaultWalkSpeed = {.v = 13.0f};
 
 struct AssetMapCell {
 	const asset::MapCell &def;

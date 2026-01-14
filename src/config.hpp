@@ -26,9 +26,9 @@ const float speedMin = speed / 1.2f;
 const int fps = 120;
 const float deltaTime = 1.0f / static_cast<float>(fps);
 
-const float gravity = 4.0f / 10.0f * deltaTime;
-const float gravityUp = 3.0f / 10.0f * deltaTime;
-const float jumpForce = 59.0f / 10.0f * deltaTime;
+const float gravity = 0.4f * deltaTime;
+const float gravityUp = 0.3f * deltaTime;
+const float jumpForce = 16.0f * deltaTime;
 const float downSpeedMax = -1.25f;
 
 const float posResetX = 13.0f;

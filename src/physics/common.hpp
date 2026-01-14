@@ -36,7 +36,7 @@ struct IntersectEvent {
 	}
 };
 
-struct Speed {
+struct Vec2 {
 	float vx = 0.0f;
 	float vy = 0.0f;
 };

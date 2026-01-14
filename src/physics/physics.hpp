@@ -20,7 +20,7 @@ public:
 private:
 	game::Reg &reg;
 	std::size_t serial = 0;
-	std::unordered_map<entt::entity, Speed> forSubStep = {};
+	std::unordered_map<entt::entity, Vec2> forSubStep = {};
 
 public:
 	Physics(std::shared_ptr<asset::Map> map, game::Reg &reg_) : reg(reg_) {
@@ -44,9 +44,9 @@ public:
 		auto view = reg.view<Rect, Body>();
 
 		for (auto [e, rect, b] : view.each()) {
-			Speed a = {.vx = b.vx, .vy = b.vy};
-			Speed c = {};
-			Speed n = {};
+			Vec2 a = {.vx = b.vx, .vy = b.vy};
+			Vec2 c = {};
+			Vec2 n = {};
 			if (limitSpeed(a, c, n)) {
 				forSubStep[e] = n;
 			}
@@ -73,9 +73,9 @@ private:
 		std::vector<entt::entity> toErase;
 
 		for (auto &[e, s] : forSubStep) {
-			Speed a = {.vx = s.vx, .vy = s.vy};
-			Speed c = {};
-			Speed n = {};
+			Vec2 a = {.vx = s.vx, .vy = s.vy};
+			Vec2 c = {};
+			Vec2 n = {};
 
 			if (limitSpeed(a, c, n)) {
 				forSubStep[e] = n;
