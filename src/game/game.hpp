@@ -64,7 +64,7 @@ public:
 
 		parseControl();
 
-		zone[0]->step();
+		zone[0]->step(window.control);
 
 		// scene.parse();
 

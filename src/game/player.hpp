@@ -35,7 +35,6 @@ public:
 
 		spdlog::info("scene {}", this->scene.player.id);
 
-		p.asset = this->asset.sprite.at("samurai");
 		prevPos = p.getPos();
 	};
 	~Player() {};
@@ -54,7 +53,7 @@ public:
 
 		// util::poseIsAttack();
 
-		parseFacing(control.axisA.x);
+		p.pose.parseFacing(control.axisA.x);
 		if (control.btnX) {
 			parseAttack();
 		}
@@ -82,8 +81,6 @@ public:
 private:
 	void next() {
 
-		p.animation();
-
 		p.prevSpeed.x = p.x - prevPos.x;
 		p.prevSpeed.y = p.y - prevPos.y;
 
@@ -94,7 +91,7 @@ private:
 		} else {
 			if ((p.prevSpeed.y > 0.001f || p.prevSpeed.y < -0.001f) &&
 				p.pose.type != pb::Pose_Type::Pose_Type_jump &&
-				!util::poseIsAttack(p.pose.type)) {
+				!p.pose.isAttack()) {
 
 				p.pose.change(pb::Pose_Type::Pose_Type_jump);
 			}
@@ -127,21 +124,5 @@ private:
 		}
 		p.command.jump = true;
 		p.pose.change(pb::Pose_Type::Pose_Type_jump);
-	}
-
-	void parseFacing(const float &x) {
-		if (p.pose.isAttack()) {
-			return;
-		}
-		bool right = lastRight;
-		if (x > 0.0f) {
-			right = true;
-		} else if (x < 0.0f) {
-			right = false;
-		}
-		if ((p.pose.facing == Pose::Facing::Right) != right) {
-			lastRight = right;
-			p.pose.facing = right ? Pose::Facing::Right : Pose::Facing::Left;
-		}
 	}
 };

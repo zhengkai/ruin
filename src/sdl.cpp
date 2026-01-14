@@ -4,7 +4,6 @@
 #include "context/scene.hpp"
 #include "context/window.hpp"
 #include "game/reg.hpp"
-#include "game/tag.hpp"
 #include "render/base.hpp"
 #include "render/debug.hpp"
 #include "render/dep.hpp"
@@ -13,6 +12,7 @@
 #include "render/map.hpp"
 #include "render/player.hpp"
 #include "render/terrain-chain.hpp"
+#include "tag.hpp"
 #include "text.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
@@ -105,7 +105,7 @@ void sdl::render(const game::Reg &reg) {
 	}
 	renderResize();
 
-	auto view = reg.view<physics::Rect, game::TagPlayer>();
+	auto view = reg.view<physics::Rect, tag::Player>();
 	if (auto entity = view.front(); entity != entt::null) {
 		auto &rect = view.get<physics::Rect>(entity);
 		window.setFocus(rect.x, rect.y);

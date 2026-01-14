@@ -23,7 +23,7 @@ const float speed = 30.0f;
 const float speedMax = speed * 1.2f;
 const float speedMin = speed / 1.2f;
 
-const int fps = 20;
+const int fps = 120;
 const float deltaTime = 1.0f / static_cast<float>(fps);
 
 const float gravity = 4.0f / 10.0f * deltaTime;

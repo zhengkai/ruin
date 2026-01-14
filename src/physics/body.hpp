@@ -6,7 +6,7 @@
 
 namespace physics {
 
-struct Body : Speed {
+struct Body {
 	std::size_t serial;
 	bool enable = true;
 	Touch touch = {};

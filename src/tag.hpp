@@ -1,18 +1,27 @@
 #pragma once
 
-#include "./pb/monster.pb.h"
-#include <cstddef>
+#include "asset/map.hpp"
 
 namespace tag {
 
-struct Player {
-	std::size_t idx = 0;
+struct Player {};
+
+struct Monster {};
+
+struct TouchX {
+	bool l = false;
+	bool r = false;
 };
 
-struct Monster {
-	pb::MonsterDef::Type type;
+struct TouchDown {};
+
+struct PrevPos {
+	float x;
+	float y;
 };
 
-struct Tile {};
+struct AssetMapCell {
+	const asset::MapCell &def;
+};
 
 }; // namespace tag
