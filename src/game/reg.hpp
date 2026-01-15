@@ -58,6 +58,11 @@ public:
 	[[nodiscard]] decltype(auto) tryGet(const entt::entity &e) const {
 		return reg.try_get<Components...>(e);
 	};
+
+	// remove
+	template <typename... Components> void remove(const entt::entity &e) {
+		reg.remove<Components...>(e);
+	};
 };
 
 }; // namespace game

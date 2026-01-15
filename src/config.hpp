@@ -29,6 +29,9 @@ const float deltaTime = 1.0f / static_cast<float>(fps);
 const float gravity = 0.4f * deltaTime;
 const float gravityUp = 0.3f * deltaTime;
 const float jumpForce = 16.0f * deltaTime;
+const float jumpShortForce =
+	jumpForce * 0.5f; // 小跳，跳跃键松开时向上力不得超过此数
+const float maxJumpCount = 2;
 const float downSpeedMax = -1.25f;
 
 const float posResetX = 13.0f;

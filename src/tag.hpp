@@ -15,7 +15,10 @@ struct TouchX {
 
 struct TouchDown {};
 
-struct Jump {};
+struct Jump {
+	bool isJumping = false;
+	int cnt = 0;
+};
 
 struct PrevPos {
 	float x;

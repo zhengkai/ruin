@@ -4,10 +4,12 @@
 #include "../asset/sprite.hpp"
 #include "../common/pose.hpp"
 #include "../context/window.hpp"
+#include "../physics/body.hpp"
 #include "../physics/physics.hpp"
 #include "../physics/rect.hpp"
 #include "../tag.hpp"
 #include "../util/animation.hpp"
+#include "player.hpp"
 #include "reg.hpp"
 
 namespace game {
@@ -64,8 +66,8 @@ public:
 	void step(const context::Control &control) {
 
 		auto v3 = reg.view<physics::Body, tag::Player>();
-		for (auto [_, body] : v3.each()) {
-			stepPlayer(control, body);
+		for (auto [e, body] : v3.each()) {
+			stepPlayer(e, control, body);
 		}
 
 		physics.step();
@@ -82,14 +84,10 @@ public:
 		}
 	};
 
-	void stepPlayer(const context::Control &control, physics::Body &body) {
-		body.vx = control.axisA.x * body.speed;
+	void stepPlayer(
+		entt::entity &e, const context::Control &control, physics::Body &body) {
 
-		if (body.touch.d) {
-			if (control.btnA) {
-				body.vy = config::jumpForce;
-			}
-		}
+		playerJump(reg, e, control, body);
 	};
 
 	const Reg &getReg() const {
