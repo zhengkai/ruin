@@ -12,9 +12,14 @@ struct Pose {
 	int step = 0;
 	bool lastRight = false;
 
+	const std::string &typeName() const {
+		return pb::Pose_Type_Name(type);
+	}
+
 	void change(pb::Pose_Type po) {
 		if (type != po) {
-			step = 65535;
+			step = 0;
+			serial = -1;
 		}
 		type = po;
 	};

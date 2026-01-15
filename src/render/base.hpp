@@ -17,7 +17,7 @@ struct base {
 	}
 
 	virtual void init() {};
-	virtual void render(const game::Reg &reg) {};
+	virtual void render(const game::Reg &_) {};
 
 	bool renderTexture(SDL_Texture *t, SDL_FRect &dst) {
 

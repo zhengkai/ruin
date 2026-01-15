@@ -1,11 +1,10 @@
 #pragma once
 
-// #include "../common/pose.hpp"
 #include "../common/pose.hpp"
 #include "../game/reg.hpp"
 #include "base.hpp"
 #include <SDL3_image/SDL_image.h>
-#include <spdlog/spdlog.h>
+// #include <spdlog/spdlog.h>
 
 namespace render {
 
@@ -19,6 +18,8 @@ struct Sprite : base {
 		auto view =
 			reg.view<physics::Rect, Pose, std::shared_ptr<asset::SpriteBox>>();
 		for (auto [_, rect, pose, box] : view.each()) {
+
+			// spdlog::info("pose {} {}", pose.typeName(), box->name);
 
 			auto tex = box->sprite.at(pose.type)->list[pose.step];
 

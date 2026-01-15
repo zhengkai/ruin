@@ -39,11 +39,16 @@ public:
 
 	void step() {
 
-		checkSpeed();
+		auto view = reg.view<Rect, Body, tag::PrevPos>();
 
-		auto view = reg.view<Rect, Body>();
+		for (auto [e, rect, b, prevPos] : view.each()) {
 
-		for (auto [e, rect, b] : view.each()) {
+			// 保存 PrevPos
+			prevPos.x = rect.x;
+			prevPos.y = rect.y;
+
+			checkSpeed(b);
+
 			Vec2 a = {.vx = b.vx, .vy = b.vy};
 			Vec2 c = {};
 			Vec2 n = {};
@@ -57,7 +62,7 @@ public:
 			subStep();
 		}
 
-		for (auto [e, rect, b] : view.each()) {
+		for (auto [e, rect, b, _] : view.each()) {
 			checkReset(b, rect);
 			CheckTouch(b, rect, world.tile);
 		}
@@ -93,15 +98,11 @@ private:
 		}
 	};
 
-	void checkSpeed() {
-
-		auto view = reg.view<Body>();
-
-		for (auto [_, b] : view.each()) {
-			if (b.gravity && !b.touch.d) {
-				b.vy -= (b.vy > 0.0f) ? config::gravityUp : config::gravity;
-				b.vy = std::max(b.vy, config::downSpeedMax);
-			}
+	// 掉落限速
+	void checkSpeed(Body &b) {
+		if (b.gravity && !b.touch.d) {
+			b.vy -= (b.vy > 0.0f) ? config::gravityUp : config::gravity;
+			b.vy = std::max(b.vy, config::downSpeedMax);
 		}
 	};
 

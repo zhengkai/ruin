@@ -65,18 +65,16 @@ public:
 
 	void step(const context::Control &control) {
 
-		auto v3 = reg.view<physics::Body, tag::Player>();
-		for (auto [e, body] : v3.each()) {
-			stepPlayer(e, control, body);
+		auto v3 = reg.view<physics::Rect,
+			tag::PrevPos,
+			physics::Body,
+			Pose,
+			tag::Player>();
+		for (auto [e, rect, prevPos, body, pose] : v3.each()) {
+			stepPlayer(e, control, rect, prevPos, body, pose);
 		}
 
 		physics.step();
-
-		auto v1 = reg.view<physics::Rect, tag::PrevPos>();
-		for (auto [_, rect, pos] : v1.each()) {
-			pos.x = rect.x;
-			pos.y = rect.y;
-		}
 
 		auto v2 = reg.view<Pose, std::shared_ptr<asset::SpriteBox>>();
 		for (auto [_, pose, box] : v2.each()) {
@@ -84,10 +82,16 @@ public:
 		}
 	};
 
-	void stepPlayer(
-		entt::entity &e, const context::Control &control, physics::Body &body) {
+	void stepPlayer(entt::entity &e,
+		const context::Control &control,
+		const physics::Rect &rect,
+		const tag::PrevPos &prevPos,
+		physics::Body &body,
+		Pose &pose) {
 
 		playerJump(reg, e, control, body);
+
+		playerPose(control, prevPos, rect, pose);
 	};
 
 	const Reg &getReg() const {

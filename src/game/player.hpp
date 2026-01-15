@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../common/pose.hpp"
 #include "../context/window.hpp"
 #include "../physics/body.hpp"
 #include "reg.hpp"
@@ -45,6 +46,32 @@ inline void playerJump(Reg &reg,
 				body.vy *= config::jumpShortForce;
 			}
 		}
+	}
+};
+
+inline void playerPose(const context::Control &control,
+	const tag::PrevPos &prevPos,
+	const physics::Rect &rect,
+	Pose &pose) {
+
+	pose.parseFacing(control.axisA.x);
+
+	float prevSpeedY = rect.y - prevPos.y;
+	if (prevSpeedY == 0.0f) {
+		if (pose.type == pb::Pose_Type::Pose_Type_jump) {
+			pose.change(pb::Pose_Type::Pose_Type_idle);
+		}
+	} else if ((prevSpeedY > 0.001f || prevSpeedY < -0.001f) &&
+		pose.type != pb::Pose_Type::Pose_Type_jump && !pose.isAttack()) {
+
+		pose.change(pb::Pose_Type::Pose_Type_jump);
+	}
+
+	if (pose.type == pb::Pose_Type::Pose_Type_idle && control.axisA.x) {
+		pose.change(pb::Pose_Type::Pose_Type_run);
+	}
+	if (pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
+		pose.change(pb::Pose_Type::Pose_Type_idle);
 	}
 };
 

@@ -8,6 +8,7 @@ namespace util {
 inline void animation(Pose &pose, std::shared_ptr<asset::SpriteBox> box) {
 
 	auto &dur = box->sprite.at(pose.type)->duration;
+
 	auto frameLimit = dur[pose.step];
 
 	pose.serial++;
