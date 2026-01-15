@@ -17,7 +17,8 @@ env:
   CC: clang
   CXX: clang++
   CMAKE_VERSION: "4.2.1"
-  VCPKG_CACHE_KEY: "vcpkg6"
+  VCPKG_CACHE_KEY_PREFIX: "vcpkg7"
+  VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\.vcpkg_binary_cache
 
 jobs:
   build-windows:
@@ -28,50 +29,41 @@ jobs:
       - name: Checkout
         run: |
           git clone --depth 1 "https://x-access-token:${{ secrets.RUIN_TOKEN }}@github.com/zhengkai/ruin.git" .
-          echo "LOCALAPPDATA=$env:LOCALAPPDATA" >> $env:GITHUB_ENV
-          echo "APPDATA=$env:APPDATA" >> $env:GITHUB_ENV
 
-      - name: Cache CMake ${{ env.CMAKE_VERSION }}
-        id: cache-cmake
+      - name: Cache Key
+        env:
+          VCPKG_HASH: ${{ hashFiles('vcpkg.json') }}
+        run: |
+          echo "CACHE_KEY=$($env:VCPKG_CACHE_KEY_PREFIX)-$($env:CMAKE_VERSION)-$($env:VCPKG_HASH)" >> $env:GITHUB_ENV
+
+      - name: Load Cache
+        id: cache
         uses: actions/cache@v4
         with:
-          path: cmake-portable
-          key: cmake-${{ env.CMAKE_VERSION }}
+          path: |
+            cmake-portable
+            tool/vcpkg
+            vcpkg_installed
+            .vcpkg_binary_cache
+          key: ${{ env.CACHE_KEY }}
 
       - name: Download CMake ${{ env.CMAKE_VERSION }}
-        if: steps.cache-cmake.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           Invoke-WebRequest -Uri "https://github.com/Kitware/CMake/releases/download/v$env:CMAKE_VERSION/cmake-$env:CMAKE_VERSION-windows-x86_64.zip" -OutFile cmake.zip
           Expand-Archive cmake.zip -DestinationPath cmake-portable
           Remove-Item cmake.zip
 
-      - name: Save CMake Cache
-        if: steps.cache-cmake.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: cmake-portable
-          key: cmake-${{ env.CMAKE_VERSION }}
-
       - name: Add CMake to PATH
         run: |
+          New-Item -ItemType Directory -Force .vcpkg_binary_cache
           $dir = Get-ChildItem -Directory "cmake-portable" | Select-Object -First 1
           $cmakeBin = Join-Path $dir.FullName "bin"
           echo "$cmakeBin" >> "$env:GITHUB_PATH"
           & "$cmakeBin/cmake.exe" --version
 
-      - name: Cache vcpkg
-        id: cache-vcpkg
-        uses: actions/cache@v4
-        with:
-          path: |
-            tool/vcpkg
-            vcpkg_installed
-            ${{ env.LOCALAPPDATA }}\vcpkg\archives
-            ${{ env.APPDATA }}\vcpkg\archives
-          key: ${{ env.VCPKG_CACHE_KEY }}-${{ hashFiles('vcpkg.json') }}
-
       - name: Clone vcpkg
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           $commit = jq -r '.[\"builtin-baseline\"]' vcpkg.json
           cd tool
@@ -93,16 +85,16 @@ jobs:
         run: |
           cmake --build build --config Release -- /m
 
-      - name: Save vcpkg Cache
-        if: steps.cache-vcpkg.outputs.cache-hit != 'true'
+      - name: Save Cache
+        if: steps.cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: |
+            cmake-portable
             tool/vcpkg
             vcpkg_installed
-            ${{ env.LOCALAPPDATA }}\vcpkg\archives
-            ${{ env.APPDATA }}\vcpkg\archives
-          key: ${{ env.VCPKG_CACHE_KEY }}-${{ hashFiles('vcpkg.json') }}
+            .vcpkg_binary_cache
+          key: ${{ env.CACHE_KEY }}
 
       - name: Download asset
         run: |
