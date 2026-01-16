@@ -7,3 +7,4 @@
 /static
 /cmake-portable
 /vcpkg_installed
+/.vcpkg_binary_cache

@@ -20,6 +20,14 @@ export CCACHE_DIRECT=1
 export CCACHE_MAXSIZE=50G
 export CMAKE_GENERATOR=Ninja
 
+export VCPKG_DEFAULT_BINARY_CACHE="${PWD}/.vcpkg_binary_cache"
+mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
+
+mkdir -p /tmp/ruin-build
+if [ ! -e build ]; then
+	ln -s /tmp/ruin-build build
+fi
+
 cmake \
 	-S . \
 	-B build \
