@@ -91,6 +91,8 @@ public:
 
 		playerJump(reg, e, control, body);
 
+		playerAttack(control, pose);
+
 		playerPose(control, prevPos, rect, pose);
 	};
 

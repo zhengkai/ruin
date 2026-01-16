@@ -7,6 +7,17 @@
 
 namespace game {
 
+inline void playerAttack(const context::Control &control, Pose &pose) {
+
+	if (!control.btnX) {
+		return;
+	}
+
+	if (!pose.isAttack()) {
+		pose.change(pb::Pose_Type::Pose_Type_attack);
+	}
+};
+
 inline void playerJump(Reg &reg,
 	entt::entity &e,
 	const context::Control &control,
