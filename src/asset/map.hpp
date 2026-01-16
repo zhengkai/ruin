@@ -22,7 +22,7 @@ struct MapTarget : physics::Pos {
 	std::string name = "";
 };
 
-struct MapGate : MapTarget {
+struct MapGate {
 	int id = 0;
 	physics::Rect rect = {};
 	MapTarget target = {};

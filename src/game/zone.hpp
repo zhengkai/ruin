@@ -3,6 +3,7 @@
 #include "../asset/asset.hpp"
 #include "../asset/sprite.hpp"
 #include "../common/pose.hpp"
+#include "../context/game.hpp"
 #include "../context/window.hpp"
 #include "../physics/body.hpp"
 #include "../physics/physics.hpp"
@@ -21,19 +22,28 @@ private:
 	entt::entity player;
 	std::shared_ptr<asset::Map> m;
 	physics::Physics physics;
+	context::Game &ctx;
 
 public:
 	const asset::Asset &asset;
 	const std::string name;
 
 public:
-	Zone(const std::string &name_, const asset::Asset &asset_)
-		: m(asset_.map.at(name_)), physics(m, reg), asset(asset_), name(name_) {
+	Zone(const std::string &name_,
+		const asset::Asset &asset_,
+		context::Game &ctx_)
+		: m(asset_.map.at(name_)), physics(m, reg), asset(asset_), ctx(ctx_),
+		  name(name_) {
 
 		for (auto &t : m->terrain) {
 			auto e = reg.create();
 			reg.emplace<physics::Rect>(e, t.pos, 0.5f);
 			reg.emplace<tag::AssetMapCell>(e, t);
+		}
+
+		for (auto &t : m->gate) {
+			auto e = reg.create();
+			reg.emplace<asset::MapGate>(e, t);
 		}
 
 		for (auto &m : m->monster) {
@@ -89,9 +99,15 @@ public:
 		physics::Body &body,
 		Pose &pose) {
 
+		if (control.btnU && playerEnterMap(reg, rect, ctx)) {
+			return;
+		};
+
 		playerJump(reg, e, control, body);
 
-		playerAttack(control, pose);
+		if (control.btnX) {
+			playerAttack(pose);
+		}
 
 		playerPose(control, prevPos, rect, pose);
 	};

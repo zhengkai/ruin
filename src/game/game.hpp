@@ -207,7 +207,7 @@ private:
 			}
 		} else {
 			spdlog::info("new map {}", name);
-			zone.insert(zone.begin(), std::make_unique<Zone>(name, asset));
+			zone.insert(zone.begin(), std::make_unique<Zone>(name, asset, ctx));
 		}
 
 		scene.map = asset.map.at(name);

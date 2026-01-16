@@ -1,18 +1,28 @@
 #pragma once
 
 #include "../common/pose.hpp"
+#include "../context/game.hpp"
 #include "../context/window.hpp"
 #include "../physics/body.hpp"
 #include "reg.hpp"
 
 namespace game {
 
-inline void playerAttack(const context::Control &control, Pose &pose) {
+inline bool playerEnterMap(
+	Reg &reg, const physics::Rect &rect, context::Game &ctx) {
 
-	if (!control.btnX) {
-		return;
+	auto view = reg.view<asset::MapGate>();
+	for (auto [_, gate] : view.each()) {
+		if (rect.isOverlap(gate.rect)) {
+			ctx.enterMap = gate.target;
+			return true;
+		}
 	}
 
+	return false;
+};
+
+inline void playerAttack(Pose &pose) {
 	if (!pose.isAttack()) {
 		pose.change(pb::Pose_Type::Pose_Type_attack);
 	}

@@ -20,6 +20,13 @@ struct Map : base {
 			auto dst = rect.getRect();
 			renderTexture(tile, dst);
 		}
+
+		SDL_SetRenderDrawColor(d->r, 200, 128, 255, 156);
+		auto v2 = reg.view<asset::MapGate>();
+		for (auto [_, mg] : v2.each()) {
+			auto dst = mg.rect.getRect();
+			renderFillRect(dst);
+		};
 	};
 };
 
