@@ -5,6 +5,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <cstring>
+#include <entt/config/version.h>
 #include <google/protobuf/stubs/common.h>
 #include <spdlog/spdlog.h>
 #ifndef __EMSCRIPTEN__
@@ -32,6 +33,11 @@ inline static void doShowVer() {
 
 	spdlog::info("protobuf   = {}",
 		google::protobuf::internal::VersionString(GOOGLE_PROTOBUF_VERSION));
+
+	spdlog::info("entt       = {}.{}.{}",
+		ENTT_VERSION_MAJOR,
+		ENTT_VERSION_MINOR,
+		ENTT_VERSION_PATCH);
 
 	spdlog::info("git        = {}({}{})",
 		GIT_BRANCH,
