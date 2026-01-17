@@ -105,11 +105,11 @@ public:
 
 		playerJump(reg, e, control, body);
 
-		if (control.btnX) {
-			playerAttack(pose);
+		if (control.btnX && playerAttack(pose)) {
+			// attack
+		} else {
+			playerPose(control, prevPos, rect, pose);
 		}
-
-		playerPose(control, prevPos, rect, pose);
 	};
 
 	const Reg &getReg() const {

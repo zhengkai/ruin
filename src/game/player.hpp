@@ -22,10 +22,12 @@ inline bool playerEnterMap(
 	return false;
 };
 
-inline void playerAttack(Pose &pose) {
-	if (!pose.isAttack()) {
-		pose.change(pb::Pose_Type::Pose_Type_attack);
+inline bool playerAttack(Pose &pose) {
+	if (pose.isAttack()) {
+		return false;
 	}
+	pose.change(pb::Pose_Type::Pose_Type_attack);
+	return true;
 };
 
 inline void playerJump(Reg &reg,
