@@ -25,7 +25,7 @@ struct Map : base {
 		auto v2 = reg.view<asset::MapGate>();
 		for (auto [_, mg] : v2.each()) {
 			auto dst = mg.rect.getRect();
-			renderFillRect(dst);
+			renderFilledRect(dst);
 		};
 	};
 };

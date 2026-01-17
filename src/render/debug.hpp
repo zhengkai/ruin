@@ -21,7 +21,7 @@ struct Debug : base {
 		auto view = reg.view<physics::Rect, tag::AssetMapCell>();
 		for (auto [_, rect, _2] : view.each()) {
 			auto dst = rect.getRect();
-			renderFillRect(dst);
+			renderFilledRect(dst);
 		}
 	};
 };

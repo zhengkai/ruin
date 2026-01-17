@@ -1,0 +1,14 @@
+syntax = "proto3";
+option go_package = "/pb";
+package pb;
+
+message Size {
+	float w = 1;
+	float h = 2;
+}
+
+message VisualSize {
+	float w = 1;
+	float h = 2;
+	float offsetY = 3;
+}

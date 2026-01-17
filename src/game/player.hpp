@@ -79,22 +79,23 @@ inline void playerPose(const context::Control &control,
 
 	pose.parseFacing(control.axisA.x);
 
+	using enum pb::Pose_Type;
+
 	float prevSpeedY = rect.y - prevPos.y;
 	if (prevSpeedY == 0.0f) {
-		if (pose.type == pb::Pose_Type::Pose_Type_jump) {
-			pose.change(pb::Pose_Type::Pose_Type_idle);
+		if (pose.type == Pose_Type_jump) {
+			pose.change(Pose_Type_idle);
 		}
 	} else if ((prevSpeedY > 0.001f || prevSpeedY < -0.001f) &&
-		pose.type != pb::Pose_Type::Pose_Type_jump && !pose.isAttack()) {
+		pose.type != Pose_Type_jump && !pose.isAttack()) {
 
-		pose.change(pb::Pose_Type::Pose_Type_jump);
+		pose.change(Pose_Type_jump);
 	}
 
-	if (pose.type == pb::Pose_Type::Pose_Type_idle && control.axisA.x) {
-		pose.change(pb::Pose_Type::Pose_Type_run);
-	}
-	if (pose.type == pb::Pose_Type::Pose_Type_run && !control.axisA.x) {
-		pose.change(pb::Pose_Type::Pose_Type_idle);
+	if (pose.type == Pose_Type_idle && control.axisA.x) {
+		pose.change(Pose_Type_run);
+	} else if (pose.type == Pose_Type_run && !control.axisA.x) {
+		pose.change(Pose_Type_idle);
 	}
 };
 

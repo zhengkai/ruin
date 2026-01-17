@@ -31,12 +31,18 @@ struct base {
 		return SDL_RenderTextureRotated(
 			d->r, t, nullptr, &dst, 0.0, nullptr, flip);
 	};
-	bool renderFillRect(SDL_FRect &rect) {
 
+	bool renderRectOutline(SDL_FRect &rect) {
+		d->window.calcCameraOffset(rect);
+		return SDL_RenderRect(d->r, &rect);
+	};
+
+	bool renderFilledRect(SDL_FRect &rect) {
 		d->window.calcCameraOffset(rect);
 		return SDL_RenderFillRect(d->r, &rect);
 	};
-	bool renderUIFillRect(SDL_FRect &rect) {
+
+	bool renderUIFilledRect(SDL_FRect &rect) {
 		return SDL_RenderFillRect(d->r, &rect);
 	};
 

@@ -58,15 +58,16 @@ public:
 	};
 
 	void enter(physics::Pos pos) {
+
+		auto sp = asset.sprite.at("dog-a");
+
 		player = reg.create();
 		reg.emplace<tag::Player>(player);
-		reg.emplace<physics::Rect>(
-			player, pos, config::playerW, config::playerH);
+		reg.emplace<physics::Rect>(player, pos, sp->physics.w, sp->physics.h);
 		reg.emplace<physics::Body>(player);
 		reg.emplace<Pose>(player);
 		reg.emplace<tag::PrevPos>(player, pos.x, pos.y);
-		reg.emplace<std::shared_ptr<asset::SpriteBox>>(
-			player, asset.sprite.at("samurai"));
+		reg.emplace<std::shared_ptr<asset::SpriteBox>>(player, sp);
 	}
 
 	void leave() {

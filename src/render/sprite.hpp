@@ -17,20 +17,34 @@ struct Sprite : base {
 
 		auto view =
 			reg.view<physics::Rect, Pose, std::shared_ptr<asset::SpriteBox>>();
-		for (auto [_, rect, pose, box] : view.each()) {
 
-			// spdlog::info("pose {} {}", pose.typeName(), box->name);
+		SDL_SetRenderDrawColor(d->r, 64, 128, 255, 192);
+		for (auto [_, rect, _2, _3] : view.each()) {
+			auto r = rect.getRect();
+			renderFilledRect(r);
+		}
+
+		SDL_SetRenderDrawColor(d->r, 255, 50, 50, 255);
+		for (auto [_, rect, pose, box] : view.each()) {
 
 			auto tex = box->sprite.at(pose.type)->list[pose.step];
 
-			SDL_FRect dst = {
-				.x = rect.x, .y = rect.y + 0.375f, .w = 2.25, .h = 2.25f};
+			auto v = box->visual;
+			SDL_FRect dst = {.x = rect.x, .y = rect.y, .w = v.w, .h = v.h};
+
+			auto d2 = dst;
+			renderRectOutline(d2);
+
+			if (v.offsetY) {
+				dst.y += v.offsetY;
+			}
 
 			if (pose.facing == Pose::Facing::Left) {
 				renderTextureFlipX(tex, dst);
 			} else {
 				renderTexture(tex, dst);
 			}
+			spdlog::info("pose {}.{} {}x{}", dst.x, dst.y, dst.w, dst.h);
 		}
 	};
 };

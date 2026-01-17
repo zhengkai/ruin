@@ -97,11 +97,8 @@ private:
 
 			dst.monster.emplace(name,
 				Monster{
-					.name = name,
-					.type = sm.type(),
 					.sprite = dst.sprite[sm.sprite()],
-					.w = sm.w(),
-					.h = sm.h(),
+					.type = sm.type(),
 				});
 
 			spdlog::info("monster {}", name);
@@ -173,12 +170,12 @@ private:
 		const google::protobuf::RepeatedPtrField<::pb::MapMonster> &li) {
 		for (const auto &c : li) {
 			auto &def = dst.monster.at(c.def());
-			float w = def.w;
-			float h = def.h;
-			if (c.scale()) {
-				w *= c.scale();
-				h *= c.scale();
-			}
+
+			float scale =
+				(def.scale ? def.scale : 1.0f) * (c.scale() ? c.scale() : 1.0f);
+			float w = scale * def.sprite->physics.w;
+			float h = scale * def.sprite->physics.h;
+
 			m->monster.emplace_back(
 				MapMonster(c.x(), c.y(), w / 2.0f, h / 2.0f, def));
 		}

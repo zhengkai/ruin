@@ -10,7 +10,7 @@
 #include "render/gamepad.hpp"
 #include "render/info.hpp"
 #include "render/map.hpp"
-#include "render/player.hpp"
+#include "render/sprite.hpp"
 #include "render/terrain-chain.hpp"
 #include "tag.hpp"
 #include "text.hpp"
@@ -87,9 +87,9 @@ void sdl::initRender() {
 
 	rd = new render::renderDep(text, asset, r, scene, window);
 
+	addRender<render::Debug>();
 	addRender<render::Map>();
 	addRender<render::Sprite>();
-	addRender<render::Debug>();
 	addRender<render::Gamepad>();
 	addRender<render::Info>();
 	addRender<render::TerrainChain>();

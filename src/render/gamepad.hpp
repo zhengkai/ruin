@@ -105,7 +105,7 @@ struct Gamepad : base {
 		r.w = r.w * grid;
 		r.h = r.h * grid;
 
-		renderUIFillRect(r);
+		renderUIFilledRect(r);
 	}
 };
 
