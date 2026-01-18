@@ -44,7 +44,7 @@ struct Sprite : base {
 			} else {
 				renderTexture(tex, dst);
 			}
-			spdlog::info("pose {}.{} {}x{}", dst.x, dst.y, dst.w, dst.h);
+			// spdlog::info("pose {}.{} {}x{}", dst.x, dst.y, dst.w, dst.h);
 		}
 	};
 };

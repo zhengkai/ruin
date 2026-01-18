@@ -1,0 +1,10 @@
+syntax = "proto3";
+option go_package = "/pb";
+package pb;
+
+import "map.proto";
+
+message Config {
+	string playerSprite = 1;
+	MapTriggerGate zoneStart = 2;
+}

@@ -64,8 +64,8 @@ struct SpriteBox {
 private:
 	bool importSpriteMeta(const pb::SpriteBox &src) {
 
-		physics.w = src.physics().w();
-		physics.h = src.physics().h();
+		physics.w = src.physics().w() * 0.5f;
+		physics.h = src.physics().h() * 0.5f;
 		if (!physics.w || !physics.h) {
 			spdlog::warn("sprite {} has invalid physics size: {}x{}",
 				name,

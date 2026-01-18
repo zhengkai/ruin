@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../pb/asset.pb.h"
+#include "config.hpp"
 #include "map.hpp"
 #include "monster.hpp"
 #include "sprite.hpp"
@@ -11,6 +12,7 @@
 namespace asset {
 
 struct Asset {
+	Config config = {};
 	std::unordered_map<std::string, std::shared_ptr<SpriteBox>> sprite = {};
 	std::unordered_map<pb::Tileset_Name, std::shared_ptr<Tileset>> tileset = {};
 	std::unordered_map<std::string, std::shared_ptr<Map>> map = {};

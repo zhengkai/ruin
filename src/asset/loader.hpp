@@ -29,6 +29,7 @@ public:
 			return false;
 		}
 
+		mergeConfig();
 		mergeCharacter();
 		mergeTileset();
 		mergeMonster();
@@ -42,6 +43,19 @@ public:
 	};
 
 private:
+	void mergeConfig() {
+		auto &sc = src.config();
+		auto &dc = dst.config;
+
+		dc.playerSprite = sc.playersprite();
+
+		auto &z = sc.zonestart();
+		dc.zoneStart = {
+			{z.x(), z.y()},
+			z.map(),
+		};
+	};
+
 	void mergeCharacter() {
 		for (const auto &sc : src.character()) {
 			auto dc = std::make_shared<SpriteBox>();
@@ -176,10 +190,8 @@ private:
 			float w = scale * def.sprite->physics.w;
 			float h = scale * def.sprite->physics.h;
 
-			m->monster.emplace_back(
-				MapMonster(c.x(), c.y(), w / 2.0f, h / 2.0f, def));
+			m->monster.emplace_back(MapMonster(c.x(), c.y(), w, h, def));
 		}
 	}
 };
-
 }; // namespace asset

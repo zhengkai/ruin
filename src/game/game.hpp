@@ -47,9 +47,7 @@ public:
 		const asset::Asset &asset_)
 		: scene(scene_), window(window_), asset(asset_) {
 
-		ctx.enterMap.name = "ruin-2";
-		ctx.enterMap.x = config::posResetX;
-		ctx.enterMap.y = config::posResetY;
+		ctx.enterMap = asset.config.zoneStart;
 	};
 	~Game() {};
 

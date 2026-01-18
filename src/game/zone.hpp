@@ -32,7 +32,7 @@ public:
 	Zone(const std::string &name_,
 		const asset::Asset &asset_,
 		context::Game &ctx_)
-		: m(asset_.map.at(name_)), physics(m, reg), asset(asset_), ctx(ctx_),
+		: m(asset_.map.at(name_)), physics(m, reg), ctx(ctx_), asset(asset_),
 		  name(name_) {
 
 		for (auto &t : m->terrain) {
@@ -59,11 +59,13 @@ public:
 
 	void enter(physics::Pos pos) {
 
-		auto sp = asset.sprite.at("dog-a");
+		auto sp = asset.sprite.at(asset.config.playerSprite);
 
 		player = reg.create();
 		reg.emplace<tag::Player>(player);
+
 		reg.emplace<physics::Rect>(player, pos, sp->physics.w, sp->physics.h);
+
 		reg.emplace<physics::Body>(player);
 		reg.emplace<Pose>(player);
 		reg.emplace<tag::PrevPos>(player, pos.x, pos.y);
