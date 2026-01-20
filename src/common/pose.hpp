@@ -7,14 +7,16 @@ struct Pose {
 	enum class Facing : uint8_t {
 		Left,
 		Right,
-	} facing = Facing::Right;
+	} facing;
 	int serial = 0;
 	int step = 0;
 	bool lastRight = false;
 
+	Pose(Facing facing_ = Facing::Right) : facing(facing_) {};
+
 	const std::string &typeName() const {
 		return pb::Pose_Type_Name(type);
-	}
+	};
 
 	void change(pb::Pose_Type po) {
 		if (type != po) {

@@ -144,7 +144,6 @@ private:
 			}
 			int id = static_cast<int>(s.id());
 			m->terrain.emplace_back(MapCell{
-				.id = id,
 				.tileName = t.name(),
 				.tileID = static_cast<int>(t.id()),
 				.pos = util::convertIDToPos(id, m),

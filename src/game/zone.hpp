@@ -5,11 +5,13 @@
 #include "../common/pose.hpp"
 #include "../context/game.hpp"
 #include "../context/window.hpp"
+#include "../decision/decision.hpp"
 #include "../physics/body.hpp"
 #include "../physics/physics.hpp"
 #include "../physics/rect.hpp"
 #include "../tag.hpp"
 #include "../util/animation.hpp"
+#include "../util/rand.hpp"
 #include "player.hpp"
 #include "reg.hpp"
 
@@ -51,7 +53,10 @@ public:
 			reg.emplace<tag::Monster>(e);
 			reg.emplace<physics::Rect>(e, m);
 			reg.emplace<physics::Body>(e);
-			reg.emplace<Pose>(e);
+			reg.emplace<physics::Body>(e);
+			reg.emplace<decision::Decision>(e);
+			reg.emplace<Pose>(
+				e, util::randBool() ? Pose::Facing::Left : Pose::Facing::Right);
 			reg.emplace<tag::PrevPos>(e, m.x, m.y);
 			reg.emplace<std::shared_ptr<asset::SpriteBox>>(e, m.def.sprite);
 		}
@@ -82,8 +87,17 @@ public:
 			tag::PrevPos,
 			physics::Body,
 			Pose,
+			decision::Decision>();
+		for (auto [e, rect, prevPos, body, pose, decision] : v3.each()) {
+			stepMonster(e, rect, prevPos, body, pose, decision);
+		}
+
+		auto v4 = reg.view<physics::Rect,
+			tag::PrevPos,
+			physics::Body,
+			Pose,
 			tag::Player>();
-		for (auto [e, rect, prevPos, body, pose] : v3.each()) {
+		for (auto [e, rect, prevPos, body, pose] : v4.each()) {
 			stepPlayer(e, control, rect, prevPos, body, pose);
 		}
 
@@ -114,6 +128,16 @@ public:
 			playerPose(control, prevPos, rect, pose);
 		}
 	};
+
+	void stepMonster(entt::entity &e,
+		const physics::Rect &rect,
+		const tag::PrevPos &prevPos,
+		physics::Body &body,
+		Pose &pose,
+		decision::Decision &decision) {
+
+		decision.Do(rect, prevPos, body, pose);
+	}
 
 	const Reg &getReg() const {
 		return reg;

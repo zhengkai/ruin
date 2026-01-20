@@ -1,5 +1,7 @@
 #pragma once
 
+#include <random>
+
 namespace util {
 
 static std::bernoulli_distribution distBool(0.5);

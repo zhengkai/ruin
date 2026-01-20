@@ -8,7 +8,6 @@
 namespace asset {
 
 struct MapCell {
-	int id = 0;
 	pb::Tileset_Name tileName = pb::Tileset_Name_unknown;
 	int tileID = 1;
 	physics::Pos pos = {};
