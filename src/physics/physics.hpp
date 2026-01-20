@@ -5,36 +5,25 @@
 #include "../game/reg.hpp"
 #include "body.hpp"
 #include "common.hpp"
-#include "tile.hpp"
 #include "util.hpp"
-#include "world.hpp"
 #include <spdlog/spdlog.h>
 
 namespace physics {
 
 class Physics {
 
-public:
-	World world;
-
 private:
+	std::shared_ptr<asset::Map> map;
 	game::Reg &reg;
+	Pos worldEnd;
 	std::size_t serial = 0;
 	std::unordered_map<entt::entity, Vec2> forSubStep = {};
 
 public:
-	Physics(std::shared_ptr<asset::Map> map, game::Reg &reg_) : reg(reg_) {
+	Physics(std::shared_ptr<asset::Map> map_, game::Reg &reg_)
+		: map{map_}, reg{reg_}, worldEnd{.x = static_cast<float>(map_->w + 2),
+									.y = static_cast<float>(map_->h + 2)} {};
 
-		world.Reset(map->w, map->h);
-
-		auto &cl = map->terrain;
-		if (!cl.size()) {
-			spdlog::warn("No map cells to init tiles.");
-		}
-		for (const auto &c : cl) {
-			addTile(c.pos);
-		}
-	};
 	~Physics() {};
 
 	void step() {
@@ -64,12 +53,8 @@ public:
 
 		for (auto [e, rect, b, _] : view.each()) {
 			checkReset(b, rect);
-			CheckTouch(b, rect, world.tile);
+			CheckTouch(b, rect, map);
 		}
-	};
-
-	void dump() {
-		spdlog::info("Physics tile count: {}", world.tile.size());
 	};
 
 private:
@@ -153,7 +138,7 @@ private:
 	};
 
 	void stepDown(Body &b, Rect &rect) {
-		float rb = CheckRollback(rect, world.tile, Direction::Down);
+		float rb = CheckRollback(rect, map, Direction::Down);
 		if (rb > 0.0f) {
 			rect.y += rb;
 			b.vy = 0.0f;
@@ -162,7 +147,7 @@ private:
 		}
 	};
 	void stepUp(Body &b, Rect &rect) {
-		float rb = CheckRollback(rect, world.tile, Direction::Up);
+		float rb = CheckRollback(rect, map, Direction::Up);
 		if (rb > 0.0f) {
 			rect.y -= rb;
 			b.vy = 0.0f;
@@ -171,7 +156,7 @@ private:
 		}
 	};
 	void stepLeft(Body &b, Rect &rect) {
-		float rb = CheckRollback(rect, world.tile, Direction::Left);
+		float rb = CheckRollback(rect, map, Direction::Left);
 		if (rb > 0.0f) {
 			rect.x += rb;
 			b.vx = 0.0f;
@@ -180,7 +165,7 @@ private:
 		}
 	};
 	void stepRight(Body &b, Rect &rect) {
-		float rb = CheckRollback(rect, world.tile, Direction::Right);
+		float rb = CheckRollback(rect, map, Direction::Right);
 		if (rb > 0.0f) {
 			rect.x -= rb;
 			b.vx = 0.0f;
@@ -190,8 +175,8 @@ private:
 	};
 
 	void checkReset(Body &b, Rect &rect) {
-		if (rect.x < -2.0f || rect.y < -2.0f || rect.x > world.w ||
-			rect.y > world.h) {
+		if (rect.x < -2.0f || rect.y < -2.0f || rect.x > worldEnd.x ||
+			rect.y > worldEnd.y) {
 			rect.x = config::posResetX;
 			rect.y = config::posResetY;
 			b.vx = 0.0f;
@@ -204,13 +189,6 @@ private:
 private:
 	std::size_t genSerial() {
 		return ++serial;
-	};
-
-	int addTile(const Pos &pos) {
-		auto serial = genSerial();
-		auto t = newTile(serial, pos);
-		world.tile[serial] = t;
-		return serial;
 	};
 };
 }; // namespace physics

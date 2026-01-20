@@ -13,6 +13,8 @@ struct Map : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
+		// spdlog::info("window", d.window.calcGrid);
+
 		auto view = reg.view<physics::Rect, tag::AssetMapCell>();
 		for (auto [_, rect, mc] : view.each()) {
 			auto t = mc.def;
