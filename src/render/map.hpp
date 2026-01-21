@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../game/reg.hpp"
-#include "../tag.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -13,18 +12,25 @@ struct Map : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
-		// spdlog::info("window", d.window.calcGrid);
-
-		auto view = reg.view<physics::Rect, tag::AssetMapCell>();
-		for (auto [_, rect, mc] : view.each()) {
-			auto t = mc.def;
-			auto tile = d->asset.tileset.at(t.tileName)->list.at(t.tileID - 1);
-			auto dst = rect.getRect();
-			renderTexture(tile, dst);
+		auto map = d->window.map;
+		if (!map) {
+			return;
 		}
 
-		SDL_SetRenderDrawColor(d->r, 200, 128, 255, 156);
+		const auto &f = d->window.focus;
+		const physics::Rect rect = {f.x, f.y, 3.0f, 3.0f};
+
+		map->filterTerrain(rect, [&](const asset::MapCell &t) -> bool {
+			auto tile = d->asset.tileset.at(t.tileName)->list.at(t.tileID - 1);
+			auto dst = t.getRect();
+			renderTexture(tile, dst);
+			return false;
+		});
+
 		auto v2 = reg.view<asset::MapGate>();
+		if (!v2.empty()) {
+			SDL_SetRenderDrawColor(d->r, 200, 128, 255, 156);
+		}
 		for (auto [_, mg] : v2.each()) {
 			auto dst = mg.rect.getRect();
 			renderFilledRect(dst);

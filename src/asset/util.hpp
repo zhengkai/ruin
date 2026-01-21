@@ -7,7 +7,7 @@
 namespace asset {
 
 MapGate convertPBTriggerGate(
-	const uint32_t tid, const pb::MapTriggerGate &g, std::shared_ptr<Map> m) {
+	const uint32_t tid, const pb::MapTriggerGate &g, Map &m) {
 
 	int id = static_cast<int>(tid);
 

@@ -22,7 +22,7 @@ class Zone {
 private:
 	Reg reg;
 	entt::entity player;
-	std::shared_ptr<asset::Map> m;
+	const asset::Map &m;
 	physics::Physics physics;
 	context::Game &ctx;
 
@@ -37,18 +37,18 @@ public:
 		: m(asset_.map.at(name_)), physics(m, reg), ctx(ctx_), asset(asset_),
 		  name(name_) {
 
-		for (auto &t : m->terrain) {
+		for (auto &t : m.terrain) {
 			auto e = reg.create();
 			reg.emplace<physics::Rect>(e, t.pos, 0.5f);
 			reg.emplace<tag::AssetMapCell>(e, t);
 		}
 
-		for (auto &t : m->gate) {
+		for (auto &t : m.gate) {
 			auto e = reg.create();
 			reg.emplace<asset::MapGate>(e, t);
 		}
 
-		for (auto &m : m->monster) {
+		for (auto &m : m.monster) {
 			auto e = reg.create();
 			reg.emplace<tag::Monster>(e);
 			reg.emplace<physics::Rect>(e, m);

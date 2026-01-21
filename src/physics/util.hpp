@@ -9,11 +9,11 @@
 
 namespace physics {
 
-inline void CheckTouch(Body &b, Rect &re, std::shared_ptr<asset::Map> map) {
+inline void CheckTouch(Body &b, Rect &re, const asset::Map &map) {
 
 	b.touch = {};
 
-	map->filterTerrain(re, [&](asset::MapCell &t) -> bool {
+	map.filterTerrain(re, [&](const asset::MapCell &t) -> bool {
 		if (!b.touch.l &&
 			re.getRollback(t.phyRect(), Direction::Left) != -1.0f) {
 			b.touch.l = true;
@@ -37,7 +37,7 @@ inline void CheckTouch(Body &b, Rect &re, std::shared_ptr<asset::Map> map) {
 }
 
 inline float CheckRollback(
-	const Rect &re, std::shared_ptr<asset::Map> map, Direction direction) {
+	const Rect &re, const asset::Map &map, Direction direction) {
 
 	float l = direction == Direction::Right
 		? re.x + re.w
@@ -56,7 +56,7 @@ inline float CheckRollback(
 	int i = 0;
 	int j = 0;
 	int k = 0;
-	map->filterTerrain(re, [&](asset::MapCell &mc) -> bool {
+	map.filterTerrain(re, [&](const asset::MapCell &mc) -> bool {
 		i++;
 		auto t = mc.phyRect();
 		if (t.x < l || t.x > r || t.y < d || t.y > u) {

@@ -192,9 +192,11 @@ private:
 
 	void checkEnterMap() {
 		std::string &name = ctx.enterMap.name;
-		if (ctx.enterMap.name == "") {
+		if (name == "") {
 			return;
 		}
+
+		window.map = &asset.map.at(name);
 
 		auto it = std::ranges::find_if(zone,
 			[&](const std::unique_ptr<Zone> &w) { return w->name == name; });
@@ -204,11 +206,9 @@ private:
 				std::rotate(zone.begin(), it, it + 1);
 			}
 		} else {
-			spdlog::info("new map {}", name);
+			spdlog::info("new map {} {}", name, asset.map.contains(name));
 			zone.insert(zone.begin(), std::make_unique<Zone>(name, asset, ctx));
 		}
-
-		scene.map = asset.map.at(name);
 
 		zone[0]->enter(ctx.enterMap);
 		if (zone.size() > 5) {

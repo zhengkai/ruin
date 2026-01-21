@@ -13,16 +13,16 @@ namespace physics {
 class Physics {
 
 private:
-	std::shared_ptr<asset::Map> map;
+	const asset::Map &map;
 	game::Reg &reg;
 	Pos worldEnd;
 	std::size_t serial = 0;
 	std::unordered_map<entt::entity, Vec2> forSubStep = {};
 
 public:
-	Physics(std::shared_ptr<asset::Map> map_, game::Reg &reg_)
-		: map{map_}, reg{reg_}, worldEnd{.x = static_cast<float>(map_->w + 2),
-									.y = static_cast<float>(map_->h + 2)} {};
+	Physics(const asset::Map &map_, game::Reg &reg_)
+		: map{map_}, reg{reg_}, worldEnd{.x = static_cast<float>(map_.w + 2),
+									.y = static_cast<float>(map_.h + 2)} {};
 
 	~Physics() {};
 

@@ -13,15 +13,14 @@ inline physics::Pos convertIDToPos(
 	};
 };
 
-inline physics::Pos convertIDToPos(
-	const int &id, std::shared_ptr<asset::Map> map) {
-	return convertIDToPos(id, map->w, map->h);
+inline physics::Pos convertIDToPos(const int &id, asset::Map &map) {
+	return convertIDToPos(id, map.w, map.h);
 };
 
 inline physics::Rect convertIDToRect(
-	const int &id, std::shared_ptr<asset::Map> map, float size = 0.5f) {
+	const int &id, asset::Map &map, float size = 0.5f) {
 	return {
-		convertIDToPos(id, map->w, map->h),
+		convertIDToPos(id, map.w, map.h),
 		size,
 		size,
 	};

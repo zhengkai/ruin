@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../asset/map.hpp"
 #include "../config.hpp"
-#include "../physics/rect.hpp"
 #include <SDL3/SDL_rect.h>
 #include <spdlog/spdlog.h>
 
@@ -92,6 +92,7 @@ public:
 	Global global = {};
 	Focus focus = {};
 	Camera camera = {};
+	const asset::Map *map = nullptr;
 
 private:
 	Boundary boundary = {};

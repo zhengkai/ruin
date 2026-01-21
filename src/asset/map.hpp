@@ -47,15 +47,16 @@ struct MapMonster : physics::Rect {
 
 struct Map {
 	std::string name = "";
-	std::size_t w = 80;
-	std::size_t h = 20;
+	std::size_t w = 0;
+	std::size_t h = 0;
 	std::vector<MapCell> staticTerrain;
 	std::vector<MapCell> terrain;
 	std::vector<MapGate> gate;
 	std::vector<MapGate> exit;
 	std::vector<MapMonster> monster;
 
-	template <typename F> void filterTerrain(const physics::Rect &re, F &&f) {
+	template <typename F>
+	void filterTerrain(const physics::Rect &re, F &&f) const {
 
 		float fl = std::floor(re.x - re.w);
 		float fd = std::floor(re.y - re.h);
@@ -69,7 +70,11 @@ struct Map {
 
 		for (std::size_t y = d; y <= u; ++y) {
 			for (std::size_t x = l; x <= r; ++x) {
-				if (f(staticTerrain[y * w + x])) {
+				auto &t = staticTerrain[y * w + x];
+				if (t.tileName == pb::Tileset_Name_unknown) {
+					continue;
+				}
+				if (f(t)) {
 					return;
 				}
 			}

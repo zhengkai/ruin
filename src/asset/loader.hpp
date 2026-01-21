@@ -34,8 +34,10 @@ public:
 		mergeTileset();
 		mergeMonster();
 
-		for (auto m : src.map()) {
-			dst.map[m.name()] = convertMap(m);
+		for (auto pm : src.map()) {
+			Map cm = {};
+			convertMap(pm, cm);
+			dst.map.emplace(pm.name(), cm);
 		}
 		return ok;
 	};
@@ -117,12 +119,10 @@ private:
 		}
 	}
 
-	std::shared_ptr<Map> convertMap(const pb::Map &pm) {
+	void convertMap(const pb::Map &pm, Map &m) {
 
-		auto m = std::make_shared<Map>();
-
-		m->w = static_cast<std::size_t>(pm.w());
-		m->h = static_cast<std::size_t>(pm.h());
+		m.w = static_cast<std::size_t>(pm.w());
+		m.h = static_cast<std::size_t>(pm.h());
 
 		convertMapTerrain(m, pm.terrain());
 
@@ -130,31 +130,29 @@ private:
 
 		convertMapTrigger(m, pm.trigger());
 		convertMapMonster(m, pm.monster());
-
-		return m;
 	};
 
-	void convertMapStaticTerrain(std::shared_ptr<Map> m,
-		const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
+	void convertMapStaticTerrain(
+		Map &m, const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
 
 		std::unordered_map<std::size_t, const pb::MapCell &> tile = {};
 		for (const auto &s : li) {
 			tile.emplace(static_cast<std::size_t>(s.id()), s);
 		}
 
-		for (std::size_t y = 0; y < m->h; y++) {
-			for (std::size_t x = 0; x < m->w; x++) {
-				auto id = y * m->w + x;
+		for (std::size_t y = 0; y < m.h; y++) {
+			for (std::size_t x = 0; x < m.w; x++) {
+				auto id = y * m.w + x;
 				if (tile.contains(id)) {
 					auto &t = tile.at(id);
 					auto i = static_cast<int>(id);
-					m->staticTerrain.emplace_back(MapCell{
+					m.staticTerrain.emplace_back(MapCell{
 						.tileName = t.tile().name(),
 						.tileID = static_cast<int>(t.tile().id()),
 						.pos = util::convertIDToPos(i, m),
 					});
 				} else {
-					m->staticTerrain.emplace_back(MapCell{
+					m.staticTerrain.emplace_back(MapCell{
 						.tileName = pb::Tileset_Name_unknown,
 					});
 				}
@@ -162,8 +160,8 @@ private:
 		}
 	};
 
-	void convertMapTerrain(std::shared_ptr<Map> m,
-		const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
+	void convertMapTerrain(
+		Map &m, const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
 		for (const auto &s : li) {
 
 			auto t = s.tile();
@@ -171,7 +169,7 @@ private:
 				continue;
 			}
 			int id = static_cast<int>(s.id());
-			m->terrain.emplace_back(MapCell{
+			m.terrain.emplace_back(MapCell{
 				.tileName = t.name(),
 				.tileID = static_cast<int>(t.id()),
 				.pos = util::convertIDToPos(id, m),
@@ -179,16 +177,16 @@ private:
 		}
 	};
 
-	void convertMapTrigger(std::shared_ptr<Map> m,
-		const google::protobuf::RepeatedPtrField<pb::MapTrigger> &li) {
+	void convertMapTrigger(
+		Map &m, const google::protobuf::RepeatedPtrField<pb::MapTrigger> &li) {
 		for (const auto &t : li) {
 			switch (t.trigger_case()) {
 			case pb::MapTrigger::kGate: {
-				m->gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), m));
+				m.gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), m));
 				break;
 			}
 			case pb::MapTrigger::kExit: {
-				m->exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
+				m.exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
 				break;
 			}
 			case pb::MapTrigger::TRIGGER_NOT_SET:
@@ -198,7 +196,7 @@ private:
 			}
 		}
 
-		for (auto &g : m->gate) {
+		for (auto &g : m.gate) {
 			spdlog::info("  gate id={} target={}@({},{})",
 				g.id,
 				g.target.name,
@@ -207,8 +205,8 @@ private:
 		}
 	}
 
-	void convertMapMonster(std::shared_ptr<Map> m,
-		const google::protobuf::RepeatedPtrField<pb::MapMonster> &li) {
+	void convertMapMonster(
+		Map &m, const google::protobuf::RepeatedPtrField<pb::MapMonster> &li) {
 		for (const auto &c : li) {
 			auto &def = dst.monster.at(c.def());
 
@@ -217,7 +215,7 @@ private:
 			float w = scale * def.sprite->physics.w;
 			float h = scale * def.sprite->physics.h;
 
-			m->monster.emplace_back(MapMonster(c.x(), c.y(), w, h, def));
+			m.monster.emplace_back(MapMonster(c.x(), c.y(), w, h, def));
 		}
 	}
 };
