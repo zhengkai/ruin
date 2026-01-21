@@ -2,9 +2,11 @@
 
 #include "../util/pose.hpp"
 #include "../util/sprite.hpp"
+#include "asset.hpp"
 #include "common.hpp"
 #include "pb/asset.pb.h"
 #include "sprite.hpp"
+#include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
 #include <unordered_map>
 
@@ -89,6 +91,22 @@ bool convertSpriteBox(const pb::SpriteBox &src,
 	}
 
 	return true;
+};
+
+void convertSprite(const google::protobuf::RepeatedPtrField<pb::SpriteBox> list,
+	Asset &dst,
+	SDL_Renderer *r,
+	const std::filesystem::path &dir) {
+	for (const auto &sc : list) {
+		auto name = sc.name();
+		if (dst.sprite.contains(name)) {
+			spdlog::warn("duplicate sprite name: {}", name);
+			return;
+		}
+		dst.sprite.emplace(name, name);
+		auto &b = dst.sprite.at(name);
+		convertSpriteBox(sc, b, r, dir);
+	}
 };
 
 }; // namespace asset

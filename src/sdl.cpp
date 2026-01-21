@@ -1,7 +1,6 @@
 #include "sdl.h"
 #include "asset/loader.hpp"
 #include "config.hpp"
-#include "context/scene.hpp"
 #include "context/window.hpp"
 #include "game/reg.hpp"
 #include "render/base.hpp"
@@ -24,12 +23,11 @@ static SDL_AppResult SDL_Fail() {
 	return SDL_APP_FAILURE;
 }
 
-sdl::sdl(context::Scene &cs,
-	context::Window &cw,
-	asset::Asset &asset,
+sdl::sdl(context::Window &cw_,
+	const asset::Asset &asset_,
 	SDL_Renderer *r,
 	SDL_Window *w)
-	: scene(cs), window(cw), asset(asset), r(r), w(w) {
+	: cw(cw_), asset(asset_), r(r), w(w) {
 }
 
 inline void initWinSize(context::Window &cw) {
@@ -55,12 +53,6 @@ bool sdl::init() {
 		SDL_SetWindowFullscreen(w, true);
 	}
 
-	auto a = asset::Loader(asset, r, config::assetDir);
-	if (!a.load()) {
-		spdlog::error("Failed to load assets");
-		return false;
-	}
-
 	SDL_SetRenderDrawColor(r, 64, 64, 64, 255);
 	SDL_RenderClear(r);
 
@@ -70,7 +62,7 @@ bool sdl::init() {
 	// SDL_GetCurrentRenderOutputSize(r, &drawableWidth, &drawableHeight);
 	// spdlog::error("output size {} {}", drawableWidth, drawableHeight);
 
-	calcGrid(window.w, window.h);
+	calcGrid(cw.w, cw.h);
 
 	if (text.init(r)) {
 		spdlog::trace("text inited");
@@ -85,7 +77,7 @@ bool sdl::init() {
 
 void sdl::initRender() {
 
-	rd = new render::renderDep(text, asset, r, scene, window);
+	rd = new render::renderDep(text, asset, r, cw);
 
 	addRender<render::Debug>();
 	addRender<render::Map>();
@@ -108,7 +100,7 @@ void sdl::render(const game::Reg &reg) {
 	auto view = reg.view<physics::Rect, tag::Player>();
 	if (auto entity = view.front(); entity != entt::null) {
 		auto &rect = view.get<physics::Rect>(entity);
-		window.setFocus(rect.x, rect.y);
+		cw.setFocus(rect.x, rect.y);
 	}
 
 	auto c = config::colorBg;
@@ -123,7 +115,7 @@ void sdl::render(const game::Reg &reg) {
 }
 
 void sdl::renderResize() {
-	auto &wr = window.winResize;
+	auto &wr = cw.winResize;
 	if (!wr.trigger) {
 		return;
 	}
@@ -133,10 +125,10 @@ void sdl::renderResize() {
 }
 
 bool sdl::toggleFullscreen() {
-	if (!window.toggleFullscreen) {
+	if (!cw.toggleFullscreen) {
 		return false;
 	}
-	window.toggleFullscreen = false;
+	cw.toggleFullscreen = false;
 	config::fullscreen = !config::fullscreen;
 	SDL_SetWindowFullscreen(w, config::fullscreen);
 	return true;
@@ -152,7 +144,7 @@ void sdl::calcGrid(float wf, float hf) {
 	hf *= scale;
 #endif
 
-	window.calcGrid(wf, hf);
+	cw.calcGrid(wf, hf);
 }
 
 sdl::~sdl() {
@@ -181,8 +173,7 @@ sdl::~sdl() {
 	SDL_Quit();
 }
 
-std::unique_ptr<sdl> createSDL(
-	context::Scene &cs, context::Window &cw, asset::Asset &asset) {
+std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset) {
 
 	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
 		SDL_Fail();
@@ -223,5 +214,11 @@ std::unique_ptr<sdl> createSDL(
 		return nullptr;
 	}
 
-	return std::make_unique<sdl>(cs, cw, asset, r, w);
+	auto a = asset::Loader(asset, r, config::assetDir);
+	if (!a.load()) {
+		spdlog::error("Failed to load assets");
+		return nullptr;
+	}
+
+	return std::make_unique<sdl>(cw, asset, r, w);
 }

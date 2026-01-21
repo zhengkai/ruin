@@ -1,6 +1,5 @@
 #pragma once
 
-#include "context/scene.hpp"
 #include "context/window.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
@@ -13,9 +12,8 @@
 class sdl {
 
 private:
-	context::Scene &scene;
-	context::Window &window;
-	asset::Asset &asset;
+	context::Window &cw;
+	const asset::Asset &asset;
 
 	render::renderDep *rd = nullptr;
 	SDL_Renderer *r = nullptr;
@@ -26,9 +24,8 @@ private:
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:
-	sdl(context::Scene &cs,
-		context::Window &cw,
-		asset::Asset &asset,
+	sdl(context::Window &cw,
+		const asset::Asset &asset,
 		SDL_Renderer *r,
 		SDL_Window *w);
 	~sdl();
@@ -51,5 +48,4 @@ private:
 
 inline void initWinSize(context::Window &cw);
 
-std::unique_ptr<sdl> createSDL(
-	context::Scene &cs, context::Window &cw, asset::Asset &asset);
+std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset);

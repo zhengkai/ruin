@@ -57,22 +57,8 @@ private:
 	};
 
 	void mergeSprite() {
-		convertSprite(src.character());
-		convertSprite(src.animal());
-		spdlog::info("load sprite count: {}", dst.sprite.size());
-	};
-
-	void convertSprite(google::protobuf::RepeatedPtrField<pb::SpriteBox> list) {
-		for (const auto &sc : list) {
-			auto name = sc.name();
-			if (dst.sprite.contains(name)) {
-				spdlog::warn("duplicate sprite name: {}", name);
-				return;
-			}
-			dst.sprite.emplace(name, name);
-			auto &b = dst.sprite.at(name);
-			convertSpriteBox(sc, b, r, dir);
-		}
+		convertSprite(src.character(), dst, r, dir);
+		convertSprite(src.animal(), dst, r, dir);
 	};
 
 	void mergeTileset() {
@@ -83,8 +69,6 @@ private:
 
 			dst.tileset.emplace(name, name);
 			auto &t = dst.tileset.at(name);
-
-			spdlog::info("Loading tileset: {}", pb::Tileset_Name_Name(t.name));
 
 			auto file = dir / st.path();
 			auto size = st.size();

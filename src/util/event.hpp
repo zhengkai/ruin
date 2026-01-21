@@ -336,6 +336,9 @@ inline void SDLEventLog(Uint32 t) {
 		// key
 		return;
 	}
+	if (t == SDL_EVENT_KEYMAP_CHANGED) {
+		return;
+	}
 	spdlog::info("event.type {} {}", t, getSDLEventName(t));
 }
 }; // namespace util

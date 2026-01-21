@@ -86,14 +86,6 @@ void convertMapTrigger(
 			break;
 		}
 	}
-
-	for (auto &g : m.gate) {
-		spdlog::info("  gate id={} target={}@({},{})",
-			g.id,
-			g.target.name,
-			g.target.x,
-			g.target.y);
-	}
 };
 
 void convertMapMonster(Map &m,

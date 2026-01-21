@@ -2,7 +2,6 @@
 
 #include "../asset/asset.hpp"
 #include "../context/game.hpp"
-#include "../context/scene.hpp"
 #include "../context/window.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
@@ -10,10 +9,9 @@
 #include "reg.hpp"
 #include "zone.hpp"
 #include <algorithm>
+#include <entt/entt.hpp>
 #include <memory>
 #include <vector>
-// #include "scene.hpp"
-#include <entt/entt.hpp>
 
 static void parseInputButton(InputButton &in, bool &out) {
 	if (in.has) {
@@ -26,7 +24,6 @@ namespace game {
 class Game {
 
 private:
-	context::Scene &scene;
 	context::Window &window;
 	const asset::Asset &asset;
 
@@ -42,10 +39,8 @@ private:
 	int cdZoom = 0;
 
 public:
-	Game(context::Scene &scene_,
-		context::Window &window_,
-		const asset::Asset &asset_)
-		: scene(scene_), window(window_), asset(asset_) {
+	Game(context::Window &window_, const asset::Asset &asset_)
+		: window(window_), asset(asset_) {
 
 		ctx.enterMap = asset.config.zoneStart;
 	};
@@ -63,8 +58,6 @@ public:
 		parseControl();
 
 		zone[0]->step(window.control);
-
-		// scene.parse();
 
 		return true;
 	}
@@ -206,7 +199,7 @@ private:
 				std::rotate(zone.begin(), it, it + 1);
 			}
 		} else {
-			spdlog::info("new map {} {}", name, asset.map.contains(name));
+			spdlog::info("new zone {}", name);
 			zone.insert(zone.begin(), std::make_unique<Zone>(name, asset, ctx));
 		}
 
