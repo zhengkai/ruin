@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../util/file.hpp"
-#include "../util/pos.hpp"
 #include "asset.hpp"
+#include "convert-sprite.hpp"
 #include "pb/manifest.pb.h"
 #include "util.hpp"
 #include <SDL3/SDL_render.h>
@@ -30,7 +30,7 @@ public:
 		}
 
 		mergeConfig();
-		mergeCharacter();
+		mergeSprite();
 		mergeTileset();
 		mergeMonster();
 
@@ -56,20 +56,22 @@ private:
 		};
 	};
 
-	void mergeCharacter() {
-		for (const auto &sc : src.character()) {
-			auto dc = std::make_shared<SpriteBox>();
-			if (!dc->import(sc, r, dir)) {
-				continue;
+	void mergeSprite() {
+		convertSprite(src.character());
+		convertSprite(src.animal());
+		spdlog::info("load sprite count: {}", dst.sprite.size());
+	};
+
+	void convertSprite(google::protobuf::RepeatedPtrField<pb::SpriteBox> list) {
+		for (const auto &sc : list) {
+			auto name = sc.name();
+			if (dst.sprite.contains(name)) {
+				spdlog::warn("duplicate sprite name: {}", name);
+				return;
 			}
-			dst.addSprite(dc);
-		}
-		for (const auto &sc : src.animal()) {
-			auto dc = std::make_shared<SpriteBox>();
-			if (!dc->import(sc, r, dir)) {
-				continue;
-			}
-			dst.addSprite(dc);
+			dst.sprite.emplace(name, name);
+			auto &b = dst.sprite.at(name);
+			convertSpriteBox(sc, b, r, dir);
 		}
 	};
 
@@ -77,15 +79,17 @@ private:
 
 		for (const auto &st : src.tileset()) {
 
-			auto t = std::make_shared<Tileset>();
-			t->name = st.name();
-			dst.tileset[t->name] = t;
-			spdlog::info("Loading tileset: {}", pb::Tileset_Name_Name(t->name));
+			auto name = st.name();
+
+			dst.tileset.emplace(name, name);
+			auto &t = dst.tileset.at(name);
+
+			spdlog::info("Loading tileset: {}", pb::Tileset_Name_Name(t.name));
 
 			auto file = dir / st.path();
 			auto size = st.size();
-			t->list = util::loadTileset(r, file, size.w(), size.h());
-			if (t->list.empty()) {
+			t.list = util::loadTileset(r, file, size.w(), size.h());
+			if (t.list.empty()) {
 				ok = false;
 				return;
 			}
@@ -111,11 +115,9 @@ private:
 
 			dst.monster.emplace(name,
 				Monster{
-					.sprite = dst.sprite[sm.sprite()],
+					.sprite = dst.sprite.at(sm.sprite()),
 					.type = sm.type(),
 				});
-
-			spdlog::info("monster {}", name);
 		}
 	}
 
@@ -129,94 +131,7 @@ private:
 		convertMapStaticTerrain(m, pm.terrain());
 
 		convertMapTrigger(m, pm.trigger());
-		convertMapMonster(m, pm.monster());
+		convertMapMonster(m, dst, pm.monster());
 	};
-
-	void convertMapStaticTerrain(
-		Map &m, const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
-
-		std::unordered_map<std::size_t, const pb::MapCell &> tile = {};
-		for (const auto &s : li) {
-			tile.emplace(static_cast<std::size_t>(s.id()), s);
-		}
-
-		for (std::size_t y = 0; y < m.h; y++) {
-			for (std::size_t x = 0; x < m.w; x++) {
-				auto id = y * m.w + x;
-				if (tile.contains(id)) {
-					auto &t = tile.at(id);
-					auto i = static_cast<int>(id);
-					m.staticTerrain.emplace_back(MapCell{
-						.tileName = t.tile().name(),
-						.tileID = static_cast<int>(t.tile().id()),
-						.pos = util::convertIDToPos(i, m),
-					});
-				} else {
-					m.staticTerrain.emplace_back(MapCell{
-						.tileName = pb::Tileset_Name_unknown,
-					});
-				}
-			}
-		}
-	};
-
-	void convertMapTerrain(
-		Map &m, const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
-		for (const auto &s : li) {
-
-			auto t = s.tile();
-			if (!t.id() || !t.name()) {
-				continue;
-			}
-			int id = static_cast<int>(s.id());
-			m.terrain.emplace_back(MapCell{
-				.tileName = t.name(),
-				.tileID = static_cast<int>(t.id()),
-				.pos = util::convertIDToPos(id, m),
-			});
-		}
-	};
-
-	void convertMapTrigger(
-		Map &m, const google::protobuf::RepeatedPtrField<pb::MapTrigger> &li) {
-		for (const auto &t : li) {
-			switch (t.trigger_case()) {
-			case pb::MapTrigger::kGate: {
-				m.gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), m));
-				break;
-			}
-			case pb::MapTrigger::kExit: {
-				m.exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
-				break;
-			}
-			case pb::MapTrigger::TRIGGER_NOT_SET:
-			default:
-				spdlog::info("unknown trigger");
-				break;
-			}
-		}
-
-		for (auto &g : m.gate) {
-			spdlog::info("  gate id={} target={}@({},{})",
-				g.id,
-				g.target.name,
-				g.target.x,
-				g.target.y);
-		}
-	}
-
-	void convertMapMonster(
-		Map &m, const google::protobuf::RepeatedPtrField<pb::MapMonster> &li) {
-		for (const auto &c : li) {
-			auto &def = dst.monster.at(c.def());
-
-			float scale =
-				(def.scale ? def.scale : 1.0f) * (c.scale() ? c.scale() : 1.0f);
-			float w = scale * def.sprite->physics.w;
-			float h = scale * def.sprite->physics.h;
-
-			m.monster.emplace_back(MapMonster(c.x(), c.y(), w, h, def));
-		}
-	}
 };
 }; // namespace asset

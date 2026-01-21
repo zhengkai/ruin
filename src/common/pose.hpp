@@ -27,9 +27,9 @@ struct Pose {
 	};
 
 	bool isAttack() {
-		return type == ::pb::Pose_Type::Pose_Type_attack ||
-			type == ::pb::Pose_Type::Pose_Type_attack2 ||
-			type == ::pb::Pose_Type::Pose_Type_attack3;
+		return type == pb::Pose_Type::Pose_Type_attack ||
+			type == pb::Pose_Type::Pose_Type_attack2 ||
+			type == pb::Pose_Type::Pose_Type_attack3;
 	};
 
 	void parseFacing(const float &x) {

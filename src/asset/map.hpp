@@ -38,7 +38,7 @@ struct MapGate {
 };
 
 struct MapMonster : physics::Rect {
-	Monster &def;
+	const Monster &def;
 
 	MapMonster(float x, float y, float w, float h, Monster &m)
 		: Rect{Pos{x, y}, w, h}, def(m) {

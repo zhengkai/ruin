@@ -2,6 +2,7 @@
 
 #include "../game/reg.hpp"
 #include "base.hpp"
+#include <spdlog/spdlog.h>
 
 namespace render {
 
@@ -18,10 +19,14 @@ struct Map : base {
 		}
 
 		const auto &f = d->window.focus;
-		const physics::Rect rect = {f.x, f.y, 3.0f, 3.0f};
+		const physics::Rect rect = {f.x, f.y, 23.0f, 23.0f};
 
 		map->filterTerrain(rect, [&](const asset::MapCell &t) -> bool {
-			auto tile = d->asset.tileset.at(t.tileName)->list.at(t.tileID - 1);
+			auto tile = d->asset.tileset.at(t.tileName).list.at(t.tileID - 1);
+			// spdlog::info("cell {} {} {}",
+			// 	t.tileID,
+			// 	tile == nullptr,
+			// 	d->asset.tileset.at(t.tileName).list.size());
 			auto dst = t.getRect();
 			renderTexture(tile, dst);
 			return false;

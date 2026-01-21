@@ -12,17 +12,21 @@ struct Debug : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
-		if (!d->scene.map) {
+		auto map = d->window.map;
+		if (!map) {
 			return;
 		}
 
+		const auto &f = d->window.focus;
+		const physics::Rect rect = {f.x, f.y, 23.0f, 23.0f};
+
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
-		auto view = reg.view<physics::Rect, tag::AssetMapCell>();
-		for (auto [_, rect, _2] : view.each()) {
-			auto dst = rect.getRect();
+		map->filterTerrain(rect, [&](const asset::MapCell &t) -> bool {
+			auto dst = t.getRect();
 			renderFilledRect(dst);
-		}
+			return false;
+		});
 	};
 };
 }; // namespace render
