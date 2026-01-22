@@ -1,5 +1,6 @@
 #pragma once
 
+#include "asset/common.hpp"
 #include "context/window.hpp"
 #include "render/base.hpp"
 #include "render/dep.hpp"
@@ -46,6 +47,6 @@ private:
 	}
 };
 
-inline void initWinSize(context::Window &cw);
+inline asset::Size initWinSize(context::Window &cw);
 
 std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset);

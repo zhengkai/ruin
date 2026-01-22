@@ -1,4 +1,5 @@
 #include "sdl.h"
+#include "asset/common.hpp"
 #include "asset/loader.hpp"
 #include "config.hpp"
 #include "context/window.hpp"
@@ -30,21 +31,25 @@ sdl::sdl(context::Window &cw_,
 	: cw(cw_), asset(asset_), r(r), w(w) {
 }
 
-inline void initWinSize(context::Window &cw) {
+inline asset::Size initWinSize(context::Window &cw) {
 
 	SDL_DisplayID display = SDL_GetPrimaryDisplay();
 	if (!display) {
-		return;
+		return {};
 	}
 	auto mode = SDL_GetCurrentDisplayMode(display);
 	if (!mode) {
-		return;
+		return {};
 	}
 
 	spdlog::info("desktop get size {}x{}", mode->w, mode->h);
 
-	cw.setSize(std::floor(static_cast<float>(mode->w) * 0.8f),
-		std::floor(static_cast<float>(mode->h) * 0.8f));
+	asset::Size size = {
+		std::floor(static_cast<float>(mode->w) * 0.8f),
+		std::floor(static_cast<float>(mode->h) * 0.8f),
+	};
+	cw.camera.setWinSize(size.w, size.h);
+	return size;
 }
 
 bool sdl::init() {
@@ -62,7 +67,8 @@ bool sdl::init() {
 	// SDL_GetCurrentRenderOutputSize(r, &drawableWidth, &drawableHeight);
 	// spdlog::error("output size {} {}", drawableWidth, drawableHeight);
 
-	calcGrid(cw.w, cw.h);
+	auto size = cw.camera.getWinSize();
+	calcGrid(size.w, size.h);
 
 	if (text.init(r)) {
 		spdlog::trace("text inited");
@@ -100,12 +106,14 @@ void sdl::render(const game::Reg &reg) {
 	auto view = reg.view<physics::Rect, tag::Player>();
 	if (auto entity = view.front(); entity != entt::null) {
 		auto &rect = view.get<physics::Rect>(entity);
-		cw.setFocus(rect.x, rect.y);
+		cw.camera.setFocus(rect.x, rect.y);
 	}
 
 	auto c = config::colorBg;
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
 	SDL_RenderClear(r);
+
+	cw.camera.prepareFocus();
 
 	for (auto &ren : renderList) {
 		ren->render(reg);
@@ -144,7 +152,7 @@ void sdl::calcGrid(float wf, float hf) {
 	hf *= scale;
 #endif
 
-	cw.calcGrid(wf, hf);
+	cw.camera.calcGrid(wf, hf);
 }
 
 sdl::~sdl() {
@@ -180,16 +188,18 @@ std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset) {
 		return nullptr;
 	}
 
-	initWinSize(cw);
+	auto size = initWinSize(cw);
 
 	SDL_PropertiesID props = SDL_CreateProperties();
 
 	SDL_SetStringProperty(
 		props, SDL_PROP_WINDOW_CREATE_TITLE_STRING, config::winTitle);
-	SDL_SetNumberProperty(
-		props, SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, static_cast<float>(cw.w));
-	SDL_SetNumberProperty(
-		props, SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, static_cast<float>(cw.h));
+	SDL_SetNumberProperty(props,
+		SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER,
+		static_cast<Sint64>(size.w));
+	SDL_SetNumberProperty(props,
+		SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER,
+		static_cast<Sint64>(size.h));
 	SDL_SetNumberProperty(props,
 		SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER,
 		SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);

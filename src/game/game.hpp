@@ -152,34 +152,17 @@ private:
 
 	void parseControl() {
 		const auto &c = window.control;
-
-		// parseZoom();
-
-		if (window.focus.offsetX != c.axisB.x ||
-			window.focus.offsetY != c.axisB.y) {
-
-			float x = window.focus.offsetX - c.axisB.x;
-			float y = window.focus.offsetY - c.axisB.y;
-			float dist = std::sqrt(x * x + y * y);
-			if (dist > config::focusSpeed) {
-				float ratio = config::focusSpeed / dist;
-				window.focus.offsetX -= x * ratio;
-				window.focus.offsetY -= y * ratio;
-			} else {
-				window.focus.offsetX = c.axisB.x;
-				window.focus.offsetY = c.axisB.y;
-			}
-		};
+		window.camera.parseFocus(c.axisB.x, c.axisB.y);
 	};
 
 	void parseZoom() {
 		const auto &c = window.control;
 		if (c.btnU) {
 			if (window.global.counter(cdZoom, config::cdZoom)) {
-				window.zoomIn();
+				window.camera.zoomIn();
 			}
 		} else if (c.btnD && window.global.counter(cdZoom, config::cdZoom)) {
-			window.zoomOut();
+			window.camera.zoomOut();
 		}
 	};
 

@@ -96,7 +96,7 @@ struct Gamepad : base {
 
 		float grid = 50.0f;
 
-		auto &w = d->window;
+		auto w = camera.getWinSize();
 		float x = w.w - grid * 18.25f;
 		float y = w.h - grid * 4.0f;
 

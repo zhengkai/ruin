@@ -14,14 +14,14 @@ struct Info : base {
 	void render(const game::Reg &_) override {
 
 		std::string counter = std::to_string(d->window.global.serial);
-		d->text.rMono32(counter, d->window.w - 16.0f, 16, Text::Align::RIGHT);
 
-		d->text.rMono32(
-			BUILD_TIMESTAMP, 16, d->window.h - 48.0f, Text::Align::LEFT);
+		auto win = camera.getWinSize();
 
-		d->text.rMono32(std::to_string(d->window.camera.gridSize),
+		d->text.rMono32(counter, win.w - 16.0f, 16, Text::Align::RIGHT);
+		d->text.rMono32(BUILD_TIMESTAMP, 16, win.h - 48.0f, Text::Align::LEFT);
+		d->text.rMono32(std::to_string(camera.getGridSize()),
 			16,
-			d->window.h - 96.0f,
+			win.h - 96.0f,
 			Text::Align::LEFT);
 	};
 };

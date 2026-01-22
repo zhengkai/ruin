@@ -17,16 +17,14 @@ struct Debug : base {
 			return;
 		}
 
-		const auto &f = d->window.focus;
-		const physics::Rect rect = {f.x, f.y, 23.0f, 23.0f};
-
 		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
 
-		map->filterTerrain(rect, [&](const asset::MapCell &t) -> bool {
-			auto dst = t.getRect();
-			renderFilledRect(dst);
-			return false;
-		});
+		map->filterTerrain(
+			camera.focusRect(), [&](const asset::MapCell &t) -> bool {
+				auto dst = t.getRect();
+				renderFilledRect(dst);
+				return false;
+			});
 	};
 };
 }; // namespace render
