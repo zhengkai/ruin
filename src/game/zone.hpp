@@ -3,7 +3,6 @@
 #include "../asset/asset.hpp"
 #include "../asset/sprite.hpp"
 #include "../common/pose.hpp"
-#include "../context/game.hpp"
 #include "../context/window.hpp"
 #include "../decision/decision.hpp"
 #include "../physics/body.hpp"
@@ -24,7 +23,7 @@ private:
 	entt::entity player;
 	const asset::Map &m;
 	physics::Physics physics;
-	context::Game &ctx;
+	context::Window &window;
 
 public:
 	const asset::Asset &asset;
@@ -33,9 +32,9 @@ public:
 public:
 	Zone(const std::string &name_,
 		const asset::Asset &asset_,
-		context::Game &ctx_)
-		: m(asset_.map.at(name_)), physics(m, reg), ctx(ctx_), asset(asset_),
-		  name(name_) {
+		context::Window &window_)
+		: m(asset_.map.at(name_)), physics(m, reg), window(window_),
+		  asset(asset_), name(name_) {
 
 		for (auto &t : m.gate) {
 			auto e = reg.create();
@@ -109,7 +108,7 @@ public:
 		physics::Body &body,
 		Pose &pose) {
 
-		if (control.btnU && playerEnterMap(reg, rect, ctx)) {
+		if (control.btnU && playerEnterMap(reg, rect, window)) {
 			return;
 		};
 

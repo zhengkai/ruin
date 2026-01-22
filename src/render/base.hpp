@@ -13,7 +13,7 @@ struct base {
 
 	renderDep *d;
 
-	Camera &camera;
+	const Camera &camera;
 
 	base(renderDep *d) : d(d), camera(d->window.camera) {};
 	virtual ~base() {

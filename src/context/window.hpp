@@ -2,7 +2,6 @@
 
 #include "../asset/map.hpp"
 #include "../camera.hpp"
-#include "../config.hpp"
 #include <SDL3/SDL_rect.h>
 #include <spdlog/spdlog.h>
 
@@ -41,6 +40,10 @@ struct WinResize {
 	bool trigger = false;
 };
 
+struct Event {
+	bool fullscreeen = false;
+};
+
 struct Global {
 	int serial = 0;
 
@@ -56,10 +59,12 @@ public:
 
 struct Window {
 	WinResize winResize = {};
+	Event event = {};
 	bool toggleFullscreen = false;
 	Control control = {};
 	Global global = {};
 	Camera camera = {};
 	const asset::Map *map = nullptr;
+	asset::MapTarget enterMap = {};
 };
 }; // namespace context

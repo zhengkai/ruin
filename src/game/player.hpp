@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../common/pose.hpp"
-#include "../context/game.hpp"
 #include "../context/window.hpp"
 #include "../physics/body.hpp"
 #include "reg.hpp"
@@ -9,12 +8,12 @@
 namespace game {
 
 inline bool playerEnterMap(
-	Reg &reg, const physics::Rect &rect, context::Game &ctx) {
+	Reg &reg, const physics::Rect &rect, context::Window &window) {
 
 	auto view = reg.view<asset::MapGate>();
 	for (auto [_, gate] : view.each()) {
 		if (rect.isOverlap(gate.rect)) {
-			ctx.enterMap = gate.target;
+			window.enterMap = gate.target;
 			return true;
 		}
 	}

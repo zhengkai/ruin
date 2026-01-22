@@ -13,7 +13,7 @@
 class sdl {
 
 private:
-	context::Window &cw;
+	const context::Window &cw;
 	const asset::Asset &asset;
 
 	render::renderDep *rd = nullptr;
@@ -25,7 +25,7 @@ private:
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:
-	sdl(context::Window &cw,
+	sdl(const context::Window &cw,
 		const asset::Asset &asset,
 		SDL_Renderer *r,
 		SDL_Window *w);

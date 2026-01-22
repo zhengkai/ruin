@@ -12,7 +12,6 @@
 #include "render/map.hpp"
 #include "render/sprite.hpp"
 // #include "render/terrain-chain.hpp"
-#include "tag.hpp"
 #include "text.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
@@ -24,14 +23,14 @@ static SDL_AppResult SDL_Fail() {
 	return SDL_APP_FAILURE;
 }
 
-sdl::sdl(context::Window &cw_,
+sdl::sdl(const context::Window &cw_,
 	const asset::Asset &asset_,
 	SDL_Renderer *r,
 	SDL_Window *w)
 	: cw(cw_), asset(asset_), r(r), w(w) {
 }
 
-inline asset::Size initWinSize(context::Window &cw) {
+inline asset::Size initWinSize() {
 
 	SDL_DisplayID display = SDL_GetPrimaryDisplay();
 	if (!display) {
@@ -48,7 +47,6 @@ inline asset::Size initWinSize(context::Window &cw) {
 		std::floor(static_cast<float>(mode->w) * 0.8f),
 		std::floor(static_cast<float>(mode->h) * 0.8f),
 	};
-	cw.camera.setWinSize(size.w, size.h);
 	return size;
 }
 
@@ -66,9 +64,6 @@ bool sdl::init() {
 	// int drawableWidth, drawableHeight;
 	// SDL_GetCurrentRenderOutputSize(r, &drawableWidth, &drawableHeight);
 	// spdlog::error("output size {} {}", drawableWidth, drawableHeight);
-
-	auto size = cw.camera.getWinSize();
-	calcGrid(size.w, size.h);
 
 	if (text.init(r)) {
 		spdlog::trace("text inited");
@@ -101,19 +96,10 @@ void sdl::render(const game::Reg &reg) {
 	if (toggleFullscreen()) {
 		return;
 	}
-	renderResize();
-
-	auto view = reg.view<physics::Rect, tag::Player>();
-	if (auto entity = view.front(); entity != entt::null) {
-		auto &rect = view.get<physics::Rect>(entity);
-		cw.camera.setFocus(rect.x, rect.y);
-	}
 
 	auto c = config::colorBg;
 	SDL_SetRenderDrawColor(r, c.r, c.g, c.b, c.a);
 	SDL_RenderClear(r);
-
-	cw.camera.prepareFocus();
 
 	for (auto &ren : renderList) {
 		ren->render(reg);
@@ -122,37 +108,14 @@ void sdl::render(const game::Reg &reg) {
 	SDL_RenderPresent(r);
 }
 
-void sdl::renderResize() {
-	auto &wr = cw.winResize;
-	if (!wr.trigger) {
-		return;
-	}
-	spdlog::info("sdl::renderResize called");
-	wr.trigger = false;
-	calcGrid(wr.w, wr.h);
-}
-
 bool sdl::toggleFullscreen() {
-	if (!cw.toggleFullscreen) {
+	if (!cw.event.fullscreeen) {
 		return false;
 	}
-	cw.toggleFullscreen = false;
+	spdlog::info("toggling fullscreen");
 	config::fullscreen = !config::fullscreen;
 	SDL_SetWindowFullscreen(w, config::fullscreen);
 	return true;
-}
-
-void sdl::calcGrid(float wf, float hf) {
-
-	float scale = SDL_GetWindowDisplayScale(w);
-	spdlog::info("start sdl::calcGrid, window display scale {:.1f}", scale);
-
-#ifndef _MSC_VER
-	wf *= scale;
-	hf *= scale;
-#endif
-
-	cw.camera.calcGrid(wf, hf);
 }
 
 sdl::~sdl() {
@@ -188,7 +151,7 @@ std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset) {
 		return nullptr;
 	}
 
-	auto size = initWinSize(cw);
+	auto size = initWinSize();
 
 	SDL_PropertiesID props = SDL_CreateProperties();
 

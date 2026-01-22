@@ -37,6 +37,10 @@ private:
 
 	float winW = 800.0f;
 	float winH = 600.0f;
+	float scale = 1.0f;
+	float winPixelW = 800.0f;
+	float winPixelH = 600.0f;
+
 	float gridSize = 1.0f;
 
 public:
@@ -54,10 +58,20 @@ public:
 	void setWinSize(const float &w, const float &h) {
 		winW = w;
 		winH = h;
+		calcGrid();
+	};
+
+	void setScale(const float &s) {
+		scale = s;
+		calcGrid();
 	};
 
 	asset::Size getWinSize() const {
 		return {winW, winH};
+	};
+
+	asset::Size getWinPixelSize() const {
+		return {winPixelW, winPixelH};
 	};
 
 	void zoomIn() {
@@ -74,35 +88,36 @@ public:
 		}
 	};
 
-	void calcGrid(float w, float h) {
+	void calcGrid() {
 
-		winW = w;
-		winH = h;
+#ifdef _MSC_VER
+		winPixelW = winW * scale;
+		winPixelH = winH * scale;
+#else
+		winPixelW = winW;
+		winPixelH = winH;
+#endif
 
-		float &gw = config::gridWF;
-		float &gh = config::gridHF;
-
-		float gs = std::floor(w / gw < h / gh ? w / gw : h / gh);
+		float gs =
+			std::floor(winPixelW / config::gridWF < winPixelH / config::gridHF
+					? winPixelW / config::gridWF
+					: winPixelH / config::gridHF);
 
 		gridSize = gs;
-		spdlog::info("gridSize = {}, win pixel = {}x{}", gs, w, h);
+		spdlog::info("calcGrid gridSize = {}, win pixel = {}x{}, scale = {}",
+			gs,
+			winW,
+			winH,
+			scale);
 
 		calc();
 	}
-
-	void calc() {
-		gridSize = gridSize * zoom;
-		spdlog::info("camera zoom: {} {}", zoom, gridSize);
-		x = std::round(winW / 2.0f);
-		y = std::round(winH / 2.0f);
-		calcBoundary();
-	};
 
 	const float fontSize(float &size) const {
 		return gridSize * size;
 	};
 
-	const physics::Rect focusRect() {
+	physics::Rect focusRect() const {
 		return {focus.x, focus.y, 23.0f, 23.0f};
 	};
 
@@ -154,6 +169,14 @@ public:
 	}
 
 private:
+	void calc() {
+		gridSize = gridSize * zoom;
+		spdlog::info("camera zoom: {} {}", zoom, gridSize);
+		x = std::round(winW / 2.0f);
+		y = std::round(winH / 2.0f);
+		calcBoundary();
+	};
+
 	void calcBoundary() {
 		auto hw = winW / 2.0f / gridSize - 0.5f;
 		focusBoundary.l = hw;

@@ -67,7 +67,7 @@ struct Gamepad : base {
 		renderGamepad(ra);
 	}
 
-	void axis(context::ControlAxis &v, float x) {
+	void axis(const context::ControlAxis &v, float x) {
 
 		colorInvalid();
 		SDL_FRect r = {.x = x, .y = 0.0f, .w = 3.5f, .h = 3.5f};

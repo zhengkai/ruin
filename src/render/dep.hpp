@@ -9,14 +9,14 @@ namespace render {
 
 struct renderDep {
 	const Text &text;
-	context::Window &window;
+	const context::Window &window;
 	const asset::Asset &asset;
 	SDL_Renderer *r;
 
 	renderDep(const Text &text,
 		const asset::Asset &a,
 		SDL_Renderer *r,
-		context::Window &cw)
+		const context::Window &cw)
 		: text(text), window(cw), asset(a), r(r) {};
 };
 
