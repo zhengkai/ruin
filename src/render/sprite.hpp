@@ -15,8 +15,7 @@ struct Sprite : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
-		auto view =
-			reg.view<physics::Rect, Pose, std::shared_ptr<asset::SpriteBox>>();
+		auto view = reg.view<physics::Rect, Pose, asset::SpriteRef>();
 
 		SDL_SetRenderDrawColor(d->r, 64, 128, 255, 192);
 		for (auto [_, rect, _2, _3] : view.each()) {
@@ -27,9 +26,12 @@ struct Sprite : base {
 		SDL_SetRenderDrawColor(d->r, 255, 50, 50, 255);
 		for (auto [_, rect, pose, box] : view.each()) {
 
-			auto tex = box->sprite.at(pose.type)->list[pose.step];
+			auto &s = box.ptr;
 
-			auto v = box->visual;
+			// auto tex = s.get(pose.type).texture(pose.step);
+			auto tex = s.sprite.at(pose.type).list[pose.step];
+
+			auto v = s.visual;
 			SDL_FRect dst = {.x = rect.x, .y = rect.y, .w = v.w, .h = v.h};
 
 			auto d2 = dst;

@@ -16,12 +16,9 @@ Ruin::~Ruin() {
 
 bool Ruin::init() {
 
-	// scene.player.x = 10.0f;
-	// scene.player.y = 13.0f;
-
 	spdlog::info("ruin start");
 
-	s = createSDL(scene, window, asset);
+	s = createSDL(window, asset);
 	if (!s) {
 		spdlog::error("sdl create failed");
 		return false;
@@ -32,9 +29,7 @@ bool Ruin::init() {
 	}
 	spdlog::trace("sdl init done");
 
-	// w = createWorld(scene, asset);
-
-	g = std::make_unique<game::Game>(scene, window, asset);
+	g = std::make_unique<game::Game>(window, asset);
 
 	return true;
 }
@@ -59,23 +54,5 @@ void Ruin::loop() {
 		return;
 	}
 
-	parseCommand();
-
 	s->render(g->getReg());
-};
-
-void Ruin::parseCommand() {
-
-	//	auto &sp = scene.player;
-	//
-	//	if (!sp.physicsSerial) {
-	//		return;
-	//	}
-	//
-	//	auto &b = p->getBody(sp.physicsSerial);
-	//	auto &cmd = sp.command;
-	//	if (cmd.jump) {
-	//		b.vy = config::jumpForce;
-	//	}
-	//	b.vx = cmd.x;
 };

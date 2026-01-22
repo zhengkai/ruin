@@ -20,7 +20,7 @@ struct TerrainChain : base {
 		}
 		lastWorld = cur;
 
-		outline = terrain::MapOutline(d->scene.map);
+		outline = terrain::MapOutline(d->window.map);
 	};
 	void render(const game::Reg &reg) override {
 		updateMap(reg);

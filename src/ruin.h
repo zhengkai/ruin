@@ -9,7 +9,6 @@
 class Ruin {
 
 private:
-	context::Scene scene = {};
 	context::Window window = {};
 	asset::Asset asset = {};
 
@@ -25,6 +24,5 @@ public:
 	void loop();
 	void run();
 	bool init();
-	void parseCommand();
 	void syncPos();
 };

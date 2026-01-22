@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../util/file.hpp"
-#include "../util/pos.hpp"
 #include "asset.hpp"
+#include "convert-sprite.hpp"
 #include "pb/manifest.pb.h"
 #include "util.hpp"
 #include <SDL3/SDL_render.h>
@@ -30,14 +30,14 @@ public:
 		}
 
 		mergeConfig();
-		mergeCharacter();
+		mergeSprite();
 		mergeTileset();
 		mergeMonster();
 
-		int idx = 0;
-		for (auto m : src.map()) {
-			dst.map[m.name()] = convertMap(m, idx);
-			idx++;
+		for (auto pm : src.map()) {
+			Map cm = {};
+			convertMap(pm, cm);
+			dst.map.emplace(pm.name(), cm);
 		}
 		return ok;
 	};
@@ -56,36 +56,24 @@ private:
 		};
 	};
 
-	void mergeCharacter() {
-		for (const auto &sc : src.character()) {
-			auto dc = std::make_shared<SpriteBox>();
-			if (!dc->import(sc, r, dir)) {
-				continue;
-			}
-			dst.addSprite(dc);
-		}
-		for (const auto &sc : src.animal()) {
-			auto dc = std::make_shared<SpriteBox>();
-			if (!dc->import(sc, r, dir)) {
-				continue;
-			}
-			dst.addSprite(dc);
-		}
+	void mergeSprite() {
+		convertSprite(src.character(), dst, r, dir);
+		convertSprite(src.animal(), dst, r, dir);
 	};
 
 	void mergeTileset() {
 
 		for (const auto &st : src.tileset()) {
 
-			auto t = std::make_shared<Tileset>();
-			t->name = st.name();
-			dst.tileset[t->name] = t;
-			spdlog::info("Loading tileset: {}", pb::Tileset_Name_Name(t->name));
+			auto name = st.name();
+
+			dst.tileset.emplace(name, name);
+			auto &t = dst.tileset.at(name);
 
 			auto file = dir / st.path();
 			auto size = st.size();
-			t->list = util::loadTileset(r, file, size.w(), size.h());
-			if (t->list.empty()) {
+			t.list = util::loadTileset(r, file, size.w(), size.h());
+			if (t.list.empty()) {
 				ok = false;
 				return;
 			}
@@ -111,86 +99,23 @@ private:
 
 			dst.monster.emplace(name,
 				Monster{
-					.sprite = dst.sprite[sm.sprite()],
+					.sprite = dst.sprite.at(sm.sprite()),
 					.type = sm.type(),
 				});
-
-			spdlog::info("monster {}", name);
 		}
 	}
 
-	std::shared_ptr<Map> convertMap(const pb::Map &pm, int idx) {
+	void convertMap(const pb::Map &pm, Map &m) {
 
-		auto m = std::make_shared<Map>();
-
-		m->idx = idx;
-		m->w = static_cast<int>(pm.w());
-		m->h = static_cast<int>(pm.h());
+		m.w = static_cast<std::size_t>(pm.w());
+		m.h = static_cast<std::size_t>(pm.h());
 
 		convertMapTerrain(m, pm.terrain());
+
+		convertMapStaticTerrain(m, pm.terrain());
+
 		convertMapTrigger(m, pm.trigger());
-		convertMapMonster(m, pm.monster());
-
-		return m;
+		convertMapMonster(m, dst, pm.monster());
 	};
-
-	void convertMapTerrain(std::shared_ptr<Map> m,
-		const google::protobuf::RepeatedPtrField<::pb::MapCell> &li) {
-		for (const auto &s : li) {
-
-			auto t = s.tile();
-			if (!t.id() || !t.name()) {
-				continue;
-			}
-			int id = static_cast<int>(s.id());
-			m->terrain.emplace_back(MapCell{
-				.tileName = t.name(),
-				.tileID = static_cast<int>(t.id()),
-				.pos = util::convertIDToPos(id, m),
-			});
-		}
-	};
-
-	void convertMapTrigger(std::shared_ptr<Map> m,
-		const google::protobuf::RepeatedPtrField<::pb::MapTrigger> &li) {
-		for (const auto &t : li) {
-			switch (t.trigger_case()) {
-			case pb::MapTrigger::kGate: {
-				m->gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), m));
-				break;
-			}
-			case pb::MapTrigger::kExit: {
-				m->exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
-				break;
-			}
-			case pb::MapTrigger::TRIGGER_NOT_SET:
-			default:
-				spdlog::info("unknown trigger");
-				break;
-			}
-		}
-
-		for (auto &g : m->gate) {
-			spdlog::info("  gate id={} target={}@({},{})",
-				g.id,
-				g.target.name,
-				g.target.x,
-				g.target.y);
-		}
-	}
-
-	void convertMapMonster(std::shared_ptr<Map> m,
-		const google::protobuf::RepeatedPtrField<::pb::MapMonster> &li) {
-		for (const auto &c : li) {
-			auto &def = dst.monster.at(c.def());
-
-			float scale =
-				(def.scale ? def.scale : 1.0f) * (c.scale() ? c.scale() : 1.0f);
-			float w = scale * def.sprite->physics.w;
-			float h = scale * def.sprite->physics.h;
-
-			m->monster.emplace_back(MapMonster(c.x(), c.y(), w, h, def));
-		}
-	}
 };
 }; // namespace asset

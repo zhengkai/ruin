@@ -2,12 +2,13 @@
 
 #include "../asset/sprite.hpp"
 #include "../common/pose.hpp"
+#include "../util/pose.hpp"
 
 namespace util {
 
-inline void animation(Pose &pose, std::shared_ptr<asset::SpriteBox> box) {
+inline void animation(Pose &pose, asset::SpriteBox &box) {
 
-	auto &dur = box->sprite.at(pose.type)->duration;
+	auto &dur = box.get(pose.type).duration;
 
 	auto frameLimit = dur[pose.step];
 

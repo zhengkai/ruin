@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config.hpp"
+#include "game/event.hpp"
 #include "util/event.hpp"
 #include <SDL3/SDL_events.h>
 
@@ -29,10 +30,7 @@ public:
 	bool space = false;
 	float x = 0.0f;
 	float y = 0.0f;
-	int winW = 0;
-	int winH = 0;
 	int speed = 0;
-	bool fullscreen = false;
 
 	InputButton btnA = {};
 	InputButton btnB = {};
@@ -55,12 +53,7 @@ public:
 		*this = {};
 	};
 
-	void winResize(const SDL_WindowEvent &w) {
-		winW = w.data1;
-		winH = w.data2;
-	}
-
-	void key(const SDL_KeyboardEvent &e, bool down) {
+	void key(const SDL_KeyboardEvent &e, bool down, game::Event &event) {
 		switch (e.key) {
 		case SDLK_ESCAPE:
 			if (down && !cfgWASM) {
@@ -86,14 +79,14 @@ public:
 			break;
 		case SDLK_F11:
 			if (down) {
-				fullscreen = true;
+				event.toggleFullscreen = true;
 			}
 			break;
 		case SDLK_RETURN:
 		case SDLK_RETURN2:
 		case SDLK_KP_ENTER:
 			if (down && (e.mod & SDL_KMOD_ALT)) {
-				fullscreen = true;
+				event.toggleFullscreen = true;
 			}
 			break;
 		}

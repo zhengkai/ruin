@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../asset/common.hpp"
 #include "common.hpp"
 #include "pos.hpp"
 #include "state.hpp"
@@ -15,6 +16,8 @@ struct Rect : Pos {
 	Rect(Pos pos, float w, float h) : Pos{pos}, w(w), h(h) {};
 
 	Rect(Pos pos, float size) : Pos{pos}, w(size), h(size) {};
+
+	Rect(Pos pos, asset::Size size) : Pos{pos}, w(size.w), h(size.h) {};
 
 	Rect(Pos pos) : Pos{pos}, w(0.5f), h(0.5f) {};
 

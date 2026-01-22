@@ -153,7 +153,7 @@ inline std::vector<IslandPos> Outline(const std::vector<IslandPos> &pl) {
 };
 
 inline std::vector<std::vector<terrain::IslandPos>> MapOutline(
-	const std::shared_ptr<asset::Map> map) {
+	const asset::Map *map) {
 
 	auto m = util::Matrix<uint8_t>(map->w, map->h, 0);
 	for (const auto &c : map->terrain) {

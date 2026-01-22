@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../camera.hpp"
 #include "../game/reg.hpp"
 #include "dep.hpp"
 #include <SDL3/SDL_render.h>
@@ -12,7 +13,9 @@ struct base {
 
 	renderDep *d;
 
-	base(renderDep *d) : d(d) {};
+	const Camera &camera;
+
+	base(renderDep *d) : d(d), camera(d->window.camera) {};
 	virtual ~base() {
 	}
 
@@ -21,24 +24,24 @@ struct base {
 
 	bool renderTexture(SDL_Texture *t, SDL_FRect &dst) {
 
-		d->window.calcCameraOffset(dst);
+		camera.calcOffset(dst);
 		return SDL_RenderTexture(d->r, t, nullptr, &dst);
 	};
 	bool renderTextureFlipX(SDL_Texture *t, SDL_FRect &dst) {
 
 		SDL_FlipMode flip = SDL_FLIP_HORIZONTAL;
-		d->window.calcCameraOffset(dst);
+		camera.calcOffset(dst);
 		return SDL_RenderTextureRotated(
 			d->r, t, nullptr, &dst, 0.0, nullptr, flip);
 	};
 
 	bool renderRectOutline(SDL_FRect &rect) {
-		d->window.calcCameraOffset(rect);
+		camera.calcOffset(rect);
 		return SDL_RenderRect(d->r, &rect);
 	};
 
 	bool renderFilledRect(SDL_FRect &rect) {
-		d->window.calcCameraOffset(rect);
+		camera.calcOffset(rect);
 		return SDL_RenderFillRect(d->r, &rect);
 	};
 
@@ -59,11 +62,11 @@ struct base {
 			.w = tt.w * size,
 			.h = tt.h * size};
 
-		d->window.calcCameraOffset(r);
+		camera.calcOffset(r);
 		tt.w = r.w;
 		tt.h = r.h;
 
-		d->text.put(tt, r.x, r.y, d->window.camera.gridSize * size);
+		d->text.put(tt, r.x, r.y, camera.fontSize(size));
 	};
 };
 }; // namespace render

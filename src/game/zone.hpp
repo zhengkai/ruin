@@ -3,7 +3,6 @@
 #include "../asset/asset.hpp"
 #include "../asset/sprite.hpp"
 #include "../common/pose.hpp"
-#include "../context/game.hpp"
 #include "../context/window.hpp"
 #include "../decision/decision.hpp"
 #include "../physics/body.hpp"
@@ -22,9 +21,9 @@ class Zone {
 private:
 	Reg reg;
 	entt::entity player;
-	std::shared_ptr<asset::Map> m;
+	const asset::Map &m;
 	physics::Physics physics;
-	context::Game &ctx;
+	context::Window &window;
 
 public:
 	const asset::Asset &asset;
@@ -33,48 +32,41 @@ public:
 public:
 	Zone(const std::string &name_,
 		const asset::Asset &asset_,
-		context::Game &ctx_)
-		: m(asset_.map.at(name_)), physics(m, reg), ctx(ctx_), asset(asset_),
-		  name(name_) {
+		context::Window &window_)
+		: m(asset_.map.at(name_)), physics(m, reg), window(window_),
+		  asset(asset_), name(name_) {
 
-		for (auto &t : m->terrain) {
-			auto e = reg.create();
-			reg.emplace<physics::Rect>(e, t.pos, 0.5f);
-			reg.emplace<tag::AssetMapCell>(e, t);
-		}
-
-		for (auto &t : m->gate) {
+		for (auto &t : m.gate) {
 			auto e = reg.create();
 			reg.emplace<asset::MapGate>(e, t);
 		}
 
-		for (auto &m : m->monster) {
+		for (auto &m : m.monster) {
 			auto e = reg.create();
 			reg.emplace<tag::Monster>(e);
 			reg.emplace<physics::Rect>(e, m);
-			reg.emplace<physics::Body>(e);
 			reg.emplace<physics::Body>(e);
 			reg.emplace<decision::Decision>(e);
 			reg.emplace<Pose>(
 				e, util::randBool() ? Pose::Facing::Left : Pose::Facing::Right);
 			reg.emplace<tag::PrevPos>(e, m.x, m.y);
-			reg.emplace<std::shared_ptr<asset::SpriteBox>>(e, m.def.sprite);
+			reg.emplace<asset::SpriteRef>(e, asset::SpriteRef{m.def.sprite});
 		}
 	};
 
 	void enter(physics::Pos pos) {
 
-		auto sp = asset.sprite.at(asset.config.playerSprite);
+		auto &sp = asset.sprite.at(asset.config.playerSprite);
 
 		player = reg.create();
 		reg.emplace<tag::Player>(player);
 
-		reg.emplace<physics::Rect>(player, pos, sp->physics.w, sp->physics.h);
+		reg.emplace<physics::Rect>(player, pos, sp.physics);
 
 		reg.emplace<physics::Body>(player);
 		reg.emplace<Pose>(player);
 		reg.emplace<tag::PrevPos>(player, pos.x, pos.y);
-		reg.emplace<std::shared_ptr<asset::SpriteBox>>(player, sp);
+		reg.emplace<asset::SpriteRef>(player, asset::SpriteRef{sp});
 	}
 
 	void leave() {
@@ -103,9 +95,9 @@ public:
 
 		physics.step();
 
-		auto v2 = reg.view<Pose, std::shared_ptr<asset::SpriteBox>>();
+		auto v2 = reg.view<Pose, asset::SpriteRef>();
 		for (auto [_, pose, box] : v2.each()) {
-			util::animation(pose, box);
+			// util::animation(pose, box.ptr);
 		}
 	};
 
@@ -116,7 +108,7 @@ public:
 		physics::Body &body,
 		Pose &pose) {
 
-		if (control.btnU && playerEnterMap(reg, rect, ctx)) {
+		if (control.btnU && playerEnterMap(reg, rect, window)) {
 			return;
 		};
 

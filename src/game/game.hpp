@@ -1,19 +1,17 @@
 #pragma once
 
 #include "../asset/asset.hpp"
-#include "../context/game.hpp"
-#include "../context/scene.hpp"
 #include "../context/window.hpp"
 #include "../input.hpp"
 #include "../util/event.hpp"
 #include "../util/input.hpp"
+#include "event.hpp"
 #include "reg.hpp"
 #include "zone.hpp"
 #include <algorithm>
+#include <entt/entt.hpp>
 #include <memory>
 #include <vector>
-// #include "scene.hpp"
-#include <entt/entt.hpp>
 
 static void parseInputButton(InputButton &in, bool &out) {
 	if (in.has) {
@@ -26,30 +24,31 @@ namespace game {
 class Game {
 
 private:
-	context::Scene &scene;
 	context::Window &window;
 	const asset::Asset &asset;
 
-	context::Game ctx;
-
 	std::vector<std::unique_ptr<Zone>> zone;
 
+	Event event = {};
 	Input input = {};
 
 	context::ControlAxis prevAxisA;
 	context::ControlAxis prevAxisB;
 
 	int cdZoom = 0;
+	int cdFullscreen = 0;
 
 public:
-	Game(context::Scene &scene_,
-		context::Window &window_,
-		const asset::Asset &asset_)
-		: scene(scene_), window(window_), asset(asset_) {
+	Game(context::Window &window_, const asset::Asset &asset_)
+		: window(window_), asset(asset_) {
 
-		ctx.enterMap = asset.config.zoneStart;
+		window.enterMap = asset.config.zoneStart;
+
+		window.camera.calcGrid();
 	};
-	~Game() {};
+	~Game() {
+
+	};
 
 	bool step() {
 
@@ -58,13 +57,14 @@ public:
 		}
 		checkEnterMap();
 
+		parseEvent();
 		parseInput();
 
 		parseControl();
 
-		zone[0]->step(window.control);
-
-		// scene.parse();
+		auto &z = zone[0];
+		z->step(window.control);
+		prepareRender(z->getReg());
 
 		return true;
 	}
@@ -78,7 +78,7 @@ public:
 				input.quit = true;
 				break;
 			}
-			util::handleInput(e, input);
+			handleInput(e);
 		}
 	};
 
@@ -87,23 +87,57 @@ public:
 	};
 
 private:
+	void eventWindowResize(const std::optional<SDL_WindowEvent> &we) {
+		float winW = static_cast<float>(we->data1);
+		float winH = static_cast<float>(we->data2);
+		spdlog::info("resize window: {}x{}", winW, winH);
+		window.camera.setWinSize(winW, winH);
+	};
+
+	void eventWindowScale(const std::optional<SDL_WindowEvent> &we) {
+		auto win = SDL_GetWindowFromID(we->windowID);
+		float scale = SDL_GetWindowDisplayScale(win);
+		window.camera.setScale(scale);
+	};
+
+	void prepareRender(const Reg &reg) const {
+
+		// 同步角色 camera 位置
+		auto view = reg.view<physics::Rect, tag::Player>();
+		if (auto entity = view.front(); entity != entt::null) {
+			auto &rect = view.get<physics::Rect>(entity);
+			window.camera.setFocus(rect.x, rect.y);
+		}
+
+		window.camera.prepareFocus();
+	};
+
+	void parseEvent() {
+
+		window.event = {};
+
+		window.event.fullscreeen = event.toggleFullscreen &&
+			window.global.counter(cdFullscreen, config::cdFullscreen);
+
+		if (event.resize) {
+			spdlog::info("resize window {}x{}",
+				event.resize->data1,
+				event.resize->data2);
+			// eventWindowResize(event.resize);
+		}
+		if (event.pixel) {
+			spdlog::info(
+				"pixel window {}x{}", event.pixel->data1, event.pixel->data2);
+			eventWindowResize(event.pixel);
+		}
+		if (event.scale) {
+			eventWindowScale(event.scale);
+		}
+
+		event = {};
+	};
+
 	void parseInput() {
-
-		// window resize
-
-		if (input.winW > 0 && input.winH > 0) {
-			auto &wr = window.winResize;
-			wr.w = input.winW;
-			wr.h = input.winH;
-			wr.trigger = true;
-		}
-
-		// fullscreen toggle
-
-		if (input.fullscreen) {
-			spdlog::info("toggling fullscreen");
-			window.toggleFullscreen = true;
-		}
 
 		// gamepad
 
@@ -159,42 +193,27 @@ private:
 
 	void parseControl() {
 		const auto &c = window.control;
-
-		// parseZoom();
-
-		if (window.focus.offsetX != c.axisB.x ||
-			window.focus.offsetY != c.axisB.y) {
-
-			float x = window.focus.offsetX - c.axisB.x;
-			float y = window.focus.offsetY - c.axisB.y;
-			float dist = std::sqrt(x * x + y * y);
-			if (dist > config::focusSpeed) {
-				float ratio = config::focusSpeed / dist;
-				window.focus.offsetX -= x * ratio;
-				window.focus.offsetY -= y * ratio;
-			} else {
-				window.focus.offsetX = c.axisB.x;
-				window.focus.offsetY = c.axisB.y;
-			}
-		};
+		window.camera.parseFocus(c.axisB.x, c.axisB.y);
 	};
 
 	void parseZoom() {
 		const auto &c = window.control;
 		if (c.btnU) {
 			if (window.global.counter(cdZoom, config::cdZoom)) {
-				window.zoomIn();
+				window.camera.zoomIn();
 			}
 		} else if (c.btnD && window.global.counter(cdZoom, config::cdZoom)) {
-			window.zoomOut();
+			window.camera.zoomOut();
 		}
 	};
 
 	void checkEnterMap() {
-		std::string &name = ctx.enterMap.name;
-		if (ctx.enterMap.name == "") {
+		std::string &name = window.enterMap.name;
+		if (name == "") {
 			return;
 		}
+
+		window.map = &asset.map.at(name);
 
 		auto it = std::ranges::find_if(zone,
 			[&](const std::unique_ptr<Zone> &w) { return w->name == name; });
@@ -204,13 +223,12 @@ private:
 				std::rotate(zone.begin(), it, it + 1);
 			}
 		} else {
-			spdlog::info("new map {}", name);
-			zone.insert(zone.begin(), std::make_unique<Zone>(name, asset, ctx));
+			spdlog::info("new zone {}", name);
+			zone.insert(
+				zone.begin(), std::make_unique<Zone>(name, asset, window));
 		}
 
-		scene.map = asset.map.at(name);
-
-		zone[0]->enter(ctx.enterMap);
+		zone[0]->enter(window.enterMap);
 		if (zone.size() > 5) {
 			zone.erase(zone.begin() + 5, zone.end());
 		}
@@ -219,7 +237,64 @@ private:
 			w.leave();
 		}
 
-		ctx.enterMap.name = "";
+		window.enterMap.name = "";
+	};
+
+	void handleInput(SDL_Event &e) {
+
+		// SDL_Gamepad *gamepad;
+
+		switch (e.type) {
+		case SDL_EVENT_KEY_DOWN:
+			input.key(e.key, true, event);
+			break;
+		case SDL_EVENT_KEY_UP:
+			input.key(e.key, false, event);
+			break;
+		case SDL_EVENT_WINDOW_RESIZED:
+			event.resize = e.window;
+			break;
+		case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+			input.gamepadAxis(e.gaxis);
+			break;
+		case SDL_EVENT_GAMEPAD_ADDED:
+			SDL_OpenGamepad(e.gdevice.which);
+			break;
+		case SDL_EVENT_GAMEPAD_REMOVED:
+			SDL_CloseGamepad(SDL_GetGamepadFromID(e.gdevice.which));
+			break;
+		case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+			input.gamepadButton(e.gbutton, true);
+			break;
+		case SDL_EVENT_GAMEPAD_BUTTON_UP:
+			input.gamepadButton(e.gbutton, false);
+			break;
+		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+			event.pixel = e.window;
+			break;
+		case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+			event.scale = e.window;
+			break;
+		case SDL_EVENT_MOUSE_MOTION:
+		case SDL_EVENT_MOUSE_BUTTON_DOWN:
+		case SDL_EVENT_MOUSE_BUTTON_UP:
+		case SDL_EVENT_WINDOW_MOUSE_ENTER:
+		case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+		case SDL_EVENT_CLIPBOARD_UPDATE:
+		case SDL_EVENT_KEYMAP_CHANGED:
+		case SDL_EVENT_WINDOW_MOVED:
+		case SDL_EVENT_JOYSTICK_ADDED:
+		case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
+		case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
+		case SDL_EVENT_WINDOW_EXPOSED:
+		case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+			// do nothing
+			break;
+		default:
+			spdlog::info(
+				"unhandled event type: {}", util::getSDLEventName(e.type));
+			break;
+		}
 	};
 };
 }; // namespace game
