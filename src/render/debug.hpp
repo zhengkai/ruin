@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../tag.hpp"
 #include "base.hpp"
 
 namespace render {
@@ -12,12 +11,12 @@ struct Debug : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
-		auto map = d->window.map;
+		auto map = d.window.map;
 		if (!map) {
 			return;
 		}
 
-		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 128);
+		SDL_SetRenderDrawColor(d.r, 200, 230, 255, 128);
 
 		map->filterTerrain(
 			camera.focusRect(), [&](const asset::MapCell &t) -> bool {

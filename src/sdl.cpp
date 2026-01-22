@@ -27,7 +27,7 @@ sdl::sdl(const context::Window &cw_,
 	const asset::Asset &asset_,
 	SDL_Renderer *r,
 	SDL_Window *w)
-	: cw(cw_), asset(asset_), r(r), w(w) {
+	: cw(cw_), asset(asset_), r(r), w(w), rd(text, asset_, r, cw_) {
 }
 
 inline asset::Size initWinSize() {
@@ -78,8 +78,6 @@ bool sdl::init() {
 
 void sdl::initRender() {
 
-	rd = new render::renderDep(text, asset, r, cw);
-
 	addRender<render::Debug>();
 	addRender<render::Map>();
 	addRender<render::Sprite>();
@@ -119,18 +117,10 @@ bool sdl::toggleFullscreen() {
 }
 
 sdl::~sdl() {
-	if (rd) {
-		delete rd;
-		rd = nullptr;
-	}
 	if (renderList.size() > 0) {
 		renderList.clear();
 	}
 
-	if (ballTex) {
-		SDL_DestroyTexture(ballTex);
-		ballTex = nullptr;
-	}
 	if (r) {
 		SDL_DestroyRenderer(r);
 		r = nullptr;

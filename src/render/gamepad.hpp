@@ -12,7 +12,7 @@ struct Gamepad : base {
 	void init() override {};
 	void render(const game::Reg &_) override {
 
-		auto &c = d->window.control;
+		auto &c = d.window.control;
 
 		float x;
 
@@ -86,10 +86,10 @@ struct Gamepad : base {
 	}
 
 	void colorInvalid() {
-		SDL_SetRenderDrawColor(d->r, 50, 70, 90, 192);
+		SDL_SetRenderDrawColor(d.r, 50, 70, 90, 192);
 	}
 	void colorValid() {
-		SDL_SetRenderDrawColor(d->r, 200, 230, 255, 255);
+		SDL_SetRenderDrawColor(d.r, 200, 230, 255, 255);
 	}
 
 	void renderGamepad(SDL_FRect &r) {

@@ -13,7 +13,7 @@ struct Map : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
-		auto map = d->window.map;
+		auto map = d.window.map;
 		if (!map) {
 			return;
 		}
@@ -21,7 +21,7 @@ struct Map : base {
 		map->filterTerrain(
 			camera.focusRect(), [&](const asset::MapCell &t) -> bool {
 				auto tile =
-					d->asset.tileset.at(t.tileName).list.at(t.tileID - 1);
+					d.asset.tileset.at(t.tileName).list.at(t.tileID - 1);
 				// spdlog::info("cell {} {} {}",
 				// 	t.tileID,
 				// 	tile == nullptr,
@@ -33,7 +33,7 @@ struct Map : base {
 
 		auto v2 = reg.view<asset::MapGate>();
 		if (!v2.empty()) {
-			SDL_SetRenderDrawColor(d->r, 200, 128, 255, 156);
+			SDL_SetRenderDrawColor(d.r, 200, 128, 255, 156);
 		}
 		for (auto [_, mg] : v2.each()) {
 			auto dst = mg.rect.getRect();

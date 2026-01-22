@@ -16,12 +16,10 @@ private:
 	const context::Window &cw;
 	const asset::Asset &asset;
 
-	render::renderDep *rd = nullptr;
-	SDL_Renderer *r = nullptr;
 	Text text = {};
-	// SDL_Texture *bg;
+	SDL_Renderer *r = nullptr;
 	SDL_Window *w = nullptr;
-	SDL_Texture *ballTex = nullptr;
+	render::renderDep rd;
 	std::vector<std::unique_ptr<render::base>> renderList;
 
 public:
@@ -31,20 +29,16 @@ public:
 		SDL_Window *w);
 	~sdl();
 	bool init();
-	void handleInput(SDL_Event *e);
 
 	void render(const game::Reg &reg);
 
 private:
-	void renderControlMsg();
-	void renderResize();
-	void calcGrid(float wf, float hf);
 	bool toggleFullscreen();
 	void initRender();
 
 	template <typename T> void addRender() {
 		renderList.emplace_back(std::make_unique<T>(rd));
-	}
+	};
 };
 
 inline asset::Size initWinSize(context::Window &cw);

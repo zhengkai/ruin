@@ -17,13 +17,13 @@ struct Sprite : base {
 
 		auto view = reg.view<physics::Rect, Pose, asset::SpriteRef>();
 
-		SDL_SetRenderDrawColor(d->r, 64, 128, 255, 192);
+		SDL_SetRenderDrawColor(d.r, 64, 128, 255, 192);
 		for (auto [_, rect, _2, _3] : view.each()) {
 			auto r = rect.getRect();
 			renderFilledRect(r);
 		}
 
-		SDL_SetRenderDrawColor(d->r, 255, 50, 50, 255);
+		SDL_SetRenderDrawColor(d.r, 255, 50, 50, 255);
 		for (auto [_, rect, pose, box] : view.each()) {
 
 			auto &s = box.ptr;
