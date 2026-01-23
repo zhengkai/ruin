@@ -90,8 +90,15 @@ private:
 	void eventWindowResize(const std::optional<SDL_WindowEvent> &we) {
 		float winW = static_cast<float>(we->data1);
 		float winH = static_cast<float>(we->data2);
-		spdlog::info("resize window: {}x{}", winW, winH);
+		spdlog::info("set resize window: {}x{}", winW, winH);
 		window.camera.setWinSize(winW, winH);
+	};
+
+	void eventWindowPixel(const std::optional<SDL_WindowEvent> &we) {
+		float winW = static_cast<float>(we->data1);
+		float winH = static_cast<float>(we->data2);
+		spdlog::info("set pixel window: {}x{}", winW, winH);
+		window.camera.setWinPixelSize(winW, winH);
 	};
 
 	void eventWindowScale(const std::optional<SDL_WindowEvent> &we) {
@@ -120,15 +127,10 @@ private:
 			window.global.counter(cdFullscreen, config::cdFullscreen);
 
 		if (event.resize) {
-			spdlog::info("resize window {}x{}",
-				event.resize->data1,
-				event.resize->data2);
-			// eventWindowResize(event.resize);
+			eventWindowResize(event.resize);
 		}
 		if (event.pixel) {
-			spdlog::info(
-				"pixel window {}x{}", event.pixel->data1, event.pixel->data2);
-			eventWindowResize(event.pixel);
+			eventWindowPixel(event.pixel);
 		}
 		if (event.scale) {
 			eventWindowScale(event.scale);

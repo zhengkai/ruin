@@ -56,8 +56,20 @@ public:
 	};
 
 	void setWinSize(const float &w, const float &h) {
+		if (winW == w && winH == h) {
+			return;
+		}
 		winW = w;
 		winH = h;
+		calcGrid();
+	};
+
+	void setWinPixelSize(const float &w, const float &h) {
+		if (winPixelW == w && winPixelH == h) {
+			return;
+		}
+		winPixelW = w;
+		winPixelH = h;
 		calcGrid();
 	};
 
@@ -91,11 +103,9 @@ public:
 	void calcGrid() {
 
 #ifdef _MSC_VER
-		winPixelW = winW * scale;
-		winPixelH = winH * scale;
+		// winPixelW = winW * scale;
+		// winPixelH = winH * scale;
 #else
-		winPixelW = winW;
-		winPixelH = winH;
 #endif
 
 		float gs =
@@ -104,10 +114,13 @@ public:
 					: winPixelH / config::gridHF);
 
 		gridSize = gs;
-		spdlog::info("calcGrid gridSize = {}, win pixel = {}x{}, scale = {}",
+		spdlog::info("calcGrid gridSize = {}, win size = {}x{}, win pixel = "
+					 "{}x{}, scale = {}",
 			gs,
 			winW,
 			winH,
+			winPixelW,
+			winPixelH,
 			scale);
 
 		calc();
@@ -172,17 +185,17 @@ private:
 	void calc() {
 		gridSize = gridSize * zoom;
 		spdlog::info("camera zoom: {} {}", zoom, gridSize);
-		x = std::round(winW / 2.0f);
-		y = std::round(winH / 2.0f);
+		x = std::round(winPixelW / 2.0f);
+		y = std::round(winPixelH / 2.0f);
 		calcBoundary();
 	};
 
 	void calcBoundary() {
-		auto hw = winW / 2.0f / gridSize - 0.5f;
+		auto hw = winPixelW / 2.0f / gridSize - 0.5f;
 		focusBoundary.l = hw;
 		focusBoundary.r = boundary.r - hw;
 
-		auto hh = winH / 2.0f / gridSize - 0.5f;
+		auto hh = winPixelH / 2.0f / gridSize - 0.5f;
 		focusBoundary.d = hh;
 		focusBoundary.u = boundary.u - hh;
 	};

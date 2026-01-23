@@ -15,7 +15,7 @@ struct Info : base {
 
 		std::string counter = std::to_string(d.window.global.serial);
 
-		auto win = camera.getWinSize();
+		auto win = camera.getWinPixelSize();
 
 		d.text.rMono32(counter, win.w - 16.0f, 16, Text::Align::RIGHT);
 		d.text.rMono32(BUILD_TIMESTAMP, 16, win.h - 48.0f, Text::Align::LEFT);

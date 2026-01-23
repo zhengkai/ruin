@@ -25,12 +25,15 @@ struct TerrainChain : base {
 	void render(const game::Reg &reg) override {
 		updateMap(reg);
 		for (auto &o : outline) {
+
+			auto win = camera.getWinPixelSize();
+
 			SDL_SetRenderDrawColor(d.r, 255, 50, 50, 255);
 			std::vector<SDL_FPoint> pts;
 			for (auto &q : o) {
 				pts.push_back(SDL_FPoint{
 					100.0f + static_cast<float>(q.x * 30),
-					800.0f - 100.0f - static_cast<float>(q.y * 30),
+					win.h - 100.0f - static_cast<float>(q.y * 30),
 				});
 			}
 			SDL_RenderLines(d.r, pts.data(), static_cast<int>(pts.size()));
