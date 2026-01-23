@@ -143,6 +143,8 @@ std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset) {
 
 	auto size = initWinSize();
 
+	cw.camera.setWinSize(size.w, size.h);
+
 	SDL_PropertiesID props = SDL_CreateProperties();
 
 	SDL_SetStringProperty(
