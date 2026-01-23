@@ -202,7 +202,7 @@ private:
 
 	void parseControl() {
 		const auto &c = window.control;
-		window.camera.parseFocus(c.axisB.x, c.axisB.y);
+		window.camera.setFocusOffset(c.axisB.x, c.axisB.y);
 
 		if (c.btnLB) {
 			window.camera.zoomOut();

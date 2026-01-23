@@ -1,6 +1,7 @@
 #pragma once
 
 #include "asset/common.hpp"
+#include "asset/map.hpp"
 #include "config.hpp"
 #include "physics/pos.hpp"
 #include "physics/rect.hpp"
@@ -25,10 +26,36 @@ struct Focus {
 	float finalY = 0.0f;
 };
 
+static inline void calcFocusAxis(float &focus,
+	float &final,
+	float input,
+	float rect,
+	float map,
+	float min,
+	float max,
+	float offset) {
+
+	if (rect > map) {
+		focus = map;
+	} else {
+		if (input < min) {
+			focus = min;
+		} else if (input > max) {
+			focus = max;
+		} else {
+			focus = input;
+		}
+	}
+	final = focus + offset * config::focusRange;
+};
+
 class Camera {
 
 private:
 	Focus focus = {};
+	float prevFocusX = 0.0f;
+	float prevFocusY = 0.0f;
+
 	Boundary boundary = {};
 	Boundary focusBoundary = {};
 
@@ -50,14 +77,20 @@ private:
 	float rectW = 0.0f;
 	float rectH = 0.0f;
 
+	// map size
+	float mapW = 1.0f;
+	float mapH = 1.0f;
+
 public:
 	Camera() {
 		calcZoom();
 	};
 
 	void calcOffset(SDL_FRect &r) const {
+
 		r.x = rectPixelW - gridSize * (focus.finalX - r.x + r.w / 2.0f);
 		r.y = rectPixelH + gridSize * (focus.finalY - r.y - r.h / 2.0f);
+
 		r.w *= gridSize;
 		r.h *= gridSize;
 	}
@@ -127,7 +160,7 @@ public:
 		calc();
 	}
 
-	const float fontSize(float &size) const {
+	float fontSize(float &size) const {
 		return gridSize * size;
 	};
 
@@ -135,35 +168,40 @@ public:
 		return {focus.x, focus.y, rectW, rectH};
 	};
 
-	void setBoundary(int x, int y) {
-		boundary.r = static_cast<float>(x - 1);
-		boundary.u = static_cast<float>(y - 1);
-		calcBoundary();
-	};
-
 	void setFocus(float x, float y) {
-		if (x < focusBoundary.l) {
-			x = focusBoundary.l;
-		} else if (x > focusBoundary.r) {
-			x = focusBoundary.r;
-		}
-		focus.x = x;
 
-		if (y < focusBoundary.d) {
-			y = focusBoundary.d;
-		} else if (y > focusBoundary.u) {
-			y = focusBoundary.u;
+		if (x == prevFocusX && y == prevFocusY) {
+			return;
 		}
-		focus.y = y;
+		prevFocusX = x;
+		prevFocusY = y;
 
-		prepareFocus();
+		// 地图边缘移动角色，而不是始终对准人物（从而画面有大量地图外空白区域）
+
+		calcFocusAxis(focus.x,
+			focus.finalX,
+			x,
+			rectW,
+			mapW,
+			focusBoundary.l,
+			focusBoundary.r,
+			focus.offsetX);
+
+		calcFocusAxis(focus.y,
+			focus.finalY,
+			y,
+			rectH,
+			mapH,
+			focusBoundary.d,
+			focusBoundary.u,
+			focus.offsetY);
 	};
 
 	void setFocus(physics::Pos &pos) {
 		setFocus(pos.x, pos.y);
 	};
 
-	void parseFocus(const float &axisX, const float &axisY) {
+	void setFocusOffset(const float &axisX, const float &axisY) {
 		if (focus.offsetX != axisX || focus.offsetY != axisY) {
 			float x = focus.offsetX - axisX;
 			float y = focus.offsetY - axisY;
@@ -177,16 +215,27 @@ public:
 				focus.offsetY = axisY;
 			}
 		};
-	}
-
-private:
-	void prepareFocus() {
-		focus.finalX = focus.x + focus.offsetX * config::focusRange;
-		focus.finalY = focus.y + focus.offsetY * config::focusRange;
 	};
 
+	void setMapSize(const asset::Map &m) {
+		float w = static_cast<float>(m.w);
+		float h = static_cast<float>(m.h);
+		boundary.r = w - 1.0f;
+		boundary.u = h - 1.0f;
+		mapW = boundary.r / 2.0f;
+		mapH = boundary.u / 2.0f;
+
+		prevFocusX = -1000.0f;
+		prevFocusY = -1000.0f;
+
+		calcBoundary();
+	};
+
+private:
 	void calcZoom() {
+
 		zoomRate = static_cast<float>(zoom) / 200.0f * 4.0f + 1.0f;
+
 		calc();
 	}
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../asset/asset.hpp"
+#include "../asset/map.hpp"
 #include "../asset/sprite.hpp"
 #include "../common/pose.hpp"
 #include "../context/window.hpp"
@@ -9,7 +10,6 @@
 #include "../physics/physics.hpp"
 #include "../physics/rect.hpp"
 #include "../tag.hpp"
-#include "../util/animation.hpp"
 #include "../util/rand.hpp"
 #include "player.hpp"
 #include "reg.hpp"
@@ -55,6 +55,8 @@ public:
 	};
 
 	void enter(physics::Pos pos) {
+
+		window.camera.setMapSize(m);
 
 		auto &sp = asset.sprite.at(asset.config.playerSprite);
 
