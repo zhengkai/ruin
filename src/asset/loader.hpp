@@ -110,8 +110,6 @@ private:
 		m.w = static_cast<std::size_t>(pm.w());
 		m.h = static_cast<std::size_t>(pm.h());
 
-		convertMapTerrain(m, pm.terrain());
-
 		convertMapStaticTerrain(m, pm.terrain());
 
 		convertMapTrigger(m, pm.trigger());

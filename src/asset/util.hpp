@@ -23,23 +23,6 @@ MapGate convertPBTriggerGate(
 	};
 };
 
-void convertMapTerrain(
-	Map &m, const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
-	for (const auto &s : li) {
-
-		auto t = s.tile();
-		if (!t.id() || !t.name()) {
-			continue;
-		}
-		int id = static_cast<int>(s.id());
-		m.terrain.emplace_back(MapCell{
-			.tileName = t.name(),
-			.tileID = static_cast<int>(t.id()),
-			.pos = util::convertIDToPos(id, m),
-		});
-	}
-};
-
 void convertMapStaticTerrain(
 	Map &m, const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
 
@@ -54,13 +37,13 @@ void convertMapStaticTerrain(
 			if (tile.contains(id)) {
 				auto &t = tile.at(id);
 				auto i = static_cast<int>(id);
-				m.staticTerrain.emplace_back(MapCell{
+				m.terrain.emplace_back(MapCell{
 					.tileName = t.tile().name(),
 					.tileID = static_cast<int>(t.tile().id()),
 					.pos = util::convertIDToPos(i, m),
 				});
 			} else {
-				m.staticTerrain.emplace_back(MapCell{
+				m.terrain.emplace_back(MapCell{
 					.tileName = pb::Tileset_Name_unknown,
 				});
 			}

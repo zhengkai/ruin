@@ -49,7 +49,6 @@ struct Map {
 	std::string name = "";
 	std::size_t w = 0;
 	std::size_t h = 0;
-	std::vector<MapCell> staticTerrain;
 	std::vector<MapCell> terrain;
 	std::vector<MapGate> gate;
 	std::vector<MapGate> exit;
@@ -70,7 +69,7 @@ struct Map {
 
 		for (std::size_t y = d; y <= u; ++y) {
 			for (std::size_t x = l; x <= r; ++x) {
-				auto &t = staticTerrain[y * w + x];
+				auto &t = terrain[y * w + x];
 				if (t.tileName == pb::Tileset_Name_unknown) {
 					continue;
 				}

@@ -11,7 +11,7 @@
 #include "render/info.hpp"
 #include "render/map.hpp"
 #include "render/sprite.hpp"
-// #include "render/terrain-chain.hpp"
+#include "render/terrain-chain.hpp"
 #include "text.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
@@ -83,7 +83,7 @@ void sdl::initRender() {
 	addRender<render::Sprite>();
 	addRender<render::Gamepad>();
 	addRender<render::Info>();
-	// addRender<render::TerrainChain>();
+	addRender<render::TerrainChain>();
 	for (auto &ren : renderList) {
 		ren->init();
 	}
