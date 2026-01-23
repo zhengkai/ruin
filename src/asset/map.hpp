@@ -55,6 +55,8 @@ struct Map {
 	std::vector<MapMonster> monster;
 
 	template <typename F>
+		requires(std::same_as<std::invoke_result_t<F, const MapCell &>, bool> ||
+			std::same_as<std::invoke_result_t<F, const MapCell &>, void>)
 	void filterTerrain(const physics::Rect &re, F &&f) const {
 
 		float fl = std::floor(re.x - re.w);
@@ -73,8 +75,14 @@ struct Map {
 				if (t.tileName == pb::Tileset_Name_unknown) {
 					continue;
 				}
-				if (f(t)) {
-					return;
+				if constexpr (std::is_same_v<
+								  std::invoke_result_t<F, const MapCell &>,
+								  bool>) {
+					if (f(t)) {
+						return;
+					}
+				} else {
+					f(t);
 				}
 			}
 		}

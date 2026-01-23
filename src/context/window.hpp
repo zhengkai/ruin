@@ -60,6 +60,8 @@ public:
 struct Window {
 	WinResize winResize = {};
 	Event event = {};
+	bool quit = false;
+	bool focus = true;
 	bool toggleFullscreen = false;
 	Control control = {};
 	Global global = {};

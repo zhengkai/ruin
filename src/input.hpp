@@ -74,6 +74,12 @@ public:
 		case SDLK_DOWN:
 			btnD = {down, true};
 			break;
+		case SDLK_MINUS: // -
+			btnLB = {down, true};
+			break;
+		case SDLK_EQUALS: // =
+			btnRB = {down, true};
+			break;
 		case SDLK_SPACE:
 			btnA = {down, true};
 			break;

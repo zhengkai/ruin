@@ -56,11 +56,11 @@ inline float CheckRollback(
 	int i = 0;
 	int j = 0;
 	int k = 0;
-	map.filterTerrain(re, [&](const asset::MapCell &mc) -> bool {
+	map.filterTerrain(re, [&](const asset::MapCell &mc) {
 		i++;
 		auto t = mc.phyRect();
 		if (t.x < l || t.x > r || t.y < d || t.y > u) {
-			return false;
+			return;
 		}
 		j++;
 		float rb = re.getRollback(t, direction);
@@ -69,7 +69,6 @@ inline float CheckRollback(
 			k++;
 		}
 		rollback = std::max(rollback, rb);
-		return false;
 	});
 
 	spdlog::debug("total {}, check {}, effect {}", i, j, k);

@@ -50,11 +50,16 @@ public:
 
 	};
 
-	bool step() {
+	void step() {
 
-		if (input.quit) {
-			return false;
+		if (window.quit) {
+			return;
 		}
+
+		if (!window.focus) {
+			return;
+		}
+
 		checkEnterMap();
 
 		parseEvent();
@@ -66,7 +71,7 @@ public:
 		z->step(window.control);
 		prepareRender(z->getReg());
 
-		return true;
+		return;
 	}
 
 	void loopEvent() {
@@ -75,7 +80,7 @@ public:
 		while (SDL_PollEvent(&e)) {
 			util::SDLEventLog(e.type);
 			if (e.type == SDL_EVENT_QUIT) {
-				input.quit = true;
+				window.quit = true;
 				break;
 			}
 			handleInput(e);
@@ -115,8 +120,6 @@ private:
 			auto &rect = view.get<physics::Rect>(entity);
 			window.camera.setFocus(rect.x, rect.y);
 		}
-
-		window.camera.prepareFocus();
 	};
 
 	void parseEvent() {
@@ -141,7 +144,10 @@ private:
 
 	void parseInput() {
 
-		// gamepad
+		if (input.quit) {
+			window.quit = true;
+			return;
+		}
 
 		parseInputButton();
 		parseInputAxis(input.axisL, prevAxisA, window.control.axisA);
@@ -175,6 +181,7 @@ private:
 	void parseInputAxis(const InputAxis &in,
 		context::ControlAxis &prev,
 		context::ControlAxis &out) {
+
 		if (!in.hasX && !in.hasY) {
 			return;
 		}
@@ -196,6 +203,12 @@ private:
 	void parseControl() {
 		const auto &c = window.control;
 		window.camera.parseFocus(c.axisB.x, c.axisB.y);
+
+		if (c.btnLB) {
+			window.camera.zoomOut();
+		} else if (c.btnRB) {
+			window.camera.zoomIn();
+		}
 	};
 
 	void parseZoom() {
@@ -277,6 +290,12 @@ private:
 		case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
 			event.scale = e.window;
 			break;
+		case SDL_EVENT_WINDOW_FOCUS_GAINED:
+			window.focus = true;
+			break;
+		case SDL_EVENT_WINDOW_FOCUS_LOST:
+			window.focus = false;
+			break;
 		case SDL_EVENT_MOUSE_MOTION:
 		case SDL_EVENT_MOUSE_BUTTON_DOWN:
 		case SDL_EVENT_MOUSE_BUTTON_UP:
@@ -290,7 +309,12 @@ private:
 		case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
 		case SDL_EVENT_WINDOW_EXPOSED:
 		case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+		case SDL_EVENT_WINDOW_HDR_STATE_CHANGED:
+		case SDL_EVENT_WINDOW_SHOWN:
+		case SDL_EVENT_WINDOW_HIDDEN:
 			// do nothing
+			// spdlog::info("known event type: {}",
+			// util::getSDLEventName(e.type));
 			break;
 		default:
 			spdlog::info(

@@ -36,7 +36,14 @@ bool Ruin::init() {
 
 void Ruin::loop() {
 
-	window.global.serial++;
+	if (window.quit) {
+		stop = true;
+		return;
+	}
+
+	if (window.focus) {
+		window.global.serial++;
+	}
 
 #ifdef __EMSCRIPTEN__
 	auto now = steady_clock::now();
@@ -49,10 +56,7 @@ void Ruin::loop() {
 
 	g->loopEvent();
 
-	if (!g->step()) {
-		stop = true;
-		return;
-	}
+	g->step();
 
 	s->render(g->getReg());
 };

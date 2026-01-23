@@ -6,6 +6,7 @@
 #include "physics/rect.hpp"
 #include <SDL3/SDL_rect.h>
 #include <spdlog/spdlog.h>
+#include <tuple>
 
 struct Boundary {
 	float d = 0.0f;
@@ -31,9 +32,8 @@ private:
 	Boundary boundary = {};
 	Boundary focusBoundary = {};
 
-	float x = 0.0f;
-	float y = 0.0f;
-	float zoom = 3.5f;
+	int zoom = 100;
+	float zoomRate = 1.0f;
 
 	float winW = 800.0f;
 	float winH = 600.0f;
@@ -41,12 +41,23 @@ private:
 	float winPixelW = 800.0f;
 	float winPixelH = 600.0f;
 
+	float baseGridSize = 1.0f;
 	float gridSize = 1.0f;
 
+	// 在 grid 系统里的上下宽高
+	float rectPixelW = 0.0f;
+	float rectPixelH = 0.0f;
+	float rectW = 0.0f;
+	float rectH = 0.0f;
+
 public:
+	Camera() {
+		calcZoom();
+	};
+
 	void calcOffset(SDL_FRect &r) const {
-		r.x = x - gridSize * (focus.finalX - r.x + r.w / 2.0f);
-		r.y = y + gridSize * (focus.finalY - r.y - r.h / 2.0f);
+		r.x = rectPixelW - gridSize * (focus.finalX - r.x + r.w / 2.0f);
+		r.y = rectPixelH + gridSize * (focus.finalY - r.y - r.h / 2.0f);
 		r.w *= gridSize;
 		r.h *= gridSize;
 	}
@@ -78,6 +89,10 @@ public:
 		calcGrid();
 	};
 
+	float getScale() const {
+		return scale;
+	};
+
 	asset::Size getWinSize() const {
 		return {winW, winH};
 	};
@@ -87,42 +102,28 @@ public:
 	};
 
 	void zoomIn() {
-		if (zoom < 5.0f) {
-			zoom += 0.125f;
-			calc();
+		if (zoom < 200) {
+			zoom++;
+			calcZoom();
 		}
 	};
 
 	void zoomOut() {
-		if (zoom > 1.0f) {
-			zoom -= 0.125f;
-			calc();
+		if (zoom > 0) {
+			zoom--;
+			calcZoom();
 		}
 	};
 
+	std::tuple<int, float, float> getZoom() const {
+		return {zoom, zoomRate, gridSize};
+	};
+
 	void calcGrid() {
-
-#ifdef _MSC_VER
-		// winPixelW = winW * scale;
-		// winPixelH = winH * scale;
-#else
-#endif
-
-		float gs =
+		baseGridSize =
 			std::floor(winPixelW / config::gridWF < winPixelH / config::gridHF
 					? winPixelW / config::gridWF
 					: winPixelH / config::gridHF);
-
-		gridSize = gs;
-		spdlog::info("calcGrid gridSize = {}, win size = {}x{}, win pixel = "
-					 "{}x{}, scale = {}",
-			gs,
-			winW,
-			winH,
-			winPixelW,
-			winPixelH,
-			scale);
-
 		calc();
 	}
 
@@ -131,12 +132,7 @@ public:
 	};
 
 	physics::Rect focusRect() const {
-		return {focus.x, focus.y, 23.0f, 23.0f};
-	};
-
-	void prepareFocus() {
-		focus.finalX = focus.x + focus.offsetX * config::focusRange;
-		focus.finalY = focus.y + focus.offsetY * config::focusRange;
+		return {focus.x, focus.y, rectW, rectH};
 	};
 
 	void setBoundary(int x, int y) {
@@ -159,6 +155,8 @@ public:
 			y = focusBoundary.u;
 		}
 		focus.y = y;
+
+		prepareFocus();
 	};
 
 	void setFocus(physics::Pos &pos) {
@@ -182,21 +180,31 @@ public:
 	}
 
 private:
+	void prepareFocus() {
+		focus.finalX = focus.x + focus.offsetX * config::focusRange;
+		focus.finalY = focus.y + focus.offsetY * config::focusRange;
+	};
+
+	void calcZoom() {
+		zoomRate = static_cast<float>(zoom) / 200.0f * 4.0f + 1.0f;
+		calc();
+	}
+
 	void calc() {
-		gridSize = gridSize * zoom;
-		spdlog::info("camera zoom: {} {}", zoom, gridSize);
-		x = std::round(winPixelW / 2.0f);
-		y = std::round(winPixelH / 2.0f);
+
+		gridSize = baseGridSize * zoomRate;
+		rectPixelW = std::round(winPixelW / 2.0f);
+		rectPixelH = std::round(winPixelH / 2.0f);
 		calcBoundary();
 	};
 
 	void calcBoundary() {
-		auto hw = winPixelW / 2.0f / gridSize - 0.5f;
-		focusBoundary.l = hw;
-		focusBoundary.r = boundary.r - hw;
+		rectW = winPixelW / 2.0f / gridSize - 0.5f;
+		focusBoundary.l = rectW;
+		focusBoundary.r = boundary.r - rectW;
 
-		auto hh = winPixelH / 2.0f / gridSize - 0.5f;
-		focusBoundary.d = hh;
-		focusBoundary.u = boundary.u - hh;
+		rectH = winPixelH / 2.0f / gridSize - 0.5f;
+		focusBoundary.d = rectH;
+		focusBoundary.u = boundary.u - rectH;
 	};
 };

@@ -18,18 +18,15 @@ struct Map : base {
 			return;
 		}
 
-		map->filterTerrain(
-			camera.focusRect(), [&](const asset::MapCell &t) -> bool {
-				auto tile =
-					d.asset.tileset.at(t.tileName).list.at(t.tileID - 1);
-				// spdlog::info("cell {} {} {}",
-				// 	t.tileID,
-				// 	tile == nullptr,
-				// 	d->asset.tileset.at(t.tileName).list.size());
-				auto dst = t.getRect();
-				renderTexture(tile, dst);
-				return false;
-			});
+		auto rect = camera.focusRect();
+		// rect.w -= 2.0f;
+		// rect.h -= 2.0f;
+
+		map->filterTerrain(rect, [&](const asset::MapCell &t) {
+			auto tile = d.asset.tileset.at(t.tileName).list.at(t.tileID - 1);
+			auto dst = t.getRect();
+			renderTexture(tile, dst);
+		});
 
 		auto v2 = reg.view<asset::MapGate>();
 		if (!v2.empty()) {

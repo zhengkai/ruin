@@ -91,6 +91,10 @@ void sdl::initRender() {
 
 void sdl::render(const game::Reg &reg) {
 
+	if (!cw.focus) {
+		return;
+	}
+
 	if (toggleFullscreen()) {
 		return;
 	}

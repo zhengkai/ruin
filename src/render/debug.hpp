@@ -18,12 +18,12 @@ struct Debug : base {
 
 		SDL_SetRenderDrawColor(d.r, 200, 230, 255, 128);
 
-		map->filterTerrain(
-			camera.focusRect(), [&](const asset::MapCell &t) -> bool {
-				auto dst = t.getRect();
-				renderFilledRect(dst);
-				return false;
-			});
+		auto rect = camera.focusRect();
+
+		map->filterTerrain(rect, [&](const asset::MapCell &t) {
+			auto dst = t.getRect();
+			renderFilledRect(dst);
+		});
 	};
 };
 }; // namespace render
