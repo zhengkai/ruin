@@ -42,8 +42,7 @@ int main(int argc, char *argv[]) {
 	theRuin = &p;
 	emscripten_set_main_loop(wasmLoop, 0, true);
 #else
-	while (!ruin.stop) {
-		ruin.loop();
+	while (ruin.loop()) {
 	}
 
 	spdlog::get("async_stdout")->flush();

@@ -10,9 +10,7 @@
 
 Ruin::Ruin() {};
 
-Ruin::~Ruin() {
-	stop = true;
-};
+Ruin::~Ruin() {};
 
 bool Ruin::init() {
 
@@ -34,12 +32,7 @@ bool Ruin::init() {
 	return true;
 }
 
-void Ruin::loop() {
-
-	if (window.quit) {
-		stop = true;
-		return;
-	}
+bool Ruin::loop() {
 
 	if (window.focus) {
 		window.global.serial++;
@@ -59,4 +52,6 @@ void Ruin::loop() {
 	g->step();
 
 	s->render(g->getReg());
+
+	return !window.quit;
 };

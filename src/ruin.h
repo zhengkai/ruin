@@ -18,10 +18,9 @@ private:
 	steady_clock::time_point prev;
 
 public:
-	bool stop = false;
 	Ruin();
 	~Ruin();
-	void loop();
+	bool loop();
 	void run();
 	bool init();
 	void syncPos();
