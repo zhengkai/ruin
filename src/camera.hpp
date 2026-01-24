@@ -176,6 +176,11 @@ public:
 		prevFocusX = x;
 		prevFocusY = y;
 
+		calcFocus(x, y);
+	};
+
+	void calcFocus(float x, float y) {
+
 		// 地图边缘移动角色，而不是始终对准人物（从而画面有大量地图外空白区域）
 
 		calcFocusAxis(focus.x,
@@ -245,6 +250,8 @@ private:
 		rectPixelW = std::round(winPixelW / 2.0f);
 		rectPixelH = std::round(winPixelH / 2.0f);
 		calcBoundary();
+
+		calcFocus(prevFocusX, prevFocusY);
 	};
 
 	void calcBoundary() {
