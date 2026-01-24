@@ -2,6 +2,7 @@
 
 #include "../asset/map.hpp"
 #include "../camera.hpp"
+#include "monitor.hpp"
 #include <SDL3/SDL_rect.h>
 #include <spdlog/spdlog.h>
 
@@ -58,7 +59,7 @@ public:
 };
 
 struct Window {
-	WinResize winResize = {};
+	FrameMonitor frameMonitor = {};
 	Event event = {};
 	bool quit = false;
 	bool focus = true;

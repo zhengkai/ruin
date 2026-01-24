@@ -26,6 +26,9 @@ const float speedMin = speed / 1.2f;
 const int fps = 120;
 const float deltaTime = 1.0f / static_cast<float>(fps);
 
+const std::size_t frameBufferSize = static_cast<std::size_t>(fps) * 5;
+const std::size_t frameTimeUs = 1000000 / static_cast<std::size_t>(fps);
+
 const float gravity = 0.4f * deltaTime;
 const float gravityUp = 0.3f * deltaTime;
 const float jumpForce = 16.0f * deltaTime;

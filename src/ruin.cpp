@@ -44,7 +44,7 @@ bool Ruin::loop() {
 		std::min(duration<float>(now - prev).count(), config::fpsDeltaTime);
 	prev = now;
 #else
-	t->tick();
+	t->tick(window.frameMonitor);
 #endif
 
 	g->loopEvent();

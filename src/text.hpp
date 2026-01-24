@@ -83,7 +83,7 @@ public:
 		TextTexture &tt) const {
 
 		SDL_Surface *surface =
-			TTF_RenderText_Solid(font, text.c_str(), 0, color);
+			TTF_RenderText_Solid(font, text.c_str(), text.size(), color);
 		if (!surface) {
 			error("Failed to create text surface, {}");
 			return false;

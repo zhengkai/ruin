@@ -20,7 +20,11 @@ struct Info : base {
 		d.text.rMono32(counter, win.w - 16.0f, 16, Text::Align::RIGHT);
 
 		std::vector<std::string> info = {
-			std::format("build time: {}", BUILD_TIMESTAMP),
+			std::format("build time: {}, git: {}({}{})",
+				BUILD_TIMESTAMP,
+				GIT_BRANCH,
+				GIT_HASH,
+				(strcmp(GIT_DIRTY, "yes") == 0) ? "-dirty" : ""),
 		};
 
 		auto size = camera.getWinSize();
@@ -48,6 +52,14 @@ struct Info : base {
 			gridSize,
 			win.w / gridSize,
 			win.h / gridSize));
+
+		auto fs = d.window.frameMonitor.getStats();
+		info.push_back(std::format(
+			"frame cost(us): avg {:4d}, min {:4d}, max {:4d}, miss {}",
+			fs.avg,
+			fs.min,
+			fs.max,
+			fs.miss));
 
 		float y = win.h;
 		for (auto s : info) {
