@@ -6,7 +6,7 @@
 
 namespace util {
 
-inline void animation(Pose &pose, asset::SpriteBox &box) {
+inline void animation(Pose &pose, const asset::SpriteBox &box) {
 
 	auto &dur = box.get(pose.type).duration;
 

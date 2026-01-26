@@ -2,6 +2,7 @@
 
 #include "../pb/asset.pb.h"
 #include "../physics/rect.hpp"
+#include "../util/format.hpp"
 #include "monster.hpp"
 #include <SDL3/SDL_rect.h>
 #include <algorithm>
@@ -53,6 +54,43 @@ struct Map {
 	std::vector<MapGate> gate;
 	std::vector<MapGate> exit;
 	std::vector<MapMonster> monster;
+
+	float checkMove(const physics::Rect &r, float move) const {
+
+		float tx = r.x + move;
+		if (move < 0.0f) {
+			tx -= r.w;
+		} else {
+			tx += r.w;
+		}
+
+		auto x = static_cast<std::size_t>(std::round(tx));
+		if (x < 0) {
+			x = 0;
+		} else if (x >= w) {
+			x = w - 1;
+		}
+
+		auto y = static_cast<std::size_t>(std::round(r.y - r.h - 0.5f));
+		if (y < 0) {
+			y = 0;
+		} else if (y >= h) {
+			y = h - 1;
+		}
+
+		bool isExists = terrain[y * w + x].tileName != pb::Tileset_Name_unknown;
+		if (isExists) {
+			return move;
+		}
+
+		if (move < 0.0f) {
+			return std::ceil(static_cast<float>(x)) + 0.5f - (r.x - r.w);
+		} else if (move > 0.0f) {
+			return std::floor(static_cast<float>(x)) - 0.5f - (r.x + r.w);
+		}
+
+		return 0.0f;
+	};
 
 	template <typename F>
 		requires(std::same_as<std::invoke_result_t<F, const MapCell &>, bool> ||

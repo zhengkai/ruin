@@ -10,6 +10,7 @@
 #include "../physics/physics.hpp"
 #include "../physics/rect.hpp"
 #include "../tag.hpp"
+#include "../util/animation.hpp"
 #include "../util/rand.hpp"
 #include "player.hpp"
 #include "reg.hpp"
@@ -21,7 +22,7 @@ class Zone {
 private:
 	Reg reg;
 	entt::entity player;
-	const asset::Map &m;
+	const asset::Map &map;
 	physics::Physics physics;
 	context::Window &window;
 
@@ -33,20 +34,20 @@ public:
 	Zone(const std::string &name_,
 		const asset::Asset &asset_,
 		context::Window &window_)
-		: m(asset_.map.at(name_)), physics(m, reg), window(window_),
+		: map(asset_.map.at(name_)), physics(map, reg), window(window_),
 		  asset(asset_), name(name_) {
 
-		for (auto &t : m.gate) {
+		for (auto &t : map.gate) {
 			auto e = reg.create();
 			reg.emplace<asset::MapGate>(e, t);
 		}
 
-		for (auto &m : m.monster) {
+		for (auto &m : map.monster) {
 			auto e = reg.create();
 			reg.emplace<tag::Monster>(e);
 			reg.emplace<physics::Rect>(e, m);
 			reg.emplace<physics::Body>(e);
-			reg.emplace<decision::Decision>(e);
+			reg.emplace<decision::Decision>(e, map);
 			reg.emplace<Pose>(
 				e, util::randBool() ? Pose::Facing::Left : Pose::Facing::Right);
 			reg.emplace<tag::PrevPos>(e, m.x, m.y);
@@ -56,7 +57,7 @@ public:
 
 	void enter(physics::Pos pos) {
 
-		window.camera.setMapSize(m);
+		window.camera.setMapSize(map);
 
 		auto &sp = asset.sprite.at(asset.config.playerSprite);
 
@@ -99,7 +100,7 @@ public:
 
 		auto v2 = reg.view<Pose, asset::SpriteRef>();
 		for (auto [_, pose, box] : v2.each()) {
-			// util::animation(pose, box.ptr);
+			util::animation(pose, box.ptr);
 		}
 	};
 
