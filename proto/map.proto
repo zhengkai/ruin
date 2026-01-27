@@ -23,7 +23,7 @@ message MapTrigger {
 }
 
 message MapTriggerGate {
-	string map = 1;
+	Zone.Name zone = 1;
 	float x = 2;
 	float y = 3;
 }
@@ -40,10 +40,25 @@ message MapMob {
 }
 
 message Map {
-	string name = 1;
+	enum Name {
+		unknown = 0;
+		map2 = 2;
+		map3 = 3;
+	}
+	Map.Name name = 1;
 	uint32 w = 2;
 	uint32 h = 3;
 	repeated MapCell terrain = 4;
-	repeated MapTrigger trigger = 5;
-	repeated MapMob mob = 6;
+}
+
+message Zone {
+	enum Name {
+		unknown = 0;
+		zone2 = 2;
+		zone3 = 3;
+	}
+	Zone.Name name = 1;
+	Map.Name map = 2;
+	repeated MapTrigger trigger = 3;
+	repeated MapMob mob = 4;
 }

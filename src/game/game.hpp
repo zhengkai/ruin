@@ -42,7 +42,7 @@ public:
 	Game(context::Window &window_, const asset::Asset &asset_)
 		: window(window_), asset(asset_) {
 
-		window.enterMap = asset.config.zoneStart;
+		window.enterZone = asset.config.zoneStart;
 
 		window.camera.calcGrid();
 	};
@@ -223,12 +223,19 @@ private:
 	};
 
 	void checkEnterMap() {
-		std::string &name = window.enterMap.name;
-		if (name == "") {
+		pb::Zone_Name &name = window.enterZone.name;
+		if (name == pb::Zone_Name::Zone_Name_unknown) {
 			return;
 		}
 
-		window.map = &asset.map.at(name);
+		if (!asset.zone.contains(name)) {
+			spdlog::warn("zone not found: {}", pb::Zone_Name_Name(name));
+			window.enterZone.name = pb::Zone_Name::Zone_Name_unknown;
+			return;
+		}
+		spdlog::warn("enter zone: {}", pb::Zone_Name_Name(name));
+
+		window.zone = &asset.zone.at(name);
 
 		auto it = std::ranges::find_if(zone,
 			[&](const std::unique_ptr<Zone> &w) { return w->name == name; });
@@ -238,12 +245,12 @@ private:
 				std::rotate(zone.begin(), it, it + 1);
 			}
 		} else {
-			spdlog::info("new zone {}", name);
+			spdlog::info("new zone {}", pb::Zone_Name_Name(name));
 			zone.insert(
 				zone.begin(), std::make_unique<Zone>(name, asset, window));
 		}
 
-		zone[0]->enter(window.enterMap);
+		zone[0]->enter(window.enterZone);
 		if (zone.size() > 5) {
 			zone.erase(zone.begin() + 5, zone.end());
 		}
@@ -252,7 +259,7 @@ private:
 			w.leave();
 		}
 
-		window.enterMap.name = "";
+		window.enterZone.name = pb::Zone_Name::Zone_Name_unknown;
 	};
 
 	void handleInput(SDL_Event &e) {

@@ -13,8 +13,8 @@ struct Map : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
-		auto map = d.window.map;
-		if (!map) {
+		auto zone = d.window.zone;
+		if (!zone) {
 			return;
 		}
 
@@ -22,7 +22,7 @@ struct Map : base {
 		// rect.w -= 2.0f;
 		// rect.h -= 2.0f;
 
-		map->filterTerrain(rect, [&](const asset::MapCell &t) {
+		zone->map.filterTerrain(rect, [&](const asset::MapCell &t) {
 			auto tile = d.asset.tileset.at(t.tileName).list.at(t.tileID - 1);
 			auto dst = t.getRect();
 			renderTexture(tile, dst);

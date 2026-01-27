@@ -11,6 +11,7 @@ message AssetManifest {
 	repeated SpriteBox character = 2;
 	repeated SpriteBox animal = 3;
 	repeated Tileset tileset = 4;
-	repeated Map map = 5;
-	repeated MobDef mob = 6;
+	repeated MobDef mob = 5;
+	repeated Map map = 6;
+	repeated Zone zone = 7;
 }

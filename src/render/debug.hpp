@@ -11,8 +11,8 @@ struct Debug : base {
 	void init() override {};
 	void render(const game::Reg &reg) override {
 
-		auto map = d.window.map;
-		if (!map) {
+		auto zone = d.window.zone;
+		if (!zone) {
 			return;
 		}
 
@@ -20,7 +20,7 @@ struct Debug : base {
 
 		auto rect = camera.focusRect();
 
-		map->filterTerrain(rect, [&](const asset::MapCell &t) {
+		zone->map.filterTerrain(rect, [&](const asset::MapCell &t) {
 			auto dst = t.getRect();
 			renderFilledRect(dst);
 		});

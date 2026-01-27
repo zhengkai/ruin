@@ -67,7 +67,7 @@ struct Window {
 	Control control = {};
 	Global global = {};
 	Camera camera = {};
-	const asset::Map *map = nullptr;
-	asset::MapTarget enterMap = {};
+	const asset::Zone *zone = nullptr;
+	asset::MapTarget enterZone = {};
 };
 }; // namespace context

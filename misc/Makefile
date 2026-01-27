@@ -5,6 +5,8 @@ PBTS=asset/node_modules/protobufjs-cli/bin/pbts
 
 PROTO_DIR=../proto
 
+.PHONY: pb
+
 asset-copy:
 	mkdir -p ../build/Release
 	./asset/copy.mjs
@@ -17,3 +19,6 @@ asset-init:
 
 asset-pb-init:
 	$(PBJS) -t static-module -w commonjs --force-number -o asset/pb.js $(PROTO_DIR)/*.proto
+
+pb:
+	./pb.sh

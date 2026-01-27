@@ -8,17 +8,17 @@
 namespace asset {
 
 MapGate convertPBTriggerGate(
-	const uint32_t tid, const pb::MapTriggerGate &g, Map &m) {
+	const uint32_t tid, const pb::MapTriggerGate &g, Zone &z) {
 
 	int id = static_cast<int>(tid);
 
 	return MapGate{
 		.id = id,
-		.rect = util::convertIDToRect(id, m),
+		.rect = util::convertIDToRect(id, z.map),
 		.target =
 			{
 				{g.x(), g.y()},
-				g.map(),
+				g.zone(),
 			},
 	};
 };
@@ -52,15 +52,15 @@ void convertMapStaticTerrain(
 };
 
 void convertMapTrigger(
-	Map &m, const google::protobuf::RepeatedPtrField<pb::MapTrigger> &li) {
+	Zone &z, const google::protobuf::RepeatedPtrField<pb::MapTrigger> &li) {
 	for (const auto &t : li) {
 		switch (t.trigger_case()) {
 		case pb::MapTrigger::kGate: {
-			m.gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), m));
+			z.gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), z));
 			break;
 		}
 		case pb::MapTrigger::kExit: {
-			m.exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), m));
+			z.exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), z));
 			break;
 		}
 		case pb::MapTrigger::TRIGGER_NOT_SET:
@@ -71,7 +71,7 @@ void convertMapTrigger(
 	}
 };
 
-void convertMapMob(Map &m,
+void convertMapMob(Zone &z,
 	Asset &dst,
 	const google::protobuf::RepeatedPtrField<pb::MapMob> &li) {
 	for (const auto &c : li) {
@@ -82,7 +82,7 @@ void convertMapMob(Map &m,
 		float w = scale * def.sprite.physics.w;
 		float h = scale * def.sprite.physics.h;
 
-		m.mob.emplace_back(MapMob(c.x(), c.y(), w, h, def));
+		z.mob.emplace_back(MapMob(c.x(), c.y(), w, h, def));
 	}
 };
 

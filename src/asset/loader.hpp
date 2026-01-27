@@ -35,9 +35,17 @@ public:
 		mergeMob();
 
 		for (auto pm : src.map()) {
-			Map cm = {};
+			auto name = pm.name();
+			dst.map.emplace(name, name);
+			auto &cm = dst.map.at(name);
 			convertMap(pm, cm);
-			dst.map.emplace(pm.name(), cm);
+		}
+
+		for (auto pz : src.zone()) {
+			auto name = pz.name();
+			dst.zone.emplace(name, name, dst.map.at(pz.map()));
+			auto &cz = dst.zone.at(name);
+			convertZone(pz, cz);
 		}
 		return ok;
 	};
@@ -52,8 +60,12 @@ private:
 		auto &z = sc.zonestart();
 		dc.zoneStart = {
 			{z.x(), z.y()},
-			z.map(),
+			z.zone(),
 		};
+		spdlog::info("start zone: {} ({}, {})",
+			pb::Zone_Name_Name(dc.zoneStart.name),
+			dc.zoneStart.x,
+			dc.zoneStart.y);
 	};
 
 	void mergeSprite() {
@@ -111,9 +123,12 @@ private:
 		m.h = static_cast<std::size_t>(pm.h());
 
 		convertMapStaticTerrain(m, pm.terrain());
+	};
 
-		convertMapTrigger(m, pm.trigger());
-		convertMapMob(m, dst, pm.mob());
+	void convertZone(const pb::Zone &pm, Zone &z) {
+
+		convertMapTrigger(z, pm.trigger());
+		convertMapMob(z, dst, pm.mob());
 	};
 };
 }; // namespace asset

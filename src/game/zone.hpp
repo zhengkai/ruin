@@ -22,32 +22,31 @@ class Zone {
 private:
 	Reg reg;
 	entt::entity player;
-	const asset::Map &map;
+	const asset::Zone &def;
 	physics::Physics physics;
 	context::Window &window;
 
 public:
 	const asset::Asset &asset;
-	const std::string name;
 
 public:
-	Zone(const std::string &name_,
+	Zone(const pb::Zone_Name &name_,
 		const asset::Asset &asset_,
 		context::Window &window_)
-		: map(asset_.map.at(name_)), physics(map, reg), window(window_),
-		  asset(asset_), name(name_) {
+		: def(asset_.zone.at(name_)), physics(def.map, reg), window(window_),
+		  asset(asset_) {
 
-		for (auto &t : map.gate) {
+		for (auto &t : def.gate) {
 			auto e = reg.create();
 			reg.emplace<asset::MapGate>(e, t);
 		}
 
-		for (auto &m : map.mob) {
+		for (auto &m : def.mob) {
 			auto e = reg.create();
 			reg.emplace<tag::Mob>(e);
 			reg.emplace<physics::Rect>(e, m);
 			reg.emplace<physics::Body>(e);
-			reg.emplace<decision::Decision>(e, map);
+			reg.emplace<decision::Decision>(e, def.map);
 			reg.emplace<Pose>(
 				e, util::randBool() ? Pose::Facing::Left : Pose::Facing::Right);
 			reg.emplace<tag::PrevPos>(e, m.x, m.y);
@@ -57,7 +56,7 @@ public:
 
 	void enter(physics::Pos pos) {
 
-		window.camera.setMapSize(map);
+		window.camera.setMapSize(def.map);
 
 		auto &sp = asset.sprite.at(asset.config.playerSprite);
 

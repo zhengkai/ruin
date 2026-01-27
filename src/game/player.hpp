@@ -13,7 +13,7 @@ inline bool playerEnterMap(
 	auto view = reg.view<asset::MapGate>();
 	for (auto [_, gate] : view.each()) {
 		if (rect.isOverlap(gate.rect)) {
-			window.enterMap = gate.target;
+			window.enterZone = gate.target;
 			return true;
 		}
 	}

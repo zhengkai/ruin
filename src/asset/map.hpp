@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../pb/asset.pb.h"
+#include "../pb/map.pb.h"
 #include "../physics/rect.hpp"
-#include "../util/format.hpp"
 #include "mob.hpp"
 #include <SDL3/SDL_rect.h>
 #include <algorithm>
@@ -29,7 +29,7 @@ struct MapCell {
 };
 
 struct MapTarget : physics::Pos {
-	std::string name = "";
+	pb::Zone_Name name;
 };
 
 struct MapGate {
@@ -47,13 +47,10 @@ struct MapMob : physics::Rect {
 };
 
 struct Map {
-	std::string name = "";
+	pb::Map_Name name;
 	std::size_t w = 0;
 	std::size_t h = 0;
 	std::vector<MapCell> terrain;
-	std::vector<MapGate> gate;
-	std::vector<MapGate> exit;
-	std::vector<MapMob> mob;
 
 	float checkMove(const physics::Rect &r, float move) const {
 
@@ -125,6 +122,16 @@ struct Map {
 			}
 		}
 	}
+};
+
+struct Zone {
+	pb::Zone_Name name;
+	Map &map;
+	std::vector<MapGate> gate;
+	std::vector<MapGate> exit;
+	std::vector<MapMob> mob;
+
+	Zone(pb::Zone_Name name_, Map &m) : name(name_), map(m) {};
 };
 
 }; // namespace asset
