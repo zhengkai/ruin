@@ -6,7 +6,7 @@ namespace tag {
 
 struct Player {};
 
-struct Monster {};
+struct Mob {};
 
 struct TouchX {
 	bool l = false;

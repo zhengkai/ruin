@@ -2,16 +2,18 @@ syntax = "proto3";
 option go_package = "/pb";
 package pb;
 
-message MonsterDef {
+import "decision.proto";
+
+message MobDef {
 	enum Type {
 		unknown = 0;
-		dog = 1;
-		bird = 2;
-		car = 3;
-		rat = 4;
+		grounded = 1;
+		aerial = 2;
+		climbing = 4;
 	}
 	Type type = 1;
 	string name = 2;
 	string sprite = 3;
 	float scale = 4;
+	Mind mind = 5;
 }

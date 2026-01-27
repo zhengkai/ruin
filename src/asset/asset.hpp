@@ -3,7 +3,7 @@
 #include "../pb/asset.pb.h"
 #include "config.hpp"
 #include "map.hpp"
-#include "monster.hpp"
+#include "mob.hpp"
 #include "sprite.hpp"
 #include "tileset.hpp"
 #include <spdlog/spdlog.h>
@@ -16,6 +16,6 @@ struct Asset {
 	std::unordered_map<std::string, SpriteBox> sprite = {};
 	std::unordered_map<pb::Tileset_Name, Tileset> tileset = {};
 	std::unordered_map<std::string, Map> map = {};
-	std::unordered_map<std::string, Monster> monster = {};
+	std::unordered_map<std::string, Mob> mob = {};
 };
 }; // namespace asset

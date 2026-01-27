@@ -32,7 +32,7 @@ public:
 		mergeConfig();
 		mergeSprite();
 		mergeTileset();
-		mergeMonster();
+		mergeMob();
 
 		for (auto pm : src.map()) {
 			Map cm = {};
@@ -80,25 +80,25 @@ private:
 		}
 	}
 
-	void mergeMonster() {
-		for (const auto &sm : src.monster()) {
+	void mergeMob() {
+		for (const auto &sm : src.mob()) {
 
 			auto &name = sm.name();
 
-			if (dst.monster.contains(name)) {
-				spdlog::warn("duplicate monster name: {}", sm.name());
+			if (dst.mob.contains(name)) {
+				spdlog::warn("duplicate mob name: {}", sm.name());
 				ok = false;
 				break;
 			}
 			if (!dst.sprite.contains(sm.sprite())) {
 				spdlog::warn(
-					"missing monster sprite {}.{}", sm.name(), sm.sprite());
+					"missing mob sprite {}.{}", sm.name(), sm.sprite());
 				ok = false;
 				break;
 			}
 
-			dst.monster.emplace(name,
-				Monster{
+			dst.mob.emplace(name,
+				Mob{
 					.sprite = dst.sprite.at(sm.sprite()),
 					.type = sm.type(),
 				});
@@ -113,7 +113,7 @@ private:
 		convertMapStaticTerrain(m, pm.terrain());
 
 		convertMapTrigger(m, pm.trigger());
-		convertMapMonster(m, dst, pm.monster());
+		convertMapMob(m, dst, pm.mob());
 	};
 };
 }; // namespace asset

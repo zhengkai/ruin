@@ -71,18 +71,18 @@ void convertMapTrigger(
 	}
 };
 
-void convertMapMonster(Map &m,
+void convertMapMob(Map &m,
 	Asset &dst,
-	const google::protobuf::RepeatedPtrField<pb::MapMonster> &li) {
+	const google::protobuf::RepeatedPtrField<pb::MapMob> &li) {
 	for (const auto &c : li) {
-		auto &def = dst.monster.at(c.def());
+		auto &def = dst.mob.at(c.def());
 
 		float scale =
 			(def.scale ? def.scale : 1.0f) * (c.scale() ? c.scale() : 1.0f);
 		float w = scale * def.sprite.physics.w;
 		float h = scale * def.sprite.physics.h;
 
-		m.monster.emplace_back(MapMonster(c.x(), c.y(), w, h, def));
+		m.mob.emplace_back(MapMob(c.x(), c.y(), w, h, def));
 	}
 };
 

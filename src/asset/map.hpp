@@ -3,7 +3,7 @@
 #include "../pb/asset.pb.h"
 #include "../physics/rect.hpp"
 #include "../util/format.hpp"
-#include "monster.hpp"
+#include "mob.hpp"
 #include <SDL3/SDL_rect.h>
 #include <algorithm>
 
@@ -38,10 +38,10 @@ struct MapGate {
 	MapTarget target = {};
 };
 
-struct MapMonster : physics::Rect {
-	const Monster &def;
+struct MapMob : physics::Rect {
+	const Mob &def;
 
-	MapMonster(float x, float y, float w, float h, Monster &m)
+	MapMob(float x, float y, float w, float h, Mob &m)
 		: Rect{Pos{x, y}, w, h}, def(m) {
 	}
 };
@@ -53,7 +53,7 @@ struct Map {
 	std::vector<MapCell> terrain;
 	std::vector<MapGate> gate;
 	std::vector<MapGate> exit;
-	std::vector<MapMonster> monster;
+	std::vector<MapMob> mob;
 
 	float checkMove(const physics::Rect &r, float move) const {
 

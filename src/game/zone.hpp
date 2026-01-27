@@ -42,9 +42,9 @@ public:
 			reg.emplace<asset::MapGate>(e, t);
 		}
 
-		for (auto &m : map.monster) {
+		for (auto &m : map.mob) {
 			auto e = reg.create();
-			reg.emplace<tag::Monster>(e);
+			reg.emplace<tag::Mob>(e);
 			reg.emplace<physics::Rect>(e, m);
 			reg.emplace<physics::Body>(e);
 			reg.emplace<decision::Decision>(e, map);
@@ -84,7 +84,7 @@ public:
 			Pose,
 			decision::Decision>();
 		for (auto [e, rect, prevPos, body, pose, decision] : v3.each()) {
-			stepMonster(e, rect, prevPos, body, pose, decision);
+			stepMob(e, rect, prevPos, body, pose, decision);
 		}
 
 		auto v4 = reg.view<physics::Rect,
@@ -124,7 +124,7 @@ public:
 		}
 	};
 
-	void stepMonster(entt::entity &e,
+	void stepMob(entt::entity &e,
 		const physics::Rect &rect,
 		const tag::PrevPos &prevPos,
 		physics::Body &body,

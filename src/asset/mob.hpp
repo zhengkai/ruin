@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../pb/monster.pb.h"
+#include "../pb/mob.pb.h"
 #include "sprite.hpp"
 
 namespace asset {
 
-struct Monster {
+struct Mob {
 	SpriteBox &sprite;
-	pb::MonsterDef_Type type;
+	pb::MobDef_Type type;
 	float scale = 0.0f;
 };
 

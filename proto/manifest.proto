@@ -3,7 +3,7 @@ package pb;
 
 import "config.proto";
 import "asset.proto";
-import "monster.proto";
+import "mob.proto";
 import "map.proto";
 
 message AssetManifest {
@@ -12,5 +12,5 @@ message AssetManifest {
 	repeated SpriteBox animal = 3;
 	repeated Tileset tileset = 4;
 	repeated Map map = 5;
-	repeated MonsterDef monster = 6;
+	repeated MobDef mob = 6;
 }

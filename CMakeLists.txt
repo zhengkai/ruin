@@ -37,10 +37,11 @@ add_library(pb OBJECT
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/common.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/config.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/pose.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/decision.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/mob.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/asset.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/map.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/manifest.proto
-    ${CMAKE_CURRENT_SOURCE_DIR}/proto/monster.proto
 )
 
 target_include_directories(pb PUBLIC
