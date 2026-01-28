@@ -30,8 +30,4 @@ struct Speed {
 };
 const Speed defaultWalkSpeed = {.v = 13.0f};
 
-struct AssetMapCell {
-	const asset::MapCell &def;
-};
-
 }; // namespace tag

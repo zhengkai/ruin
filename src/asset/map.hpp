@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../name/zone.hpp"
 #include "../pb/asset.pb.h"
 #include "../pb/map.pb.h"
 #include "../physics/rect.hpp"
@@ -29,13 +30,13 @@ struct MapCell {
 };
 
 struct MapTarget : physics::Pos {
-	pb::Zone_Name name;
+	name::Zone name = name::ZoneNone;
 };
 
 struct MapGate {
 	int id = 0;
 	physics::Rect rect = {};
-	MapTarget target = {};
+	MapTarget target;
 };
 
 struct MapMob : physics::Rect {
@@ -122,16 +123,6 @@ struct Map {
 			}
 		}
 	}
-};
-
-struct Zone {
-	pb::Zone_Name name;
-	Map &map;
-	std::vector<MapGate> gate;
-	std::vector<MapGate> exit;
-	std::vector<MapMob> mob;
-
-	Zone(pb::Zone_Name name_, Map &m) : name(name_), map(m) {};
 };
 
 }; // namespace asset

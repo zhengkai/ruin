@@ -3,6 +3,7 @@
 #include "../asset/asset.hpp"
 #include "../context/window.hpp"
 #include "../input.hpp"
+#include "../name/zone.hpp"
 #include "../util/event.hpp"
 #include "../util/input.hpp"
 #include "event.hpp"
@@ -223,29 +224,31 @@ private:
 	};
 
 	void checkEnterMap() {
-		pb::Zone_Name &name = window.enterZone.name;
-		if (name == pb::Zone_Name::Zone_Name_unknown) {
+		auto &name = window.enterZone.name;
+		if (!name) {
 			return;
 		}
 
 		if (!asset.zone.contains(name)) {
-			spdlog::warn("zone not found: {}", pb::Zone_Name_Name(name));
+			spdlog::warn("zone not found: {}", name);
 			window.enterZone.name = pb::Zone_Name::Zone_Name_unknown;
 			return;
 		}
-		spdlog::warn("enter zone: {}", pb::Zone_Name_Name(name));
+		spdlog::warn("enter zone: {}", name);
 
 		window.zone = &asset.zone.at(name);
 
-		auto it = std::ranges::find_if(zone,
-			[&](const std::unique_ptr<Zone> &w) { return w->name == name; });
+		auto it =
+			std::ranges::find_if(zone, [&](const std::unique_ptr<Zone> &w) {
+				return w->def.name == name;
+			});
 
 		if (it != zone.end()) {
 			if (it != zone.begin()) {
 				std::rotate(zone.begin(), it, it + 1);
 			}
 		} else {
-			spdlog::info("new zone {}", pb::Zone_Name_Name(name));
+			spdlog::info("new zone {}", name);
 			zone.insert(
 				zone.begin(), std::make_unique<Zone>(name, asset, window));
 		}

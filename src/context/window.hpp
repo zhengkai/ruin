@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../asset/map.hpp"
+#include "../asset/zone.hpp"
 #include "../camera.hpp"
 #include "monitor.hpp"
 #include <SDL3/SDL_rect.h>

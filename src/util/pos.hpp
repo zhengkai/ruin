@@ -18,7 +18,7 @@ inline physics::Pos convertIDToPos(const int &id, asset::Map &map) {
 };
 
 inline physics::Rect convertIDToRect(
-	const int &id, asset::Map &map, float size = 0.5f) {
+	const int &id, const asset::Map &map, float size = 0.5f) {
 	return {
 		convertIDToPos(id, map.w, map.h),
 		size,

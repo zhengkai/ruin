@@ -3,6 +3,7 @@
 #include "../asset/asset.hpp"
 #include "../asset/map.hpp"
 #include "../asset/sprite.hpp"
+#include "../asset/zone.hpp"
 #include "../common/pose.hpp"
 #include "../context/window.hpp"
 #include "../decision/decision.hpp"
@@ -22,19 +23,19 @@ class Zone {
 private:
 	Reg reg;
 	entt::entity player;
-	const asset::Zone &def;
 	physics::Physics physics;
 	context::Window &window;
 
 public:
+	const asset::Zone &def;
 	const asset::Asset &asset;
 
 public:
-	Zone(const pb::Zone_Name &name_,
+	Zone(const name::Zone name_,
 		const asset::Asset &asset_,
 		context::Window &window_)
-		: def(asset_.zone.at(name_)), physics(def.map, reg), window(window_),
-		  asset(asset_) {
+		: physics(asset_.zone.at(name_).map, reg), window(window_),
+		  asset(asset_), def(asset_.zone.at(name_)) {
 
 		for (auto &t : def.gate) {
 			auto e = reg.create();

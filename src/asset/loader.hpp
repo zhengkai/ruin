@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../name/zone.hpp"
 #include "../util/file.hpp"
 #include "asset.hpp"
 #include "convert-sprite.hpp"
 #include "pb/manifest.pb.h"
 #include "util.hpp"
+#include "zone.hpp"
 #include <SDL3/SDL_render.h>
 
 namespace asset {
@@ -34,19 +36,9 @@ public:
 		mergeTileset();
 		mergeMob();
 
-		for (auto pm : src.map()) {
-			auto name = pm.name();
-			dst.map.emplace(name, name);
-			auto &cm = dst.map.at(name);
-			convertMap(pm, cm);
-		}
+		mergeMap();
+		mergeZone();
 
-		for (auto pz : src.zone()) {
-			auto name = pz.name();
-			dst.zone.emplace(name, name, dst.map.at(pz.map()));
-			auto &cz = dst.zone.at(name);
-			convertZone(pz, cz);
-		}
 		return ok;
 	};
 
@@ -63,7 +55,7 @@ private:
 			z.zone(),
 		};
 		spdlog::info("start zone: {} ({}, {})",
-			pb::Zone_Name_Name(dc.zoneStart.name),
+			dc.zoneStart.name,
 			dc.zoneStart.x,
 			dc.zoneStart.y);
 	};
@@ -115,20 +107,24 @@ private:
 					.type = sm.type(),
 				});
 		}
-	}
-
-	void convertMap(const pb::Map &pm, Map &m) {
-
-		m.w = static_cast<std::size_t>(pm.w());
-		m.h = static_cast<std::size_t>(pm.h());
-
-		convertMapStaticTerrain(m, pm.terrain());
 	};
 
-	void convertZone(const pb::Zone &pm, Zone &z) {
+	void mergeMap() {
+		for (auto pm : src.map()) {
+			auto name = pm.name();
+			dst.map.emplace(name, name);
+			auto &cm = dst.map.at(name);
+			convertMap(pm, cm);
+		}
+	};
 
-		convertMapTrigger(z, pm.trigger());
-		convertMapMob(z, dst, pm.mob());
+	void mergeZone() {
+		for (auto pz : src.zone()) {
+			name::Zone name = {pz.name()};
+			dst.zone.try_emplace(name, name, dst.map.at(pz.map()));
+			auto &cz = dst.zone.at(name);
+			convertZone(pz, dst, cz);
+		}
 	};
 };
 }; // namespace asset

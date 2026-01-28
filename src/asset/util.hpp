@@ -86,4 +86,18 @@ void convertMapMob(Zone &z,
 	}
 };
 
+void convertMap(const pb::Map &pm, Map &m) {
+
+	m.w = static_cast<std::size_t>(pm.w());
+	m.h = static_cast<std::size_t>(pm.h());
+
+	convertMapStaticTerrain(m, pm.terrain());
+};
+
+void convertZone(const pb::Zone &pm, Asset &dst, Zone &z) {
+
+	convertMapTrigger(z, pm.trigger());
+	convertMapMob(z, dst, pm.mob());
+};
+
 }; // namespace asset
