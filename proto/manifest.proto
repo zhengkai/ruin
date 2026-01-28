@@ -5,13 +5,14 @@ import "config.proto";
 import "asset.proto";
 import "mob.proto";
 import "map.proto";
+import "sprite.proto";
 
 message AssetManifest {
 	Config config = 1;
 	repeated SpriteBox character = 2;
 	repeated SpriteBox animal = 3;
 	repeated Tileset tileset = 4;
-	repeated MobDef mob = 5;
+	repeated Mob mob = 5;
 	repeated Map map = 6;
 	repeated Zone zone = 7;
 }

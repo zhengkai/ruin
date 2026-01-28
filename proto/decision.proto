@@ -1,16 +1,22 @@
 syntax = "proto3";
-option go_package = "/pb";
 package pb;
 
-message IdleBehavior {
-	enum Type {
-		unknown = 0;
+message Behavior {
+	enum Idle {
+		unknownIdle = 0;
 		stand = 1;
 		wander = 2;
 		patrol = 3;
 	}
+	enum Movement {
+		unknownMovement = 0;
+		grounded = 1;
+		aerial = 2;
+		climbing = 4;
+	}
 }
 
 message Mind {
-	IdleBehavior.Type idleBehavior = 1;
+	Behavior.Idle idle = 1;
+	Behavior.Movement movement = 2;
 }

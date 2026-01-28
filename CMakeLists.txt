@@ -36,6 +36,7 @@ file(MAKE_DIRECTORY ${PROTO_OUT_DIR})
 add_library(pb OBJECT
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/common.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/config.proto
+    ${CMAKE_CURRENT_SOURCE_DIR}/proto/sprite.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/pose.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/decision.proto
     ${CMAKE_CURRENT_SOURCE_DIR}/proto/mob.proto

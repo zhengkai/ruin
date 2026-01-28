@@ -1,0 +1,34 @@
+syntax = "proto3";
+package pb;
+
+import "common.proto";
+import "pose.proto";
+
+message Sprite {
+	Pose.Type pose = 1;
+	string path = 2;
+	repeated uint32 step = 3;
+}
+
+message SpriteBox {
+	enum Name {
+		unknown = 0;
+
+		birdA = 1001;
+		birdB = 1002;
+		dogA = 1003;
+		dogB = 1004;
+		catA = 1005;
+		catB = 1006;
+		ratA = 1007;
+		ratB = 1008;
+
+		fighter = 2001;
+		samurai = 2002;
+		shinobi = 2003;
+	}
+	Name name = 1;
+	Size physics = 2;
+	VisualSize visual = 4;
+	repeated Sprite sprite = 6;
+}

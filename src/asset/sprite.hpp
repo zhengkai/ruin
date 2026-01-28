@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../name/sprite.hpp"
 #include "common.hpp"
 #include "pb/pose.pb.h"
 #include <SDL3_image/SDL_image.h>
@@ -27,13 +28,13 @@ struct Sprite {
 	};
 };
 
-struct SpriteBox {
-	std::string name;
+struct [[nodiscard]] SpriteBox {
+	const name::Sprite name;
 	std::unordered_map<pb::Pose::Type, Sprite> sprite = {};
 	Size physics = {};
 	VisualSize visual = {};
 
-	SpriteBox(const std::string &name_) : name(name_) {};
+	SpriteBox(const name::Sprite &name_) : name(name_) {};
 
 	const Sprite &get(const pb::Pose::Type &t) const {
 		return sprite.at(t);

@@ -75,14 +75,16 @@ void convertMapMob(Zone &z,
 	Asset &dst,
 	const google::protobuf::RepeatedPtrField<pb::MapMob> &li) {
 	for (const auto &c : li) {
+
 		auto &def = dst.mob.at(c.def());
 
-		float scale =
-			(def.scale ? def.scale : 1.0f) * (c.scale() ? c.scale() : 1.0f);
+		// float scale =
+		// (def.scale ? def.scale : 1.0f) * (c.scale() ? c.scale() : 1.0f);
+		float scale = 1.0f;
 		float w = scale * def.sprite.physics.w;
 		float h = scale * def.sprite.physics.h;
 
-		z.mob.emplace_back(MapMob(c.x(), c.y(), w, h, def));
+		z.mob.emplace_back(MapMob{c.x(), c.y(), w, h, def});
 	}
 };
 

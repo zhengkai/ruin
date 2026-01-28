@@ -5,7 +5,7 @@
 
 namespace name {
 
-struct Zone {
+struct [[nodiscard]] Zone {
 
 private:
 	pb::Zone_Name v;

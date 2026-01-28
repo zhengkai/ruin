@@ -47,17 +47,13 @@ private:
 		auto &sc = src.config();
 		auto &dc = dst.config;
 
-		dc.playerSprite = sc.playersprite();
+		// dc.playerSprite = sc.playersprite();
 
 		auto &z = sc.zonestart();
 		dc.zoneStart = {
 			{z.x(), z.y()},
 			z.zone(),
 		};
-		spdlog::info("start zone: {} ({}, {})",
-			dc.zoneStart.name,
-			dc.zoneStart.x,
-			dc.zoneStart.y);
 	};
 
 	void mergeSprite() {
@@ -66,6 +62,11 @@ private:
 	};
 
 	void mergeTileset() {
+
+		if (src.tileset().empty()) {
+			spdlog::warn("no tileset defined");
+			return;
+		}
 
 		for (const auto &st : src.tileset()) {
 
@@ -85,6 +86,12 @@ private:
 	}
 
 	void mergeMob() {
+
+		if (src.mob().empty()) {
+			spdlog::warn("no mobs defined");
+			return;
+		}
+
 		for (const auto &sm : src.mob()) {
 
 			auto &name = sm.name();
@@ -94,22 +101,30 @@ private:
 				ok = false;
 				break;
 			}
-			if (!dst.sprite.contains(sm.sprite())) {
-				spdlog::warn(
-					"missing mob sprite {}.{}", sm.name(), sm.sprite());
+
+			auto spriteName = name::Sprite{sm.sprite()};
+
+			if (!dst.sprite.contains(spriteName)) {
+				spdlog::warn("missing mob sprite {}.{}", sm.name(), spriteName);
 				ok = false;
 				break;
 			}
 
 			dst.mob.emplace(name,
 				Mob{
-					.sprite = dst.sprite.at(sm.sprite()),
-					.type = sm.type(),
+					.sprite = dst.getSprite(spriteName),
+					// .type = sm.type(),
 				});
 		}
 	};
 
 	void mergeMap() {
+
+		if (src.map().empty()) {
+			spdlog::warn("no maps defined");
+			return;
+		}
+
 		for (auto pm : src.map()) {
 			auto name = pm.name();
 			dst.map.emplace(name, name);
@@ -119,6 +134,12 @@ private:
 	};
 
 	void mergeZone() {
+
+		if (src.zone().empty()) {
+			spdlog::warn("no maps defined");
+			return;
+		}
+
 		for (auto pz : src.zone()) {
 			name::Zone name = {pz.name()};
 			dst.zone.try_emplace(name, name, dst.map.at(pz.map()));

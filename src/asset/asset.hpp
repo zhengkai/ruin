@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../name/sprite.hpp"
 #include "../name/zone.hpp"
 #include "../pb/asset.pb.h"
 #include "../pb/map.pb.h"
@@ -16,10 +17,14 @@ namespace asset {
 
 struct Asset {
 	Config config = {};
-	std::unordered_map<std::string, SpriteBox> sprite = {};
+	std::unordered_map<name::Sprite, SpriteBox> sprite = {};
 	std::unordered_map<pb::Tileset_Name, Tileset> tileset = {};
 	std::unordered_map<pb::Map_Name, Map> map = {};
 	std::unordered_map<name::Zone, Zone> zone = {};
 	std::unordered_map<std::string, Mob> mob = {};
+
+	const SpriteBox &getSprite(const name::Sprite &name) const {
+		return sprite.at(name);
+	};
 };
 }; // namespace asset

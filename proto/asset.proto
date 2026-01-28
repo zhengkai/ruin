@@ -1,9 +1,6 @@
 syntax = "proto3";
 package pb;
 
-import "pose.proto";
-import "common.proto";
-
 message TilesetSize {
 	uint32 w = 1;
 	uint32 h = 2;
@@ -18,17 +15,4 @@ message Tileset {
 	Name name = 1;
 	string path = 2;
 	TilesetSize size = 3;
-}
-
-message Sprite {
-	Pose.Type pose = 1;
-	string path = 2;
-	repeated uint32 step = 3;
-}
-
-message SpriteBox {
-	string name = 1;
-	Size physics = 2;
-	VisualSize visual = 4;
-	repeated Sprite sprite = 6;
 }

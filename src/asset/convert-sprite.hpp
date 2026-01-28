@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../name/sprite.hpp"
 #include "../util/pose.hpp"
 #include "../util/sprite.hpp"
 #include "asset.hpp"
 #include "common.hpp"
-#include "pb/asset.pb.h"
 #include "sprite.hpp"
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
@@ -16,7 +16,7 @@ bool importOneSprite(const pb::Sprite &src,
 	Sprite &dst,
 	SDL_Renderer *r,
 	const std::filesystem::path &file,
-	const std::string &name) {
+	const name::Sprite &name) {
 
 	dst.list = util::loadSpriteFrames(r, file);
 	if (dst.list.empty()) {
@@ -71,8 +71,6 @@ bool convertSpriteBox(const pb::SpriteBox &src,
 	SDL_Renderer *r,
 	const std::filesystem::path &dir) {
 
-	dst.name = src.name();
-
 	for (const auto &row : src.sprite()) {
 
 		auto pose = row.pose();
@@ -98,7 +96,8 @@ void convertSprite(const google::protobuf::RepeatedPtrField<pb::SpriteBox> list,
 	SDL_Renderer *r,
 	const std::filesystem::path &dir) {
 	for (const auto &sc : list) {
-		auto name = sc.name();
+
+		auto name = name::Sprite{sc.name()};
 		if (dst.sprite.contains(name)) {
 			spdlog::warn("duplicate sprite name: {}", name);
 			return;
