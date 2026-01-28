@@ -5,7 +5,18 @@ import "decision.proto";
 import "sprite.proto";
 
 message Mob {
-	string name = 1;
-	Mind mind = 2;
+	enum Type {
+		unknownMob = 0;
+		dog = 1;
+		bird = 2;
+	}
+	enum Movement {
+		unknownMovement = 0;
+		grounded = 1;
+		aerial = 2;
+		climbing = 4;
+	}
+	Type type = 1;
 	SpriteBox.Name sprite = 3;
+	Movement movement = 2;
 }

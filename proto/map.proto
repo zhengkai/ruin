@@ -1,7 +1,9 @@
 syntax = "proto3";
 package pb;
 
+import "mob.proto";
 import "asset.proto";
+import "sprite.proto";
 
 message MapCellTile {
 	Tileset.Name name = 1;
@@ -33,7 +35,8 @@ message MapTriggerWater {
 }
 
 message MapMob {
-	string def = 1;
+	Mob.Type type = 1;
+	SpriteBox.Name sprite = 5;
 	float x = 2;
 	float y = 3;
 	float scale = 4;

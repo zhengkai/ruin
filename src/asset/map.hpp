@@ -1,10 +1,13 @@
 #pragma once
 
+#include "../name/mob.hpp"
+#include "../name/sprite.hpp"
 #include "../name/zone.hpp"
 #include "../pb/asset.pb.h"
 #include "../pb/map.pb.h"
+#include "../physics/pos.hpp"
 #include "../physics/rect.hpp"
-#include "mob.hpp"
+#include "sprite.hpp"
 #include <SDL3/SDL_rect.h>
 #include <algorithm>
 
@@ -39,11 +42,19 @@ struct MapGate {
 	MapTarget target;
 };
 
-struct MapMob : physics::Rect {
-	const Mob &def;
+struct MapMob {
 
-	MapMob(float x, float y, float w, float h, Mob &m)
-		: Rect{Pos{x, y}, w, h}, def(m) {
+	name::MobType type;
+	SpriteBox &sprite;
+	physics::Rect rect;
+
+	MapMob(const name::MobType &type_,
+		SpriteBox &sprite_,
+		const physics::Pos &pos_)
+		: type{type_}, sprite{sprite_}, rect{pos_.x,
+											pos_.y - 0.5f + sprite_.physics.h,
+											sprite_.physics.w,
+											sprite_.physics.h} {
 	}
 };
 

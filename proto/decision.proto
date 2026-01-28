@@ -18,5 +18,4 @@ message Behavior {
 
 message Mind {
 	Behavior.Idle idle = 1;
-	Behavior.Movement movement = 2;
 }

@@ -51,7 +51,7 @@ void convertMapStaticTerrain(
 	}
 };
 
-void convertMapTrigger(
+bool convertMapTrigger(
 	Zone &z, const google::protobuf::RepeatedPtrField<pb::MapTrigger> &li) {
 	for (const auto &t : li) {
 		switch (t.trigger_case()) {
@@ -66,26 +66,46 @@ void convertMapTrigger(
 		case pb::MapTrigger::TRIGGER_NOT_SET:
 		default:
 			spdlog::info("unknown trigger");
+			return false;
 			break;
 		}
 	}
+	return true;
 };
 
-void convertMapMob(Zone &z,
+bool convertMapMob(Zone &z,
 	Asset &dst,
 	const google::protobuf::RepeatedPtrField<pb::MapMob> &li) {
+
+	int index = -1;
 	for (const auto &c : li) {
+		index++;
 
-		auto &def = dst.mob.at(c.def());
+		auto type = name::MobType{c.type()};
+		if (!dst.mob.contains(type)) {
+			spdlog::error(
+				"mob type not found at zone {}({}.{}), index {}: {} {}",
+				z.name,
+				c.x(),
+				c.y(),
+				index,
+				type,
+				dst.mob.size());
+			return false;
+		}
 
-		// float scale =
-		// (def.scale ? def.scale : 1.0f) * (c.scale() ? c.scale() : 1.0f);
-		float scale = 1.0f;
-		float w = scale * def.sprite.physics.w;
-		float h = scale * def.sprite.physics.h;
+		auto spriteName = name::Sprite{c.sprite()};
 
-		z.mob.emplace_back(MapMob{c.x(), c.y(), w, h, def});
+		auto pos = physics::Pos{
+			.x = c.x(),
+			.y = c.y(),
+		};
+
+		z.mob.emplace_back(MapMob{type,
+			spriteName ? dst.sprite.at(spriteName) : dst.mob.at(type).sprite,
+			pos});
 	}
+	return true;
 };
 
 void convertMap(const pb::Map &pm, Map &m) {
@@ -96,10 +116,15 @@ void convertMap(const pb::Map &pm, Map &m) {
 	convertMapStaticTerrain(m, pm.terrain());
 };
 
-void convertZone(const pb::Zone &pm, Asset &dst, Zone &z) {
+bool convertZone(const pb::Zone &pm, Asset &dst, Zone &z) {
 
-	convertMapTrigger(z, pm.trigger());
-	convertMapMob(z, dst, pm.mob());
+	if (!convertMapTrigger(z, pm.trigger())) {
+		return false;
+	}
+	if (!convertMapMob(z, dst, pm.mob())) {
+		return false;
+	}
+	return true;
 };
 
 }; // namespace asset

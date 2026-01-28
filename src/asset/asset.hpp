@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../name/mob.hpp"
 #include "../name/sprite.hpp"
 #include "../name/zone.hpp"
 #include "../pb/asset.pb.h"
@@ -21,7 +22,7 @@ struct Asset {
 	std::unordered_map<pb::Tileset_Name, Tileset> tileset = {};
 	std::unordered_map<pb::Map_Name, Map> map = {};
 	std::unordered_map<name::Zone, Zone> zone = {};
-	std::unordered_map<std::string, Mob> mob = {};
+	std::unordered_map<name::MobType, Mob> mob = {};
 
 	const SpriteBox &getSprite(const name::Sprite &name) const {
 		return sprite.at(name);

@@ -45,13 +45,13 @@ public:
 		for (auto &m : def.mob) {
 			auto e = reg.create();
 			reg.emplace<tag::Mob>(e);
-			reg.emplace<physics::Rect>(e, m);
+			reg.emplace<physics::Rect>(e, m.rect);
 			reg.emplace<physics::Body>(e);
 			reg.emplace<decision::Decision>(e, def.map);
 			reg.emplace<Pose>(
 				e, util::randBool() ? Pose::Facing::Left : Pose::Facing::Right);
-			reg.emplace<tag::PrevPos>(e, m.x, m.y);
-			reg.emplace<asset::SpriteRef>(e, asset::SpriteRef{m.def.sprite});
+			reg.emplace<tag::PrevPos>(e, m.rect.x, m.rect.y);
+			reg.emplace<asset::SpriteRef>(e, asset::SpriteRef{m.sprite});
 		}
 	};
 

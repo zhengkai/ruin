@@ -1,12 +1,12 @@
 #pragma once
 
+#include "../name/mob.hpp"
 #include "../name/zone.hpp"
 #include "../util/file.hpp"
 #include "asset.hpp"
 #include "convert-sprite.hpp"
 #include "pb/manifest.pb.h"
 #include "util.hpp"
-#include "zone.hpp"
 #include <SDL3/SDL_render.h>
 
 namespace asset {
@@ -65,6 +65,7 @@ private:
 
 		if (src.tileset().empty()) {
 			spdlog::warn("no tileset defined");
+			ok = false;
 			return;
 		}
 
@@ -79,6 +80,7 @@ private:
 			auto size = st.size();
 			t.list = util::loadTileset(r, file, size.w(), size.h());
 			if (t.list.empty()) {
+				spdlog::warn("load tileset fail: {}", file.c_str());
 				ok = false;
 				return;
 			}
@@ -89,15 +91,23 @@ private:
 
 		if (src.mob().empty()) {
 			spdlog::warn("no mobs defined");
+			ok = false;
 			return;
 		}
 
+		int i = -1;
 		for (const auto &sm : src.mob()) {
+			i++;
 
-			auto &name = sm.name();
+			auto type = name::MobType{sm.type()};
+			if (!type) {
+				spdlog::warn("invalid mob type: {} {}", i, type);
+				ok = false;
+				return;
+			}
 
-			if (dst.mob.contains(name)) {
-				spdlog::warn("duplicate mob name: {}", sm.name());
+			if (dst.mob.contains(type)) {
+				spdlog::warn("duplicate mob type: {}", type);
 				ok = false;
 				break;
 			}
@@ -105,15 +115,15 @@ private:
 			auto spriteName = name::Sprite{sm.sprite()};
 
 			if (!dst.sprite.contains(spriteName)) {
-				spdlog::warn("missing mob sprite {}.{}", sm.name(), spriteName);
+				spdlog::warn("missing mob sprite {}.{}", type, spriteName);
 				ok = false;
 				break;
 			}
 
-			dst.mob.emplace(name,
+			dst.mob.emplace(type,
 				Mob{
-					.sprite = dst.getSprite(spriteName),
-					// .type = sm.type(),
+					.type = type,
+					.sprite = dst.sprite.at(spriteName),
 				});
 		}
 	};
@@ -122,6 +132,7 @@ private:
 
 		if (src.map().empty()) {
 			spdlog::warn("no maps defined");
+			ok = false;
 			return;
 		}
 
@@ -137,6 +148,7 @@ private:
 
 		if (src.zone().empty()) {
 			spdlog::warn("no maps defined");
+			ok = false;
 			return;
 		}
 
@@ -144,7 +156,10 @@ private:
 			name::Zone name = {pz.name()};
 			dst.zone.try_emplace(name, name, dst.map.at(pz.map()));
 			auto &cz = dst.zone.at(name);
-			convertZone(pz, dst, cz);
+			if (!convertZone(pz, dst, cz)) {
+				ok = false;
+				break;
+			}
 		}
 	};
 };

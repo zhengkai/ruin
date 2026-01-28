@@ -1,12 +1,13 @@
 #pragma once
 
+#include "../name/mob.hpp"
 #include "sprite.hpp"
 
 namespace asset {
 
 struct Mob {
-	const SpriteBox &sprite;
-	// pb::MobDef_Type type;
+	name::MobType type;
+	SpriteBox &sprite;
 };
 
 }; // namespace asset

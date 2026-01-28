@@ -6,4 +6,4 @@ mkdir -p pb
 
 cd ../proto || exit 1
 
-protoc --cpp_out=../misc/pb *.proto
+protoc --cpp_out=../misc/pb ./*.proto
