@@ -54,6 +54,11 @@ message Map {
 	repeated MapCell terrain = 4;
 }
 
+message ZoneBackground {
+	uint32 index = 1;
+	string path = 2;
+}
+
 message Zone {
 	enum Name {
 		unknown = 0;
@@ -64,4 +69,5 @@ message Zone {
 	Map.Name map = 2;
 	repeated MapTrigger trigger = 3;
 	repeated MapMob mob = 4;
+	repeated ZoneBackground background = 5;
 }

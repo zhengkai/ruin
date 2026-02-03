@@ -4,8 +4,35 @@
 #include "asset.hpp"
 #include "map.hpp"
 #include "pb/map.pb.h"
+#include "texture.hpp"
+#include <SDL3_image/SDL_image.h>
 
 namespace asset {
+
+struct FileLoader {
+	SDL_Renderer *r;
+	std::filesystem::path dir;
+
+	FileLoader(SDL_Renderer *r_, std::filesystem::path dir_)
+		: r{r_}, dir{dir_} {};
+
+	bool load(const std::string &path, Texture &t) {
+		auto file = dir / path;
+
+		SDL_Surface *s = IMG_Load(file.c_str());
+		if (!s) {
+			spdlog::error("load image fail: {}", path);
+			return false;
+		}
+
+		t.w = static_cast<float>(s->w);
+		t.h = static_cast<float>(s->h);
+		t.texture = SDL_CreateTextureFromSurface(r, s);
+		SDL_DestroySurface(s);
+
+		return true;
+	}
+};
 
 MapGate convertPBTriggerGate(
 	const uint32_t tid, const pb::MapTriggerGate &g, Zone &z) {
@@ -49,6 +76,19 @@ void convertMapStaticTerrain(
 			}
 		}
 	}
+};
+
+bool convertZoneBackground(Zone &z,
+	FileLoader &loader,
+	const google::protobuf::RepeatedPtrField<pb::ZoneBackground> &li) {
+	for (const auto &b : li) {
+		auto &bg = z.background.emplace_back();
+		bg.index = static_cast<std::size_t>(b.index());
+		if (!loader.load(b.path(), bg)) {
+			return false;
+		}
+	}
+	return true;
 };
 
 bool convertMapTrigger(
@@ -116,8 +156,11 @@ void convertMap(const pb::Map &pm, Map &m) {
 	convertMapStaticTerrain(m, pm.terrain());
 };
 
-bool convertZone(const pb::Zone &pm, Asset &dst, Zone &z) {
+bool convertZone(const pb::Zone &pm, FileLoader &fl, Asset &dst, Zone &z) {
 
+	if (!convertZoneBackground(z, fl, pm.background())) {
+		return false;
+	}
 	if (!convertMapTrigger(z, pm.trigger())) {
 		return false;
 	}

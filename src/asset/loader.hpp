@@ -17,11 +17,12 @@ private:
 	Asset &dst;
 	SDL_Renderer *r;
 	std::filesystem::path dir;
+	FileLoader fileLoader;
 	bool ok = true;
 
 public:
-	Loader(Asset &dst, SDL_Renderer *r, std::filesystem::path dir)
-		: dst{dst}, r{r}, dir{dir} {};
+	Loader(Asset &dst_, SDL_Renderer *r_, std::filesystem::path dir_)
+		: dst{dst_}, r{r_}, dir{dir_}, fileLoader{r_, dir_} {};
 
 	bool load() {
 		auto f = util::file(dir / "manifest.json");
@@ -156,7 +157,7 @@ private:
 			name::Zone name = {pz.name()};
 			dst.zone.try_emplace(name, name, dst.map.at(pz.map()));
 			auto &cz = dst.zone.at(name);
-			if (!convertZone(pz, dst, cz)) {
+			if (!convertZone(pz, fileLoader, dst, cz)) {
 				ok = false;
 				break;
 			}

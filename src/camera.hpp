@@ -9,6 +9,11 @@
 #include <spdlog/spdlog.h>
 #include <tuple>
 
+struct FocusRate {
+	float x;
+	float y;
+};
+
 struct Boundary {
 	float d = 0.0f;
 	float u = 100.0f;
@@ -166,6 +171,15 @@ public:
 
 	physics::Rect focusRect() const {
 		return {focus.x, focus.y, rectW, rectH};
+	};
+
+	FocusRate focusRate() const {
+		return {
+			.x = (focus.finalX - focusBoundary.l) /
+				(focusBoundary.r - focusBoundary.l),
+			.y = (focus.finalY - focusBoundary.u) /
+				(focusBoundary.d - focusBoundary.u),
+		};
 	};
 
 	void setFocus(float x, float y) {

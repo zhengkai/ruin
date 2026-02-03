@@ -4,6 +4,7 @@
 #include "config.hpp"
 #include "context/window.hpp"
 #include "game/reg.hpp"
+#include "render/background.hpp"
 #include "render/base.hpp"
 #include "render/debug.hpp"
 #include "render/dep.hpp"
@@ -79,6 +80,7 @@ bool sdl::init() {
 void sdl::initRender() {
 
 	addRender<render::Debug>();
+	addRender<render::Background>();
 	addRender<render::Map>();
 	addRender<render::Sprite>();
 	addRender<render::Gamepad>();
