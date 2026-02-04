@@ -10,6 +10,8 @@ namespace asset {
 struct ZoneBackground : Texture {
 	std::size_t index = 0;
 
+	std::optional<float> loopCnt;
+
 	~ZoneBackground() {
 		if (texture != nullptr) {
 			SDL_DestroyTexture(texture);

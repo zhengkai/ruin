@@ -81,13 +81,29 @@ void convertMapStaticTerrain(
 bool convertZoneBackground(Zone &z,
 	FileLoader &loader,
 	const google::protobuf::RepeatedPtrField<pb::ZoneBackground> &li) {
-	for (const auto &b : li) {
+
+	z.background.reserve(li.size());
+
+	for (int i = li.size() - 1; i >= 0; --i) {
+		const auto &b = li.Get(i);
 		auto &bg = z.background.emplace_back();
-		bg.index = static_cast<std::size_t>(b.index());
+
+		switch (b.type_case()) {
+		case pb::ZoneBackground::kTile:
+			bg.loopCnt = b.tile().loopcnt();
+			if (bg.loopCnt <= 0.0f) {
+				bg.loopCnt = 1.0f;
+			}
+			break;
+		default:
+			break;
+		}
+
 		if (!loader.load(b.path(), bg)) {
 			return false;
 		}
 	}
+
 	return true;
 };
 

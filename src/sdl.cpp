@@ -79,8 +79,8 @@ bool sdl::init() {
 
 void sdl::initRender() {
 
-	addRender<render::Debug>();
 	addRender<render::Background>();
+	addRender<render::Debug>();
 	addRender<render::Map>();
 	addRender<render::Sprite>();
 	addRender<render::Gamepad>();
