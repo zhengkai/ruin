@@ -34,19 +34,15 @@ struct FileLoader {
 	}
 };
 
-MapGate convertPBTriggerGate(
-	const uint32_t tid, const pb::MapTriggerGate &g, Zone &z) {
+void convertPBTriggerGate(
+	const uint32_t tid, const pb::MapTriggerGate &g, Zone &z, MapGate &mg) {
 
 	int id = static_cast<int>(tid);
-
-	return MapGate{
-		.id = id,
-		.rect = util::convertIDToRect(id, z.map),
-		.target =
-			{
-				{g.x(), g.y()},
-				g.zone(),
-			},
+	mg.id = id;
+	mg.rect = util::convertIDToRect(id, z.map);
+	mg.target = {
+		{g.x(), g.y()},
+		g.zone(),
 	};
 };
 
@@ -54,6 +50,7 @@ void convertMapStaticTerrain(
 	Map &m, const google::protobuf::RepeatedPtrField<pb::MapCell> &li) {
 
 	std::unordered_map<std::size_t, const pb::MapCell &> tile = {};
+	tile.reserve(li.size());
 	for (const auto &s : li) {
 		tile.emplace(static_cast<std::size_t>(s.id()), s);
 	}
@@ -61,18 +58,13 @@ void convertMapStaticTerrain(
 	for (std::size_t y = 0; y < m.h; y++) {
 		for (std::size_t x = 0; x < m.w; x++) {
 			auto id = y * m.w + x;
+			auto &c = m.terrain.emplace_back();
 			if (tile.contains(id)) {
 				auto &t = tile.at(id);
 				auto i = static_cast<int>(id);
-				m.terrain.emplace_back(MapCell{
-					.tileName = t.tile().name(),
-					.tileID = static_cast<int>(t.tile().id()),
-					.pos = util::convertIDToPos(i, m),
-				});
-			} else {
-				m.terrain.emplace_back(MapCell{
-					.tileName = pb::Tileset_Name_unknown,
-				});
+				c.tileName = t.tile().name();
+				c.tileID = static_cast<int>(t.tile().id());
+				c.pos = util::convertIDToPos(i, m);
 			}
 		}
 	}
@@ -112,11 +104,13 @@ bool convertMapTrigger(
 	for (const auto &t : li) {
 		switch (t.trigger_case()) {
 		case pb::MapTrigger::kGate: {
-			z.gate.emplace_back(convertPBTriggerGate(t.id(), t.gate(), z));
+			auto &mg = z.gate.emplace_back();
+			convertPBTriggerGate(t.id(), t.gate(), z, mg);
 			break;
 		}
 		case pb::MapTrigger::kExit: {
-			z.exit.emplace_back(convertPBTriggerGate(t.id(), t.exit(), z));
+			auto &mg = z.exit.emplace_back();
+			convertPBTriggerGate(t.id(), t.gate(), z, mg);
 			break;
 		}
 		case pb::MapTrigger::TRIGGER_NOT_SET:
@@ -157,9 +151,9 @@ bool convertMapMob(Zone &z,
 			.y = c.y(),
 		};
 
-		z.mob.emplace_back(MapMob{type,
+		z.mob.emplace_back(type,
 			spriteName ? dst.sprite.at(spriteName) : dst.mob.at(type).sprite,
-			pos});
+			pos);
 	}
 	return true;
 };
@@ -185,5 +179,4 @@ bool convertZone(const pb::Zone &pm, FileLoader &fl, Asset &dst, Zone &z) {
 	}
 	return true;
 };
-
 }; // namespace asset

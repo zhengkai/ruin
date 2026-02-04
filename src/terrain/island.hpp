@@ -10,15 +10,15 @@ namespace terrain {
 
 struct IslandChecker {
 	util::Matrix<uint8_t> &src;
-	std::vector<IslandPos> li;
 	std::unordered_map<IslandPos, uint8_t, IslandPosHash> visited;
 
-	IslandChecker(util::Matrix<uint8_t> &src, std::size_t x, std::size_t y)
-		: src(src) {
-		scan(IslandPos{x, y});
+	IslandChecker(util::Matrix<uint8_t> &src_) : src(src_) {};
+
+	void scan(std::size_t x, std::size_t y, std::vector<IslandPos> &li) {
+		scan(IslandPos{x, y}, li);
 	};
 
-	void scan(IslandPos pos) {
+	void scan(IslandPos pos, std::vector<IslandPos> &li) {
 		if (visited.contains(pos)) {
 			return;
 		}
@@ -32,16 +32,16 @@ struct IslandChecker {
 		src[pos.x][pos.y] = 0;
 
 		if (pos.x > 0) {
-			scan(IslandPos{pos.x - 1, pos.y});
+			scan(pos.x - 1, pos.y, li);
 		}
 		if (pos.x + 1 < src.w()) {
-			scan(IslandPos{pos.x + 1, pos.y});
+			scan(pos.x + 1, pos.y, li);
 		}
 		if (pos.y > 0) {
-			scan(IslandPos{pos.x, pos.y - 1});
+			scan(pos.x, pos.y - 1, li);
 		}
 		if (pos.y + 1 < src.h()) {
-			scan(IslandPos{pos.x, pos.y + 1});
+			scan(pos.x, pos.y + 1, li);
 		}
 	}
 };
@@ -56,8 +56,9 @@ inline std::vector<std::vector<IslandPos>> Island(util::Matrix<uint8_t> &m) {
 			if (!m(x, y)) {
 				continue;
 			}
-			IslandChecker checker(m, x, y);
-			li.emplace_back(std::move(checker.li));
+			auto &item = li.emplace_back();
+			auto checker = IslandChecker{m};
+			checker.scan(x, y, item);
 		}
 	}
 

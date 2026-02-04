@@ -40,10 +40,8 @@ static std::unordered_multimap<IslandPos, IslandPos> genBasicOutline(
 	return adj;
 };
 
-static std::vector<IslandPos> walkOutline(
-	std::unordered_multimap<IslandPos, IslandPos> &adj) {
-
-	std::vector<IslandPos> re;
+static void walkOutline(std::unordered_multimap<IslandPos, IslandPos> &adj,
+	std::vector<IslandPos> &re) {
 
 	// 从某个点开始，遍历轮廓线
 	while (!adj.empty()) {
@@ -81,8 +79,6 @@ static std::vector<IslandPos> walkOutline(
 			re = outline;
 		}
 	}
-
-	return re;
 };
 
 static std::size_t minXYIndex(const std::vector<IslandPos> &v) {
@@ -141,15 +137,13 @@ static std::vector<IslandPos> mergeCollinear(std::vector<IslandPos> &in) {
 	return out;
 }
 
-inline std::vector<IslandPos> Outline(const std::vector<IslandPos> &pl) {
+inline void Outline(
+	const std::vector<IslandPos> &pl, std::vector<IslandPos> &re) {
 
 	auto adj = genBasicOutline(pl);
-
-	auto re = walkOutline(adj);
-
+	walkOutline(adj, re);
 	rotateOutline(re);
-
-	return mergeCollinear(re);
+	mergeCollinear(re);
 };
 
 inline std::vector<std::vector<terrain::IslandPos>> MapOutline(
@@ -167,7 +161,8 @@ inline std::vector<std::vector<terrain::IslandPos>> MapOutline(
 	std::vector<std::vector<terrain::IslandPos>> outline;
 	outline.reserve(size);
 	for (auto &is : island) {
-		outline.emplace_back(terrain::Outline(is));
+		auto &re = outline.emplace_back();
+		terrain::Outline(is, re);
 	}
 
 	return outline;

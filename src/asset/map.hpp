@@ -39,7 +39,7 @@ struct MapTarget : physics::Pos {
 struct MapGate {
 	int id = 0;
 	physics::Rect rect = {};
-	MapTarget target;
+	MapTarget target = {};
 };
 
 struct MapMob {
