@@ -2,9 +2,9 @@
 
 #include "../name/sprite.hpp"
 #include "../util/pose.hpp"
-#include "../util/sprite.hpp"
 #include "asset.hpp"
 #include "common.hpp"
+#include "file-loader.hpp"
 #include "sprite.hpp"
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
@@ -12,15 +12,37 @@
 
 namespace asset {
 
+inline std::vector<SDL_Texture *> loadSpriteFrames(
+	SDL_Renderer *r, Texture &t) {
+
+	std::vector<SDL_Texture *> fl;
+	SDL_FRect dst{0.0f, 0.0f, t.h, t.h};
+
+	int h = static_cast<int>(t.h);
+
+	for (float x = 0.0f; x < t.w; x += t.h) {
+		SDL_FRect src{x, 0, t.h, t.h};
+		SDL_Texture *f = SDL_CreateTexture(
+			r, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, h, h);
+
+		SDL_SetRenderTarget(r, f);
+		SDL_RenderTexture(r, t.texture, &src, &dst);
+		SDL_SetRenderTarget(r, nullptr);
+		fl.push_back(f);
+	}
+
+	return fl;
+};
+
 bool importOneSprite(const pb::Sprite &src,
 	Sprite &dst,
+	Texture &t,
 	SDL_Renderer *r,
-	const std::filesystem::path &file,
 	const name::Sprite &name) {
 
-	dst.list = util::loadSpriteFrames(r, file);
+	dst.list = loadSpriteFrames(r, t);
 	if (dst.list.empty()) {
-		spdlog::warn("sprite character {} is empty: {}", name, file.string());
+		spdlog::warn("sprite character {} is empty", name);
 		return false;
 	}
 
@@ -66,10 +88,8 @@ bool importSpriteMeta(const pb::SpriteBox &src, SpriteBox &dst) {
 	return true;
 };
 
-bool convertSpriteBox(const pb::SpriteBox &src,
-	SpriteBox &dst,
-	SDL_Renderer *r,
-	const std::filesystem::path &dir) {
+bool convertSpriteBox(
+	const pb::SpriteBox &src, SpriteBox &dst, FileLoader &loader) {
 
 	for (const auto &row : src.sprite()) {
 
@@ -78,8 +98,13 @@ bool convertSpriteBox(const pb::SpriteBox &src,
 		dst.sprite.emplace(pose, pose);
 		auto &sp = dst.sprite.at(pose);
 
-		auto file = dir / row.path();
-		if (!importOneSprite(row, sp, r, file, dst.name)) {
+		auto t = Texture{};
+		if (!loader.load(row.path(), t)) {
+			return false;
+		}
+
+		if (!importOneSprite(row, sp, t, loader.r, dst.name)) {
+			spdlog::warn("sprite box {} load fail: {}", dst.name, row.path());
 			return false;
 		}
 	}
@@ -93,8 +118,7 @@ bool convertSpriteBox(const pb::SpriteBox &src,
 
 void convertSprite(const google::protobuf::RepeatedPtrField<pb::SpriteBox> list,
 	Asset &dst,
-	SDL_Renderer *r,
-	const std::filesystem::path &dir) {
+	FileLoader &loader) {
 	for (const auto &sc : list) {
 
 		auto name = name::Sprite{sc.name()};
@@ -104,7 +128,7 @@ void convertSprite(const google::protobuf::RepeatedPtrField<pb::SpriteBox> list,
 		}
 		dst.sprite.emplace(name, name);
 		auto &b = dst.sprite.at(name);
-		convertSpriteBox(sc, b, r, dir);
+		convertSpriteBox(sc, b, loader);
 	}
 };
 

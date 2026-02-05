@@ -3,8 +3,11 @@
 #include "../name/mob.hpp"
 #include "../name/zone.hpp"
 #include "../util/file.hpp"
+#include "../util/path.hpp"
 #include "asset.hpp"
-#include "convert-sprite.hpp"
+#include "file-loader.hpp"
+#include "load-sprite.hpp"
+#include "load-tileset.hpp"
 #include "pb/manifest.pb.h"
 #include "util.hpp"
 #include <SDL3/SDL_render.h>
@@ -58,8 +61,8 @@ private:
 	};
 
 	void mergeSprite() {
-		convertSprite(src.character(), dst, r, dir);
-		convertSprite(src.animal(), dst, r, dir);
+		convertSprite(src.character(), dst, fileLoader);
+		convertSprite(src.animal(), dst, fileLoader);
 	};
 
 	void mergeTileset() {
@@ -75,12 +78,18 @@ private:
 			auto name = st.name();
 
 			dst.tileset.emplace(name, name);
-			auto &t = dst.tileset.at(name);
+			auto &ts = dst.tileset.at(name);
 
 			auto file = dir / st.path();
 			auto size = st.size();
-			t.list = util::loadTileset(r, file, size.w(), size.h());
-			if (t.list.empty()) {
+
+			auto t = Texture{};
+			if (!fileLoader.load(st.path(), t)) {
+				return;
+			}
+
+			ts.list = loadTileset(r, t, size);
+			if (ts.list.empty()) {
 				spdlog::warn("load tileset fail: {}", st.path());
 				ok = false;
 				return;
