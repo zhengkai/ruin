@@ -8,12 +8,6 @@ message Behavior {
 		wander = 2;
 		patrol = 3;
 	}
-	enum Movement {
-		unknownMovement = 0;
-		grounded = 1;
-		aerial = 2;
-		climbing = 4;
-	}
 }
 
 message Mind {

@@ -19,7 +19,14 @@ struct FileLoader {
 	bool load(const std::string &path, Texture &t) {
 		auto file = dir / path;
 
-		SDL_Surface *s = IMG_Load(file.c_str());
+#ifdef _MSC_VER
+	auto u8 = file.generic_u8string(); // std::u8string
+	std::string p(u8.begin(), u8.end()); // char8_t -> char (逐字节拷贝)
+	SDL_Surface *s = IMG_Load(p.c_str());
+#else
+	SDL_Surface *s = IMG_Load(file.c_str());
+#endif
+
 		if (!s) {
 			spdlog::error("load image fail: {}", path);
 			return false;

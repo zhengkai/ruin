@@ -81,7 +81,7 @@ private:
 			auto size = st.size();
 			t.list = util::loadTileset(r, file, size.w(), size.h());
 			if (t.list.empty()) {
-				spdlog::warn("load tileset fail: {}", file.c_str());
+				spdlog::warn("load tileset fail: {}", st.path());
 				ok = false;
 				return;
 			}
