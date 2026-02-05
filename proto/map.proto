@@ -47,6 +47,7 @@ message Map {
 		unknown = 0;
 		map2 = 2;
 		map3 = 3;
+		mapWell = 4;
 	}
 	Map.Name name = 1;
 	uint32 w = 2;
@@ -71,6 +72,7 @@ message Zone {
 		unknown = 0;
 		zone2 = 2;
 		zone3 = 3;
+		zoneWell = 4;
 	}
 	Zone.Name name = 1;
 	Map.Name map = 2;

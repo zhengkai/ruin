@@ -22,7 +22,7 @@ class Zone {
 
 private:
 	Reg reg;
-	entt::entity player;
+	entt::entity player = entt::null;
 	physics::Physics physics;
 	context::Window &window;
 
@@ -56,6 +56,17 @@ public:
 	};
 
 	void enter(physics::Pos pos) {
+
+		spdlog::info("enter map {} {}.{}", def.name, pos.x, pos.y);
+
+		if (reg.valid(player)) {
+			spdlog::info("reset player pos");
+			auto &rect = reg.get<physics::Rect>(player);
+			rect.x = pos.x;
+			rect.y = pos.y + rect.h - 0.5f; // TODO 怎么第一次图进不用修正
+			reg.emplace<tag::PrevPos>(player, pos.x, pos.y);
+			return;
+		}
 
 		window.camera.setMapSize(def.map);
 
@@ -111,7 +122,7 @@ public:
 		physics::Body &body,
 		Pose &pose) {
 
-		if (control.btnU && playerEnterMap(reg, rect, window)) {
+		if (control.btnU && playerEnterZone(reg, rect, window)) {
 			return;
 		};
 

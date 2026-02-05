@@ -18,6 +18,12 @@ public:
 		reg.destroy(e);
 	};
 
+	// valid
+
+	[[nodiscard]] bool valid(const entt::entity &e) const {
+		return reg.valid(e);
+	};
+
 	// view
 
 	template <typename... Components> [[nodiscard]] auto view() {

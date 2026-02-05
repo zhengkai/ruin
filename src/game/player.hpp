@@ -7,7 +7,7 @@
 
 namespace game {
 
-inline bool playerEnterMap(
+inline bool playerEnterZone(
 	Reg &reg, const physics::Rect &rect, context::Window &window) {
 
 	auto view = reg.view<asset::MapGate>();

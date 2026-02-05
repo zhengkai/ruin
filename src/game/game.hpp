@@ -61,7 +61,7 @@ public:
 			return;
 		}
 
-		checkEnterMap();
+		checkEnterZone();
 
 		parseEvent();
 		parseInput();
@@ -223,7 +223,7 @@ private:
 		}
 	};
 
-	void checkEnterMap() {
+	void checkEnterZone() {
 		auto &name = window.enterZone.name;
 		if (!name) {
 			return;
