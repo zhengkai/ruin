@@ -322,6 +322,12 @@ private:
 		case SDL_EVENT_WINDOW_HDR_STATE_CHANGED:
 		case SDL_EVENT_WINDOW_SHOWN:
 		case SDL_EVENT_WINDOW_HIDDEN:
+		case SDL_EVENT_GAMEPAD_UPDATE_COMPLETE:
+		case SDL_EVENT_JOYSTICK_AXIS_MOTION:
+		case SDL_EVENT_JOYSTICK_BUTTON_DOWN:
+		case SDL_EVENT_JOYSTICK_BUTTON_UP:
+		case SDL_EVENT_JOYSTICK_UPDATE_COMPLETE:
+		case SDL_EVENT_JOYSTICK_HAT_MOTION:
 			// do nothing
 			// spdlog::info("known event type: {}",
 			// util::getSDLEventName(e.type));

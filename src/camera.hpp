@@ -170,7 +170,7 @@ public:
 	};
 
 	physics::Rect focusRect() const {
-		return {focus.x, focus.y, rectW, rectH};
+		return {focus.finalX, focus.finalY, rectW, rectH};
 	};
 
 	FocusRate focusRate() const {
@@ -221,19 +221,22 @@ public:
 	};
 
 	void setFocusOffset(const float &axisX, const float &axisY) {
-		if (focus.offsetX != axisX || focus.offsetY != axisY) {
-			float x = focus.offsetX - axisX;
-			float y = focus.offsetY - axisY;
-			float dist = std::sqrt(x * x + y * y);
-			if (dist > config::focusSpeed) {
-				float ratio = config::focusSpeed / dist;
-				focus.offsetX -= x * ratio;
-				focus.offsetY -= y * ratio;
-			} else {
-				focus.offsetX = axisX;
-				focus.offsetY = axisY;
-			}
+
+		if (focus.offsetX == axisX && focus.offsetY == axisY) {
+			return;
 		};
+		float x = focus.offsetX - axisX;
+		float y = focus.offsetY - axisY;
+		float dist = std::sqrt(x * x + y * y);
+		if (dist > config::focusSpeed) {
+			float ratio = config::focusSpeed / dist;
+			focus.offsetX -= x * ratio;
+			focus.offsetY -= y * ratio;
+		} else {
+			focus.offsetX = axisX;
+			focus.offsetY = axisY;
+		}
+		calcFocus(prevFocusX, prevFocusY);
 	};
 
 	void setMapSize(const asset::Map &m) {
