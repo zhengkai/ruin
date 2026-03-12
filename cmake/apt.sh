@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt install -y autoconf-archive
+
 # x11
 
 sudo apt install -y libx11-dev libxft-dev libxext-dev

@@ -4,7 +4,7 @@
 
 namespace util {
 
-inline const std::string poseName(::pb::Pose_Type t) {
+inline const absl::string_view poseName(::pb::Pose_Type t) {
 	return pb::Pose::Type_descriptor()->FindValueByNumber(t)->name();
 };
 

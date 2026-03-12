@@ -50,6 +50,7 @@ version:
 tidy:
 	find src -type f \( -name '*.h' -o -name '*.hpp' -o -name '*.cpp' \) | xargs clang-tidy -p build
 
-clean:
+clean-build:
 	@rm -rf build || :
-	./run.sh
+
+clean: clean-build default
