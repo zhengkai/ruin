@@ -1,4 +1,5 @@
-#!/bin/bash -ex
+#! /usr/bin/env bash
+set -ex
 
 BUILD_TYPE="${1:-Debug}"
 

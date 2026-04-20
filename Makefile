@@ -1,4 +1,4 @@
-SHELL:=/bin/bash
+SHELL:=/usr/bin/env bash
 
 export RUIN_DIR := $(CURDIR)/build/Release
 
