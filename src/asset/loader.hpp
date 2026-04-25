@@ -25,7 +25,9 @@ private:
 
 public:
 	Loader(Asset &dst_, SDL_Renderer *r_, std::filesystem::path dir_)
-		: dst{dst_}, r{r_}, dir{dir_}, fileLoader{r_, dir_} {};
+		: dst{dst_}, r{r_}, dir{dir_}, fileLoader{r_, dir_} {
+		spdlog::info("base dir {}", dir_.string());
+	};
 
 	bool load() {
 		auto f = util::file(dir / "manifest.json");

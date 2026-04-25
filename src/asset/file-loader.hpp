@@ -27,6 +27,7 @@ struct FileLoader {
 
 		if (!s) {
 			spdlog::error("load image fail: {}", path);
+			spdlog::error("load image fail: {}", file.string());
 			return false;
 		}
 

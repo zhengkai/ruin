@@ -35,6 +35,9 @@ ver:
 ruin:
 	./build/ruin --ruin
 
+strace:
+	strace -f -e openat ./build/ruin 2>&1 | grep -E 'wayland|xkbcommon|decor|ffi' xt
+
 small:
 	./build/ruin --grid-w=20 --grid-h=16
 
@@ -51,6 +54,7 @@ tidy:
 	find src -type f \( -name '*.h' -o -name '*.hpp' -o -name '*.cpp' \) | xargs clang-tidy -p build
 
 clean-build:
-	@rm -rf build || :
+	rm -rf build || :
+	rm -rf /tmp/ruin-build || :
 
 clean: clean-build default

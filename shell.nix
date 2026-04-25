@@ -26,50 +26,40 @@
     unzip
     zip
 
-    glibc
-
+    fmt
+    fmt.dev
+    spdlog
+    spdlog.dev
+    cli11
+    protobuf
+    abseil-cpp_202505
+    zlib
+    zlib.dev
     sdl3
+    sdl3.dev
+    sdl3-image
+    sdl3-image.dev
+    sdl3-ttf
+    entt
+    freetype
+    freetype.dev
+
     wayland
+    wayland.dev
     wayland-protocols
     wayland-scanner
-    libxkbcommon
-    libdecor
-    libffi
-    mesa
-    vulkan-loader
-    libglvnd
-    libdrm
-    libX11
-    libXcursor
-    libXrandr
-    libXi
-    libXext
-    libXfixes
-    libXinerama
-    libXScrnSaver
-    libGL
 
     alsa-lib
+    alsa-lib.dev
     libpulseaudio
+    libpulseaudio.dev
     udev
+    udev.dev
     dbus
+    dbus.dev
   ];
 
   profile = ''
-    export LD_LIBRARY_PATH=${pkgs.lib.makeLibraryPath [
-      pkgs.glibc
-      pkgs.sdl3
-      pkgs.wayland
-      pkgs.libxkbcommon
-      pkgs.libdecor
-      pkgs.mesa
-      pkgs.vulkan-loader
-      pkgs.udev
-      pkgs.libglvnd
-      pkgs.dbus
-      pkgs.alsa-lib
-      pkgs.libpulseaudio
-    ]}
     export VCPKG_FORCE_SYSTEM_BINARIES=1
     export SDL_LOG_PRIORITY=verbose
     export SDL_VIDEODRIVER=wayland
