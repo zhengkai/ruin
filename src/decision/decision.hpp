@@ -31,7 +31,7 @@ struct Decision {
 	};
 
 	void Do(const physics::Rect &rect,
-		const tag::PrevPos &prevPos,
+		const tag::PrevPos &_,
 		physics::Body &body,
 		Pose &pose) {
 

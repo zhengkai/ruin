@@ -2,6 +2,6 @@
 
 cd "$(dirname "$(readlink -f "$0")")" || exit 1
 
-export LD_PRELOAD=
+export SDL_VIDEO_DRIVER=wayland
 
 ldd ../build/ruin | awk '{print $1}' | sort | tee result.txt
