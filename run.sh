@@ -26,8 +26,6 @@ if [ ! -e build ]; then
 	ln -s /tmp/ruin-build build
 fi
 
-# fmt_DIR="$(nix-build '<nixpkgs>' -A fmt)/lib"
-
 cmake \
 	-S . \
 	-B build \

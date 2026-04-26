@@ -3,12 +3,14 @@
 (pkgs.buildFHSEnv {
   name = "ruin";
   targetPkgs = pkgs: with pkgs; [
-    autoconf-archive
-    libtool
     autoconf
+    autoconf-archive
     automake
     bash
     binutils
+    ccache
+    clang
+    clang-tools
     cmake
     coreutils
     curl
@@ -17,9 +19,11 @@
     gnumake
     gnutar
     gzip
+    libtool
     linuxHeaders
     m4
     ninja
+    nodejs
     perl
     pkg-config
     python3
@@ -32,7 +36,7 @@
     spdlog.dev
     cli11
     protobuf
-    abseil-cpp_202505
+    abseil-cpp.dev
     zlib
     zlib.dev
     sdl3
@@ -57,6 +61,9 @@
     udev.dev
     dbus
     dbus.dev
+
+    zsh
+    ncurses
   ];
 
   profile = ''

@@ -41,6 +41,10 @@ strace:
 small:
 	./build/ruin --grid-w=20 --grid-h=16
 
+.PHONY: asset
+asset:
+	git clone --depth 1 https://github.com/zhengkai/ruin-asset.git asset
+
 gdb:
 	gdb ./build/ruin
 
