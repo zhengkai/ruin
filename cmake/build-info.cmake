@@ -31,6 +31,7 @@ else()
 	set(GIT_DIRTY "yes")
 endif()
 
+unset(ENV{SOURCE_DATE_EPOCH})
 string(TIMESTAMP BUILD_TIMESTAMP "%Y-%m-%d %H:%M:%S")
 
 configure_file(
