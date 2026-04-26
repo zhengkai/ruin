@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
 concurrency:
   group: build-windows
   cancel-in-progress: true
@@ -16,8 +19,8 @@ defaults:
 env:
   CC: clang
   CXX: clang++
-  CMAKE_VERSION: "4.2.1"
-  VCPKG_CACHE_KEY_PREFIX: "vcpkg7"
+  CMAKE_VERSION: "4.3.2"
+  VCPKG_CACHE_KEY_PREFIX: "vcpkg"
   VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\.vcpkg_binary_cache
 
 jobs:
@@ -38,7 +41,7 @@ jobs:
 
       - name: Load Cache
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             cmake-portable
@@ -47,7 +50,7 @@ jobs:
             .vcpkg_binary_cache
           key: ${{ env.CACHE_KEY }}
 
-      - name: Download CMake ${{ env.CMAKE_VERSION }}
+      - name: Download CMake
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           Invoke-WebRequest -Uri "https://github.com/Kitware/CMake/releases/download/v$env:CMAKE_VERSION/cmake-$env:CMAKE_VERSION-windows-x86_64.zip" -OutFile cmake.zip
@@ -87,7 +90,7 @@ jobs:
 
       - name: Save Cache
         if: steps.cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         with:
           path: |
             cmake-portable
@@ -107,7 +110,7 @@ jobs:
           .\ruin.exe --version
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ruin-windows
           path: build\Release\*
@@ -129,13 +132,13 @@ jobs:
           cd build\Release
           7z a ..\..\ruin-win.zip .\*
 
-      - name: Create/Update Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: daily
-          name: Daily Build
-          prerelease: true
-          body: "Latest daily build."
-          files: ruin-win.zip
+      - name: Delete old daily release
         env:
-          GITHUB_TOKEN: ${{ secrets.RUIN_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        continue-on-error: true
+        run: gh release delete daily --cleanup-tag -y
+
+      - name: Create daily release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create daily ruin-win.zip --title "Daily Build" --notes "Latest daily build." --prerelease --target "$env:GITHUB_SHA"
