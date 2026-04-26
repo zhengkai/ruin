@@ -30,36 +30,25 @@
     unzip
     zip
 
-    fmt
     fmt.dev
-    spdlog
     spdlog.dev
     cli11
     protobuf
     abseil-cpp.dev
-    zlib
     zlib.dev
-    sdl3
     sdl3.dev
-    sdl3-image
     sdl3-image.dev
     sdl3-ttf
     entt
-    freetype
     freetype.dev
 
-    wayland
     wayland.dev
     wayland-protocols
     wayland-scanner
 
-    alsa-lib
     alsa-lib.dev
-    libpulseaudio
     libpulseaudio.dev
-    udev
     udev.dev
-    dbus
     dbus.dev
 
     zsh
