@@ -9,7 +9,7 @@ struct Debug : base {
 	using base::base;
 
 	void init() override {};
-	void render(const game::Reg &reg) override {
+	void render(const game::Reg &_) override {
 
 		auto zone = d.window.zone;
 		if (!zone) {

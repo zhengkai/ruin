@@ -14,7 +14,6 @@ class sdl {
 
 private:
 	const context::Window &cw;
-	const asset::Asset &asset;
 
 	Text text = {};
 	SDL_Renderer *r = nullptr;

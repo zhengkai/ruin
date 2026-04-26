@@ -6,7 +6,7 @@
 namespace util {
 
 inline physics::Pos convertIDToPos(
-	const int &id, const std::size_t &w, const std::size_t &h) {
+	const int &id, const std::size_t &w, const std::size_t &_) {
 	return physics::Pos{
 		.x = static_cast<float>(id % w),
 		.y = static_cast<float>(id / w),

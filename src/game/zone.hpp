@@ -35,7 +35,7 @@ public:
 		const asset::Asset &asset_,
 		context::Window &window_)
 		: physics(asset_.zone.at(name_).map, reg), window(window_),
-		  asset(asset_), def(asset_.zone.at(name_)) {
+		  def(asset_.zone.at(name_)), asset(asset_) {
 
 		for (auto &t : def.gate) {
 			auto e = reg.create();
@@ -135,7 +135,7 @@ public:
 		}
 	};
 
-	void stepMob(entt::entity &e,
+	void stepMob(entt::entity &_,
 		const physics::Rect &rect,
 		const tag::PrevPos &prevPos,
 		physics::Body &body,

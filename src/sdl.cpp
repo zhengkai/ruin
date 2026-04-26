@@ -19,8 +19,9 @@
 #include <memory>
 #include <spdlog/spdlog.h>
 
-static SDL_AppResult SDL_Fail() {
-	SDL_LogError(SDL_LOG_CATEGORY_CUSTOM, "Error %s", SDL_GetError());
+static SDL_AppResult SDL_Fail(const char *prefix) {
+	SDL_LogError(
+		SDL_LOG_CATEGORY_CUSTOM, "%s Error: %s", prefix, SDL_GetError());
 	return SDL_APP_FAILURE;
 }
 
@@ -28,7 +29,7 @@ sdl::sdl(const context::Window &cw_,
 	const asset::Asset &asset_,
 	SDL_Renderer *r,
 	SDL_Window *w)
-	: cw(cw_), asset(asset_), r(r), w(w), rd(text, asset_, r, cw_) {
+	: cw(cw_), r(r), w(w), rd(text, asset_, r, cw_) {
 }
 
 inline asset::Size initWinSize() {
@@ -142,8 +143,8 @@ sdl::~sdl() {
 
 std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset) {
 
-	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD)) {
-		SDL_Fail();
+	if (!SDL_Init(SDL_INIT_VIDEO)) {
+		SDL_Fail("SDL_Init");
 		return nullptr;
 	}
 
@@ -175,13 +176,13 @@ std::unique_ptr<sdl> createSDL(context::Window &cw, asset::Asset &asset) {
 	SDL_DestroyProperties(props);
 
 	if (!w) {
-		SDL_Fail();
+		SDL_Fail("SDL_CreateWindowWithProperties");
 		return nullptr;
 	}
 
 	auto r = SDL_CreateRenderer(w, NULL);
 	if (!r) {
-		SDL_Fail();
+		SDL_Fail("SDL_CreateRenderer");
 		return nullptr;
 	}
 

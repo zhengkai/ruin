@@ -21,9 +21,6 @@ export CCACHE_DIRECT=1
 export CCACHE_MAXSIZE=50G
 export CMAKE_GENERATOR=Ninja
 
-export VCPKG_DEFAULT_BINARY_CACHE="${PWD}/.vcpkg_binary_cache"
-mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
-
 mkdir -p /tmp/ruin-build
 if [ ! -e build ]; then
 	ln -s /tmp/ruin-build build
@@ -37,7 +34,6 @@ cmake \
 	-DCMAKE_CXX_COMPILER=clang++ \
 	-DCMAKE_C_COMPILER_LAUNCHER=ccache \
 	-DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-	-DCMAKE_TOOLCHAIN_FILE="${PWD}/tool/vcpkg/scripts/buildsystems/vcpkg.cmake" \
 	-DCMAKE_BUILD_TYPE="$BUILD_TYPE"
 
 cmake --build build -j"$(nproc)"
