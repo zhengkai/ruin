@@ -5,7 +5,7 @@ export RUIN_DIR := $(CURDIR)/build/Release
 default:
 	./run.sh Release
 
-run:
+run: asset
 	# RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2
 	# RUIN_DIR=$(RUIN_DIR) ./build/ruin -r 2,2,3,4,2,2 --fullscreen
 	./build/ruin
@@ -43,7 +43,9 @@ small:
 
 .PHONY: asset
 asset:
-	git clone --depth 1 https://github.com/zhengkai/ruin-asset.git asset
+	@if [ ! -d asset ]; then \
+		git clone --depth 1 https://github.com/zhengkai/ruin-asset.git asset; \
+	fi
 
 gdb:
 	gdb ./build/ruin

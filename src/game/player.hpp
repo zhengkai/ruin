@@ -40,7 +40,7 @@ inline void playerJump(Reg &reg,
 	if (body.touch.d) {
 		if (control.btnA) {
 			body.vy = config::jumpForce;
-			reg.emplace<tag::Jump>(e, true, 1);
+			reg.emplaceOrReplace<tag::Jump>(e, true, 1);
 		} else {
 			reg.remove<tag::Jump>(e);
 		}

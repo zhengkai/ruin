@@ -41,6 +41,11 @@ public:
 		return reg.emplace<Type>(e, std::forward<Args>(args)...);
 	}
 
+	template <typename Type, typename... Args>
+	decltype(auto) emplaceOrReplace(entt::entity e, Args &&...args) {
+		return reg.emplace_or_replace<Type>(e, std::forward<Args>(args)...);
+	}
+
 	// get
 
 	template <typename... Components>
@@ -68,6 +73,11 @@ public:
 	// remove
 	template <typename... Components> void remove(const entt::entity &e) {
 		reg.remove<Components...>(e);
+	};
+
+	// erase
+	template <typename... Components> void erase(const entt::entity &e) {
+		reg.erase<Components...>(e);
 	};
 };
 

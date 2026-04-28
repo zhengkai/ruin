@@ -15,6 +15,7 @@
     coreutils
     curl
     gcc
+    gdb
     git
     gnumake
     gnutar
