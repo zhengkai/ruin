@@ -20,12 +20,12 @@ env:
   CC: clang
   CXX: clang++
   CMAKE_VERSION: "4.3.2"
-  VCPKG_CACHE_KEY_PREFIX: "vcpkg"
+  VCPKG_CACHE_KEY_PREFIX: "vcpkg1"
   VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\.vcpkg_binary_cache
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
 
     steps:
 
